@@ -66,7 +66,6 @@ function renderStrukturNode(array $node, int $depth = 0): string
     flex-wrap: wrap;
     padding-top: 28px;
     gap: 0 10px;
-    max-width: 640px;
 }
 .org-tree ul::before {
     content: '';
@@ -83,7 +82,6 @@ function renderStrukturNode(array $node, int $depth = 0): string
     flex-direction: column;
     align-items: center;
     padding: 28px 8px 0;
-    min-width: 0;
 }
 .org-tree li::before,
 .org-tree li::after {
