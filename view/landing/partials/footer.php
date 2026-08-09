@@ -12,7 +12,7 @@ if ($waNum !== '' && str_starts_with($waNum, '0')) {
 }
 $mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($alamat !== '' ? $namaPekon . ', ' . $alamat : $namaPekon);
 ?>
-<footer class="bg-surface-container-low py-10 border-t border-glass-border">
+<footer class="bg-surface-container-low py-14 border-t border-glass-border">
 <div class="max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-stack-lg">
 <!-- Brand -->
 <div class="lg:col-span-5 flex flex-col gap-4">
@@ -69,7 +69,7 @@ $mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($al
 </a>
 </div>
 </div>
-<div class="mt-8 pt-6 border-t border-glass-border max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop flex flex-col md:flex-row items-center justify-between gap-2 text-caption text-on-surface-variant pb-1">
+<div class="mt-stack-lg pt-stack-lg border-t border-glass-border max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop flex flex-col md:flex-row items-center justify-between gap-2 text-caption text-on-surface-variant pb-3">
 <span>© <?= date('Y') ?> <?= e($namaPekon) ?> Digital.</span>
 <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px] text-primary">public</span>Kabupaten Pesawaran, Lampung</span>
 </div>
