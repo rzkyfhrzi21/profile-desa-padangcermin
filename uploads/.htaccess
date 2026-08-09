@@ -1,0 +1,9 @@
+# Folder upload non-executable PHP (A08)
+<FilesMatch "\.(php|phtml|php[0-9]|phar)$">
+    <IfModule mod_php.c>
+        php_flag engine off
+    </IfModule>
+    Require all denied
+</FilesMatch>
+
+Options -Indexes

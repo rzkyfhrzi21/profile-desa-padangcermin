@@ -1,0 +1,115 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"lime-glow":"rgba(158, 230, 56, 0.25)","secondary":"#bdcac0","surface-bright":"#2a3d33","surface":"#05170e","on-secondary":"#28332c","on-primary-fixed-variant":"#304f00","inverse-on-surface":"#22342b","surface-variant":"#26392f","background":"#05170e","status-success":"#1E3A21","outline":"#8c947d","surface-dim":"#05170e","primary-fixed":"#aef849","muted-forest":"#1A2E23","on-error":"#690005","surface-tint":"#93da2c","on-surface-variant":"#c1cab0","status-error":"#3D1E1E","on-tertiary":"#2a322e","on-tertiary-container":"#535c56","on-primary-container":"#3e6400","on-primary":"#203600","inverse-primary":"#426900","primary-container":"#9ee638","surface-container":"#11231a","tertiary":"#e7f0e9","primary-fixed-dim":"#93da2c","glass-border":"rgba(255, 255, 255, 0.08)","tertiary-fixed":"#dce5dd","glass-fill":"rgba(22, 37, 30, 0.65)","on-error-container":"#ffdad6","tertiary-fixed-dim":"#c0c9c2","primary":"#c8ff80","on-secondary-container":"#afbcb2","surface-container-lowest":"#011109","status-warning":"#3D2E14","on-secondary-fixed-variant":"#3e4942","secondary-fixed":"#d9e6dc","error-container":"#93000a","outline-variant":"#424936","on-background":"#d2e8d9","inverse-surface":"#d2e8d9","secondary-container":"#404c44","secondary-fixed-dim":"#bdcac0","surface-container-high":"#1b2e24","on-secondary-fixed":"#131e18","on-surface":"#d2e8d9","on-primary-fixed":"#112000","on-tertiary-fixed":"#151d19","surface-container-low":"#0d1f16","tertiary-container":"#cbd4cd","on-tertiary-fixed-variant":"#404944","surface-container-highest":"#26392f","error":"#ffb4ab"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"stack-sm":"8px","stack-md":"16px","section-gap":"100px","margin-desktop":"40px","stack-lg":"32px","gutter":"24px","container-max":"1280px","margin-mobile":"16px"},"fontFamily":{"caption":["Plus Jakarta Sans"],"headline-xl-mobile":["Space Grotesk"],"headline-xl":["Space Grotesk"],"label-mono":["JetBrains Mono"],"headline-lg":["Space Grotesk"],"headline-md":["Space Grotesk"],"body-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"]},"fontSize":{"caption":["13px",{"lineHeight":"1.4","fontWeight":"500"}],"headline-xl-mobile":["32px",{"lineHeight":"1.2","letterSpacing":"-0.01em","fontWeight":"700"}],"headline-xl":["56px",{"lineHeight":"1.15","letterSpacing":"-0.02em","fontWeight":"700"}],"label-mono":["14px",{"lineHeight":"1.4","letterSpacing":"0.05em","fontWeight":"500"}],"headline-lg":["36px",{"lineHeight":"1.25","fontWeight":"700"}],"headline-md":["22px",{"lineHeight":"1.35","fontWeight":"600"}],"body-lg":["18px",{"lineHeight":"1.6","fontWeight":"400"}],"body-md":["16px",{"lineHeight":"1.6","fontWeight":"400"}]}}}}</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&family=Space+Grotesk:wght@100..900&display=swap" rel="stylesheet"/></head><body class="bg-background font-body-md text-on-surface"><main class="w-full flex min-h-screen items-center justify-center p-margin-mobile"><div class="flex flex-col w-full relative overflow-hidden flex-grow justify-center items-center py-margin-desktop">
+<!-- Animated Ambient Background Layer -->
+<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+<div class="absolute w-[800px] h-[800px] rounded-full bg-surface-tint/10 blur-[120px] top-[-20%] left-[-10%] animate-[pulse_8s_ease-in-out_infinite]"></div>
+<div class="absolute w-[600px] h-[600px] rounded-full bg-primary/5 blur-[100px] bottom-[-10%] right-[-10%] animate-[pulse_10s_ease-in-out_infinite_reverse]"></div>
+<!-- Grain Overlay -->
+<div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
+</div>
+<!-- Login Container -->
+<div class="relative z-10 w-full max-w-md px-margin-mobile">
+<!-- Header / Logo -->
+<div class="flex flex-col items-center mb-stack-lg animate-[fade-in-up_0.6s_ease-out]">
+<img alt="Pekon Padang Cermin Logo" class="w-32 h-auto object-contain mb-stack-md drop-shadow-xl filter brightness-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgFEJ-GGNfWDllBgVjcqqicTTn7RRbu4-ErmJvH91LzlXIKz6r7vO5DE1ML0bkgol46CpqzW_U6u2n4B6rPIZfDCc16EpfcZ-rqX_nZQlI9vEOIqn8Pw2VcVnt7VCwciqfZm2evCZRgMtqOz0UkI_JPC8uwQPvg0UblndNamRHwdMtpApqJdOgIgUeOQ4I3xIS5eTy6eUDajhD8G_5k2FtBnlQ9b0174hdSE35hp1famqog54-8DvfUeHvce9B55MUDQ"/>
+<div class="text-center">
+<h1 class="font-headline-lg text-on-surface mb-stack-sm tracking-tight">Padang Cermin</h1>
+<p class="font-label-mono text-on-surface-variant uppercase tracking-widest text-xs">Secure Admin Portal</p>
+</div>
+</div>
+<!-- Glassmorphic Card -->
+<div class="bg-glass-fill backdrop-blur-[16px] rounded-[20px] p-stack-lg border border-glass-border shadow-2xl relative overflow-hidden transition-all duration-300 hover:shadow-lime-glow/20 hover:-translate-y-1 animate-[fade-in-up_0.8s_ease-out_0.1s_both]">
+<!-- Subtle Highlight -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-primary-fixed/30 to-transparent"></div>
+<form class="flex flex-col gap-stack-md" id="admin-login-form">
+<!-- ID Input -->
+<div class="flex flex-col gap-stack-sm">
+<label class="font-label-mono text-on-surface-variant text-xs ml-1" for="admin-id">Admin ID</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors duration-300">badge</span>
+<input autocomplete="username" class="w-full bg-[#111C16] border border-glass-border rounded-xl py-3 pl-12 pr-4 text-on-surface font-body-md placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary-fixed focus:shadow-[0_0_15px_rgba(158,230,56,0.15)] transition-all duration-300" id="admin-id" name="admin-id" placeholder="Enter your credentials" required="" type="text"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="flex flex-col gap-stack-sm">
+<div class="flex justify-between items-center ml-1">
+<label class="font-label-mono text-on-surface-variant text-xs" for="admin-pass">Access Key</label>
+<a class="font-label-mono text-primary text-[10px] hover:underline hover:text-primary-fixed-dim transition-colors" href="#">Recover?</a>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors duration-300">lock</span>
+<input autocomplete="current-password" class="w-full bg-[#111C16] border border-glass-border rounded-xl py-3 pl-12 pr-12 text-on-surface font-body-md placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary-fixed focus:shadow-[0_0_15px_rgba(158,230,56,0.15)] transition-all duration-300" id="admin-pass" name="admin-pass" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors focus:outline-none" id="toggle-password" type="button">
+<span class="material-symbols-outlined text-sm">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Security Badge -->
+<div class="flex items-center gap-2 mt-stack-sm p-3 rounded-lg bg-surface-container-low/50 border border-glass-border/50">
+<div class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></div>
+<span class="font-label-mono text-[10px] text-on-surface-variant">End-to-End Encrypted Session</span>
+<span class="material-symbols-outlined text-[14px] text-primary ml-auto">verified_user</span>
+</div>
+<!-- Submit Button -->
+<button class="mt-stack-sm w-full py-4 rounded-full bg-primary-fixed text-background font-headline-md text-sm hover:bg-primary hover:shadow-[0_0_20px_rgba(158,230,56,0.3)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden" type="submit">
+<span class="relative z-10 flex items-center gap-2">Masuk ke Portal Admin <span class="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_forward</span></span>
+<!-- Button Glow Effect -->
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_ease-in-out_infinite]"></div>
+</button>
+</form>
+</div>
+<!-- Footer Info -->
+<div class="mt-stack-lg text-center animate-[fade-in-up_1s_ease-out_0.2s_both]">
+<p class="font-caption text-on-surface-variant/60 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[14px]">policy</span> Restricted Access Area
+            </p>
+</div>
+</div>
+</div>
+<style>
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes shimmer {
+        100% {
+            transform: translateX(100%);
+        }
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('admin-pass');
+        const toggleIcon = togglePasswordBtn.querySelector('span');
+
+        togglePasswordBtn.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            toggleIcon.textContent = type === 'password' ? 'visibility_off' : 'visibility';
+        });
+
+        const form = document.getElementById('admin-login-form');
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Simulate login process
+            submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Authenticating...';
+            submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+            
+            setTimeout(() => {
+                submitBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Verified';
+                submitBtn.classList.replace('bg-primary-fixed', 'bg-secondary');
+                // Normally you would redirect here
+            }, 1500);
+        });
+    });
+</script></main></body></html>

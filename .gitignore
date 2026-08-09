@@ -1,0 +1,14 @@
+.env
+# config/.env
+node_modules/
+tailwindcss.exe
+*.log
+# uploads/*
+# !uploads/.htaccess
+config/logs/
+graphify-out/
+.git
+.grok/
+.rtk/
+@agents/
+Zzz/

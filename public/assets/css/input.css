@@ -1,0 +1,218 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        overscroll-behavior: none;
+    }
+    main > :first-child {
+        margin-top: 0 !important;
+    }
+    main > :last-child {
+        margin-bottom: 0 !important;
+    }
+    ::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@layer components {
+    .prose-sederhana h2,
+    .prose-sederhana h3 {
+        @apply font-display font-bold text-coklat;
+    }
+    .prose-sederhana h2 {
+        @apply mt-6 text-2xl;
+    }
+    .prose-sederhana h3 {
+        @apply mt-4 text-xl;
+    }
+    .prose-sederhana p {
+        @apply mb-4;
+    }
+    .prose-sederhana ul {
+        @apply mb-4 list-disc pl-6;
+    }
+    .prose-sederhana ol {
+        @apply mb-4 list-decimal pl-6;
+    }
+    .prose-sederhana blockquote {
+        @apply border-l-4 border-kuning pl-4 italic text-abu;
+    }
+    .prose-sederhana a {
+        @apply text-hijau underline;
+    }
+    .prose-sederhana img {
+        @apply rounded-[14px] my-4;
+    }
+}
+
+@layer utilities {
+    .skeleton {
+        position: relative;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 0.5rem;
+    }
+    .skeleton::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        animation: skeleton-shimmer 1.4s infinite;
+    }
+    @keyframes skeleton-shimmer {
+        100% {
+            transform: translateX(100%);
+        }
+    }
+    .lazy-spinner {
+        width: 28px;
+        height: 28px;
+        border-radius: 9999px;
+        border: 3px solid rgba(255, 255, 255, 0.15);
+        border-top-color: #c8ff80;
+        animation: lazy-spin 0.7s linear infinite;
+    }
+    @keyframes lazy-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+    .toast-progress {
+        animation: toast-countdown 2s linear forwards;
+    }
+    @keyframes toast-countdown {
+        from {
+            width: 100%;
+        }
+        to {
+            width: 0%;
+        }
+    }
+    .modal-overlay {
+        animation: modal-fade 0.2s ease-out;
+    }
+    .modal-panel {
+        animation: modal-pop 0.25s ease-out;
+    }
+    @keyframes modal-fade {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    @keyframes modal-pop {
+        from {
+            opacity: 0;
+            transform: translateY(16px) scale(0.97);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    .toast-enter {
+        animation: toast-slide 0.25s ease-out;
+    }
+    @keyframes toast-slide {
+        from {
+            opacity: 0;
+            transform: translateX(24px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    /* ===== SIDEBAR & LAYOUT ===== */
+    /* Sidebar: JS mengatur width + transform via inline style.
+       CSS hanya handle: transisi, collapsed label-hide, dan link layout */
+    #admin-sidebar {
+        /* Default: tersembunyi di mobile (JS set transform di applyLayout) */
+    }
+    /* Collapsed state: hide teks label dan sesuaikan link */
+    .sidebar-collapsed .sidebar-label,
+    .sidebar-collapsed .sidebar-label-wrap {
+        display: none;
+        opacity: 0;
+    }
+    .sidebar-collapsed .sidebar-link {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+        gap: 0;
+    }
+    .sidebar-collapsed .sidebar-brand {
+        justify-content: center;
+    }
+    /* Backdrop */
+    #sidebar-backdrop {
+        transition: opacity 0.3s ease;
+    }
+    /* Main wrap dan topbar: JS mengatur padding-left dan left via inline style */
+    #admin-main-wrap,
+    #admin-topbar {
+        /* transition diset di Tailwind class */
+    }
+    .carousel-slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.45s ease, visibility 0.45s;
+    }
+    .carousel-slide.carousel-active {
+        position: relative;
+        z-index: 1;
+        opacity: 1;
+        visibility: visible;
+    }
+    .carousel-btn {
+        transition: all 0.2s ease;
+    }
+    .carousel-btn:hover {
+        background: rgba(158, 230, 56, 0.15);
+        border-color: rgba(158, 230, 56, 0.5);
+        color: #c8ff80;
+    }
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        padding: 0;
+    }
+    .carousel-dot:hover {
+        background: rgba(255, 255, 255, 0.6);
+    }
+    .carousel-dot-active {
+        width: 24px;
+        background: #c8ff80;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

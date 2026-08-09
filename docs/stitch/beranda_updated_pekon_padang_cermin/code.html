@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;} 
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+.reveal.active { opacity: 1; transform: translateY(0); }
+</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"lime-glow":"rgba(158, 230, 56, 0.25)","secondary":"#bdcac0","surface-bright":"#2a3d33","surface":"#05170e","on-secondary":"#28332c","on-primary-fixed-variant":"#304f00","inverse-on-surface":"#22342b","surface-variant":"#26392f","background":"#05170e","status-success":"#1E3A21","outline":"#8c947d","surface-dim":"#05170e","primary-fixed":"#aef849","muted-forest":"#1A2E23","on-error":"#690005","surface-tint":"#93da2c","on-surface-variant":"#c1cab0","status-error":"#3D1E1E","on-tertiary":"#2a322e","on-tertiary-container":"#535c56","on-primary-container":"#3e6400","on-primary":"#203600","inverse-primary":"#426900","primary-container":"#9ee638","surface-container":"#11231a","tertiary":"#e7f0e9","primary-fixed-dim":"#93da2c","glass-border":"rgba(255, 255, 255, 0.08)","tertiary-fixed":"#dce5dd","glass-fill":"rgba(22, 37, 30, 0.65)","on-error-container":"#ffdad6","tertiary-fixed-dim":"#c0c9c2","primary":"#9EE638","on-secondary-container":"#afbcb2","surface-container-lowest":"#011109","status-warning":"#3D2E14","on-secondary-fixed-variant":"#3e4942","secondary-fixed":"#d9e6dc","error-container":"#93000a","outline-variant":"#424936","on-background":"#d2e8d9","inverse-surface":"#d2e8d9","secondary-container":"#404c44","secondary-fixed-dim":"#bdcac0","surface-container-high":"#1b2e24","on-secondary-fixed":"#131e18","on-surface":"#d2e8d9","on-primary-fixed":"#112000","on-tertiary-fixed":"#151d19","surface-container-low":"#0d1f16","tertiary-container":"#cbd4cd","on-tertiary-fixed-variant":"#404944","surface-container-highest":"#26392f","error":"#ffb4ab"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"stack-sm":"8px","stack-md":"16px","section-gap":"100px","margin-desktop":"40px","stack-lg":"32px","gutter":"24px","container-max":"1280px","margin-mobile":"16px"},"fontFamily":{"caption":["Plus Jakarta Sans"],"headline-xl-mobile":["Space Grotesk"],"headline-xl":["Space Grotesk"],"label-mono":["JetBrains Mono"],"headline-lg":["Space Grotesk"],"headline-md":["Space Grotesk"],"body-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"]},"fontSize":{"caption":["13px",{"lineHeight":"1.4","fontWeight":"500"}],"headline-xl-mobile":["32px",{"lineHeight":"1.2","letterSpacing":"-0.01em","fontWeight":"700"}],"headline-xl":["56px",{"lineHeight":"1.15","letterSpacing":"-0.02em","fontWeight":"700"}],"label-mono":["14px",{"lineHeight":"1.4","letterSpacing":"0.05em","fontWeight":"500"}],"headline-lg":["36px",{"lineHeight":"1.25","fontWeight":"700"}],"headline-md":["22px",{"lineHeight":"1.35","fontWeight":"600"}],"body-lg":["18px",{"lineHeight":"1.6","fontWeight":"400"}],"body-md":["16px",{"lineHeight":"1.6","fontWeight":"400"}]}}}}</script><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&amp;family=Plus+Jakarta+Sans:wght@400;500&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/></head><body class="bg-background font-body-md text-on-surface"><header class="fixed top-0 w-full z-50 flex justify-center py-4"><div class="h-auto md:h-16 w-full max-w-[1200px] mx-margin-mobile lg:mx-margin-desktop bg-glass-fill backdrop-blur-xl border border-glass-border rounded-2xl md:rounded-full flex flex-col md:flex-row items-center justify-between p-4 md:px-8 shadow-lg gap-4 md:gap-0"><div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start"><div class="flex items-center gap-4"><img alt="logo.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLuOj4QSl4radSYiBHvE0k-zbwm9wBfRmJR3uI5ghlrLSEn5nDMa-JxA6VMIxe8eAKjn_UjoNpHLhVucvNi0fYjjx1GSjwhakGYTkjOfiUiJsiTHMqRlkM7a57mup-nbpeUKGQ_bYzmIQNVz9JZ7bFojWZts9owj_mDzYxuAlle3gWFT_kzwWKsiLE-02lHxguYIwa8OkPJO__IYPzTSp5-zZYIq3Nm1UuPmdF_UX0olsMupMFZRGMRMfuoLgyIOvsvJbU8r2XQPOQ"/><span class="font-headline-md text-[18px] md:text-headline-md text-primary tracking-tight">Pekon Padang Cermin</span></div><div class="md:hidden font-label-mono text-primary text-sm" id="mobile-clock"></div></div><nav class="flex flex-wrap justify-center items-center gap-4 md:gap-stack-lg" data-active-classes="text-primary font-bold"><a aria-current="page" class="transition-colors text-primary font-bold" data-path="beranda" href="#">Beranda</a><a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" data-path="profil" href="#">Profil</a><a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" data-path="wisata" href="#">Wisata</a><a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" data-path="berita" href="#">Berita</a></nav><div class="flex items-center gap-4 w-full md:w-auto justify-center md:justify-end"><div class="hidden md:block font-label-mono text-primary text-sm mr-4" id="desktop-clock"></div><a class="bg-primary text-on-primary px-6 py-2 rounded-full font-body-md font-bold hover:shadow-lime-glow transition-all flex items-center gap-2" data-path="login" href="#">Portal Admin <span class="material-symbols-outlined text-[18px]">arrow_forward</span></a></div></div></header><main class="w-full pt-28 md:pt-20"><div class="flex flex-col w-full relative overflow-hidden">
+<!-- Atmospheric Background Decoration -->
+<div class="absolute top-0 left-0 w-full h-[921px] pointer-events-none z-0">
+<div class="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background z-10"></div>
+<img alt="Rice Terraces" class="w-full h-full object-cover opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8Af1po4q5qXWAGBT5sc2MwF6TM6d-l0Ky90uxwrl2oaw0Jloy0VA76WayM3KaBpNO0B0Q8PSpdR9hr9sWhiZqipxP_j6A7N9DOFKlKatSO3_W8Ac_rQe-4pu0AWFWPIRn8u7WrHYYS7cuGyht8_Nljs7SDBqIEqcG9Mn5ZuzrTXOIl2yZ5kxURMoDyUXwa6JCHjrsJJT-5q_Pl_z5cPHF0zTGuIFRSE52oMfL06PG5jh9ABrZ0301"/>
+</div>
+<!-- Hero Section -->
+<section class="relative w-full min-h-[90vh] flex flex-col justify-center px-margin-mobile lg:px-margin-desktop py-section-gap z-10 pt-32 reveal">
+<div class="max-w-container-max mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+<!-- Hero Content -->
+<div class="lg:col-span-7 flex flex-col gap-stack-lg z-20">
+<div class="inline-flex items-center gap-2 bg-glass-fill backdrop-blur-md rounded-full px-4 py-2 w-max shadow-sm border border-glass-border">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-mono text-label-mono text-primary">SISTEM TERINTEGRASI V2.4</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl-mobile lg:text-headline-xl text-on-surface leading-tight">
+                    Mengelola Ekosistem <br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-surface-tint">Padang Cermin</span> Secara Transparan.
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                    Pusat komando digital untuk administrasi desa, pemantauan agrikultur, dan pelayanan masyarakat berbasis data waktu nyata di ujung jari Anda.
+                </p>
+<div class="flex flex-wrap items-center gap-4 mt-4">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-full font-body-md font-bold hover:shadow-[0_0_20px_rgba(158,230,56,0.4)] transition-all flex items-center gap-2 group">
+                        Jelajahi Data Pekon 
+                        <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+<button class="bg-glass-fill backdrop-blur-md text-on-surface border border-glass-border px-8 py-4 rounded-full font-body-md hover:bg-surface-container-high transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined">play_circle</span> Tonton Profil
+                    </button>
+</div>
+</div>
+<!-- Live Insights Widget (Glassmorphic) -->
+<div class="lg:col-span-5 relative z-20 mt-12 lg:mt-0">
+<div class="bg-glass-fill backdrop-blur-[16px] rounded-[20px] p-stack-lg border border-glass-border shadow-2xl group hover:-translate-y-1 transition-transform duration-500 hover:border-primary/40 relative overflow-hidden">
+<!-- Decorative chart line in background -->
+<svg class="absolute bottom-0 right-0 w-full h-32 opacity-20" preserveaspectratio="none" viewbox="0 0 100 30">
+<path d="M0,30 L10,25 L25,28 L40,15 L60,20 L80,5 L100,10 L100,30 Z" fill="url(#chartGrad)"></path>
+<path class="text-primary" d="M0,30 L10,25 L25,28 L40,15 L60,20 L80,5 L100,10" fill="none" stroke="currentColor" stroke-width="0.5"></path>
+<defs>
+<lineargradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="var(--colors-primary)" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="var(--colors-primary)" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+<div class="flex justify-between items-start mb-8 relative z-10">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Live Insights</h3>
+<p class="font-caption text-caption text-on-surface-variant">Update terkini status desa</p>
+</div>
+<span class="material-symbols-outlined text-primary bg-muted-forest p-2 rounded-lg">sensors</span>
+</div>
+<div class="grid grid-cols-2 gap-6 relative z-10">
+<div class="flex flex-col gap-1">
+<span class="font-label-mono text-label-mono text-on-surface-variant">KUALITAS UDARA</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-primary">32</span>
+<span class="font-caption text-caption text-secondary">AQI</span>
+</div>
+<span class="font-caption text-caption text-primary flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">eco</span> Sangat Baik</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-mono text-label-mono text-on-surface-variant">CUACA</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface">28°C</span>
+</div>
+<span class="font-caption text-caption text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">partly_cloudy_day</span> Berawan</span>
+</div>
+<div class="col-span-2 bg-glass-fill backdrop-blur-md rounded-xl p-4 border border-glass-border">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-mono text-label-mono text-on-surface-variant">PENDAPATAN DESA (YTD)</span>
+<span class="text-primary font-caption text-caption">+14%</span>
+</div>
+<div class="w-full bg-surface-container-lowest rounded-full h-2">
+<div class="bg-primary h-2 rounded-full w-[68%]" style="box-shadow: 0 0 10px rgba(158,230,56,0.5);"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Stats Bar -->
+<div class="absolute bottom-0 left-0 w-full translate-y-1/2 px-margin-mobile lg:px-margin-desktop z-30 pointer-events-none hidden md:block">
+<div class="max-w-container-max mx-auto">
+<div class="bg-glass-fill backdrop-blur-xl border border-glass-border rounded-2xl p-6 lg:p-8 grid grid-cols-1 md:grid-cols-3 gap-8 shadow-2xl pointer-events-auto">
+<div class="flex items-center gap-4 border-b md:border-b-0 md:border-r border-glass-border pb-4 md:pb-0 pr-0 md:pr-4">
+<div class="w-12 h-12 rounded-xl bg-glass-fill backdrop-blur-md flex items-center justify-center text-primary border border-glass-border">
+<span class="material-symbols-outlined">group</span>
+</div>
+<div>
+<h4 class="font-headline-lg text-headline-lg text-on-surface">1,248+</h4>
+<p class="font-label-mono text-label-mono text-on-surface-variant">JIWA PENDUDUK</p>
+</div>
+</div>
+<div class="flex items-center gap-4 border-b md:border-b-0 md:border-r border-glass-border pb-4 md:pb-0 pr-0 md:pr-4">
+<div class="w-12 h-12 rounded-xl bg-glass-fill backdrop-blur-md flex items-center justify-center text-primary border border-glass-border">
+<span class="material-symbols-outlined">agriculture</span>
+</div>
+<div>
+<h4 class="font-headline-lg text-headline-lg text-on-surface">412 Ha</h4>
+<p class="font-label-mono text-label-mono text-on-surface-variant">LAHAN SAWAH</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-glass-fill backdrop-blur-md flex items-center justify-center text-primary border border-glass-border">
+<span class="material-symbols-outlined">landscape</span>
+</div>
+<div>
+<h4 class="font-headline-lg text-headline-lg text-on-surface">5</h4>
+<p class="font-label-mono text-label-mono text-on-surface-variant">DESTINASI WISATA</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Feature Cards Section -->
+<section class="w-full pt-16 md:pt-32 pb-section-gap px-margin-mobile lg:px-margin-desktop bg-surface-dim relative">
+<div class="max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-stack-lg gap-4 reveal">
+<div>
+<h2 class="font-label-mono text-label-mono text-primary mb-2">FOKUS KAMI</h2>
+<h3 class="font-headline-lg text-[28px] md:text-headline-lg text-on-surface max-w-lg">Apa Yang Kami Kelola Untuk Kesejahteraan.</h3>
+</div>
+<a class="font-body-md text-primary flex items-center gap-2 hover:underline" href="#">
+                    Lihat Semua Layanan <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Agriculture -->
+<div class="bg-glass-fill backdrop-blur-md rounded-[20px] p-6 hover:bg-glass-fill/80 transition-colors group cursor-pointer border border-glass-border hover:border-primary/50 reveal delay-100">
+<div class="w-12 h-12 rounded-lg bg-[#0E2818] flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">psychiatry</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Pertanian Digital</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                        Pemantauan hasil panen, jadwal tanam, dan distribusi pupuk secara transparan untuk ketahanan pangan.
+                    </p>
+</div>
+<!-- Services -->
+<div class="bg-glass-fill backdrop-blur-md rounded-[20px] p-6 hover:bg-glass-fill/80 transition-colors group cursor-pointer border border-glass-border hover:border-primary/50 reveal delay-200">
+<div class="w-12 h-12 rounded-lg bg-[#1F2C3D] flex items-center justify-center text-[#8CBEFF] mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">support_agent</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Layanan Publik</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                        Administrasi surat menyurat, pelaporan warga, dan layanan kesehatan dasar dalam satu pintu digital.
+                    </p>
+</div>
+<!-- Governance -->
+<div class="bg-glass-fill backdrop-blur-md rounded-[20px] p-6 hover:bg-glass-fill/80 transition-colors group cursor-pointer border border-glass-border hover:border-primary/50 reveal delay-300">
+<div class="w-12 h-12 rounded-lg bg-[#2D1F3D] flex items-center justify-center text-[#D6A3FF] mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Tata Kelola</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                        Transparansi APBDes, program pembangunan fisik, dan pelaporan kinerja perangkat desa ke publik.
+                    </p>
+</div>
+<!-- Tourism -->
+<div class="bg-glass-fill backdrop-blur-md rounded-[20px] p-6 hover:bg-glass-fill/80 transition-colors group cursor-pointer border border-glass-border hover:border-primary/50 reveal delay-400">
+<div class="w-12 h-12 rounded-lg bg-[#3D2F1F] flex items-center justify-center text-[#FFC48C] mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">tour</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Pariwisata</h4>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                        Promosi ekowisata, manajemen tiket masuk, dan pemberdayaan UMKM lokal di sekitar area wisata.
+                    </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Data Dashboard Preview -->
+<section class="w-full py-section-gap px-margin-mobile lg:px-margin-desktop bg-surface relative reveal">
+<div class="max-w-container-max mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<!-- Text Content -->
+<div class="flex flex-col gap-6">
+<span class="font-label-mono text-label-mono text-primary">TRANSPARANSI DATA</span>
+<h2 class="font-headline-xl text-headline-xl-mobile lg:text-headline-xl text-on-surface">Data Desa,<br/>Kini Terbuka.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                        Kami percaya bahwa tata kelola yang baik dimulai dari transparansi. Akses ringkasan demografi, realisasi anggaran, dan pencapaian program desa kapan saja.
+                    </p>
+<div class="flex flex-col gap-4 mt-4">
+<div class="flex flex-col sm:flex-row sm:items-center gap-4 bg-glass-fill backdrop-blur-md border border-glass-border p-4 rounded-xl">
+<span class="material-symbols-outlined text-primary text-[32px]">pie_chart</span>
+<div>
+<h4 class="font-headline-md text-on-surface text-[18px]">Realisasi APBDes 2024</h4>
+<p class="font-caption text-secondary">Telah terserap 78% dari target kuartal 3</p>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-center gap-4 bg-glass-fill backdrop-blur-md border border-glass-border p-4 rounded-xl">
+<span class="material-symbols-outlined text-primary text-[32px]">trending_up</span>
+<div>
+<h4 class="font-headline-md text-on-surface text-[18px]">Pertumbuhan UMKM</h4>
+<p class="font-caption text-secondary">Peningkatan 12% usaha mikro terdaftar</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Visualization Mockup -->
+<div class="bg-glass-fill backdrop-blur-md rounded-[24px] border border-glass-border p-6 md:p-8 shadow-2xl relative w-full overflow-hidden">
+<div class="absolute -top-4 -right-4 w-24 h-24 bg-primary/20 rounded-full blur-2xl"></div>
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-2">
+<h4 class="font-headline-md text-on-surface">Demografi Penduduk</h4>
+<span class="bg-glass-fill backdrop-blur-md text-on-surface-variant font-label-mono text-[12px] px-3 py-1 rounded-full border border-glass-border w-max">2024</span>
+</div>
+<div class="flex justify-around items-end h-48 mb-6 border-b border-glass-border/30 pb-2">
+<!-- Bar Chart -->
+<div class="w-8 sm:w-12 bg-glass-fill backdrop-blur-md border-x border-t border-glass-border rounded-t-lg relative group">
+<div class="absolute bottom-0 w-full bg-primary/40 rounded-t-lg h-[40%] group-hover:bg-primary transition-colors cursor-pointer"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-caption text-secondary text-[10px] sm:text-[11px]">0-14</span>
+</div>
+<div class="w-8 sm:w-12 bg-glass-fill backdrop-blur-md border-x border-t border-glass-border rounded-t-lg relative group">
+<div class="absolute bottom-0 w-full bg-primary/60 rounded-t-lg h-[85%] group-hover:bg-primary transition-colors cursor-pointer"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-caption text-secondary text-[10px] sm:text-[11px]">15-34</span>
+</div>
+<div class="w-8 sm:w-12 bg-glass-fill backdrop-blur-md border-x border-t border-glass-border rounded-t-lg relative group">
+<div class="absolute bottom-0 w-full bg-primary/80 rounded-t-lg h-[65%] group-hover:bg-primary transition-colors cursor-pointer"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-caption text-secondary text-[10px] sm:text-[11px]">35-54</span>
+</div>
+<div class="w-8 sm:w-12 bg-glass-fill backdrop-blur-md border-x border-t border-glass-border rounded-t-lg relative group">
+<div class="absolute bottom-0 w-full bg-primary/40 rounded-t-lg h-[30%] group-hover:bg-primary transition-colors cursor-pointer"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-caption text-secondary text-[10px] sm:text-[11px]">55+</span>
+</div>
+</div>
+<div class="mt-8 pt-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="relative w-12 h-12 flex items-center justify-center shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container-high" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="60, 100" stroke-width="3"></path>
+</svg>
+<span class="absolute font-label-mono text-[10px] text-on-surface">60%</span>
+</div>
+<div>
+<p class="font-caption text-on-surface">Usia Produktif</p>
+<p class="font-caption text-secondary text-[12px]">Mendominasi populasi</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div></main><footer class="bg-surface-container-low py-section-gap border-t border-glass-border"><div class="max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter"><div class="col-span-1 md:col-span-2"><div class="flex items-center gap-4 mb-stack-md"><img alt="logo.png" class="h-10 w-auto" src="https://lh3.googleusercontent.com/aida/AP1WRLuOj4QSl4radSYiBHvE0k-zbwm9wBfRmJR3uI5ghlrLSEn5nDMa-JxA6VMIxe8eAKjn_UjoNpHLhVucvNi0fYjjx1GSjwhakGYTkjOfiUiJsiTHMqRlkM7a57mup-nbpeUKGQ_bYzmIQNVz9JZ7bFojWZts9owj_mDzYxuAlle3gWFT_kzwWKsiLE-02lHxguYIwa8OkPJO__IYPzTSp5-zZYIq3Nm1UuPmdF_UX0olsMupMFZRGMRMfuoLgyIOvsvJbU8r2XQPOQ"/><span class="font-headline-md text-headline-md text-primary">Pekon Padang Cermin</span></div><p class="text-on-surface-variant max-w-sm">Menuju tata kelola desa yang transparan, digital, dan berkelanjutan untuk masa depan hijau.</p></div><div class="flex flex-col gap-4"><h4 class="text-primary font-headline-md">Navigasi</h4><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Layanan Publik</a><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Dokumentasi</a><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Galeri Wisata</a></div><div class="flex flex-col gap-4"><h4 class="text-primary font-headline-md">Kontak</h4><p class="text-on-surface-variant">Jl. Lintas Barat No. 45, Padang Cermin, Lampung</p><p class="text-on-surface-variant">info@pekonpadangcermin.go.id</p></div></div><div class="mt-stack-lg pt-stack-lg border-t border-glass-border max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop text-center text-caption text-on-surface-variant pb-8">© 2024 Pekon Padang Cermin Digital. Ditenagai oleh Sprout Technology.</div></footer>
+<script>
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        document.getElementById('desktop-clock').textContent = timeString;
+        document.getElementById('mobile-clock').textContent = timeString;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function reveal() {
+        var reveals = document.querySelectorAll(".reveal");
+        for (var i = 0; i < reveals.length; i++) {
+            var windowHeight = window.innerHeight;
+            var elementTop = reveals[i].getBoundingClientRect().top;
+            var elementVisible = 150;
+            if (elementTop < windowHeight - elementVisible) {
+                reveals[i].classList.add("active");
+            }
+        }
+    }
+    window.addEventListener("scroll", reveal);
+    reveal(); // Trigger on load
+</script>
+</body></html>

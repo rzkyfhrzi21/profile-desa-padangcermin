@@ -1,0 +1,28 @@
+# ===== Pekon Padang Cermin — root .htaccess (deploy Apache/cPanel) =====
+# Berlaku bila docroot mengarah ke folder project ini.
+# Server dev lokal (php -S) TIDAK membaca file ini.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS (A02 Cryptographic Failures)
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Blokir akses langsung ke area sensitif (A05 Security Misconfiguration)
+    RewriteRule ^(config|function|view|Zzz|docs|@agents)/ - [F,L]
+    RewriteRule ^\.env$ - [F,L]
+    RewriteRule ^(AGENTS|ARSITEKTUR|DESIGN|README)\.md$ - [F,L]
+    RewriteRule ^\.(git|codebase-memory|rtk|opencode)(/.*)?$ - [F,L]
+
+    # Semua request lain dialihkan ke public/
+    RewriteCond %{REQUEST_URI} !/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Hapus header versi server (A05)
+<IfModule mod_headers.c>
+    Header unset X-Powered-By
+</IfModule>

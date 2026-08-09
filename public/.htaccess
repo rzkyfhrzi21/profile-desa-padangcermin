@@ -1,0 +1,19 @@
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS (A02) — aktif di produksi
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # File/dir nyata (assets, uploads, dll) dilewati, sisanya ke index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Hapus header Server versi (A05)
+<IfModule mod_headers.c>
+    Header unset X-Powered-By
+</IfModule>
