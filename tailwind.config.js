@@ -8,6 +8,10 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                /* Admin dashboard light area */
+                'admin-bg': '#EEF2EF',
+                'admin-card': '#FFFFFF',
+                'admin-topbar': 'rgba(238, 242, 239, 0.92)',
                 putihHangat: '#FBF8F1',
                 kuning: '#E7A825',
                 kuningHover: '#C98F1B',
@@ -78,6 +82,7 @@ module.exports = {
                 'margin-desktop': '28px',
                 'margin-mobile': '16px',
                 gutter: '20px',
+                'container-max': '1280px',
             },
             fontFamily: {
                 display: ['"Space Grotesk"', 'sans-serif'],
@@ -112,4 +117,27 @@ module.exports = {
         },
     },
     plugins: [],
+    safelist: [
+        /* gallery lightbox & confirm modal — class dipakai di JS string */
+        'fixed', 'inset-0', 'z-[200]', 'z-[201]',
+        'flex', 'items-center', 'justify-center', 'justify-end',
+        'bg-black/85', 'bg-black/70', 'backdrop-blur-sm',
+        'relative', 'max-w-[92vw]', 'max-h-[92vh]', 'flex-col',
+        '-top-10', 'right-0', 'w-9', 'h-9', 'rounded-full',
+        'bg-white/15', 'bg-white/30', 'border', 'border-white/20',
+        'text-white', 'transition-all', 'text-[20px]', 'absolute',
+        'max-w-full', 'max-h-[85vh]', 'object-contain',
+        'rounded-xl', 'shadow-2xl', 'block',
+        /* confirm modal */
+        'bg-surface-container-highest', 'border-glass-border', 'rounded-2xl',
+        'p-6', 'max-w-sm', 'w-full', 'mx-4', 'gap-5',
+        'gap-3', 'w-10', 'h-10', 'bg-red-500/10',
+        'shrink-0', 'text-red-400',
+        'text-base', 'font-semibold', 'text-on-surface', 'leading-tight',
+        'text-sm', 'text-on-surface-variant', 'mt-0.5',
+        'px-4', 'py-2', 'border-glass-border', 'text-on-surface-variant',
+        'hover:text-on-surface',
+        'bg-red-500', 'hover:bg-red-600', 'font-medium',
+        'gap-[8px]', 'overflow-hidden',
+    ],
 };

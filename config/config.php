@@ -33,12 +33,23 @@ function env(string $key, string $default = ''): string
 
 define('APP_URL', rtrim(env('APP_URL', 'http://localhost'), '/'));
 define('APP_BASE', rtrim(env('APP_BASE', ''), '/'));
-define('APP_ENV', env('APP_ENV', 'production'));
-define('DB_HOST', env('DB_HOST', 'localhost'));
-define('DB_PORT', env('DB_PORT', '3306'));
-define('DB_NAME', env('DB_NAME', 'padang_cermin_db'));
-define('DB_USER', env('DB_USER', 'root'));
-define('DB_PASS', env('DB_PASS', ''));
+$is_local = in_array($_SERVER['HTTP_HOST'] ?? 'localhost', ['localhost', '127.0.0.1', '::1']) || str_ends_with($_SERVER['HTTP_HOST'] ?? '', '.test');
+
+if ($is_local) {
+    define('APP_ENV', env('APP_ENV', 'development'));
+    define('DB_HOST', env('DB_HOST', 'localhost'));
+    define('DB_PORT', env('DB_PORT', '3306'));
+    define('DB_NAME', env('DB_NAME', 'padang_cermin_db'));
+    define('DB_USER', env('DB_USER', 'root'));
+    define('DB_PASS', env('DB_PASS', ''));
+} else {
+    define('APP_ENV', env('APP_ENV', 'production'));
+    define('DB_HOST', env('DB_HOST', 'sql208.infinityfree.com'));
+    define('DB_PORT', env('DB_PORT', '3306'));
+    define('DB_NAME', env('DB_NAME', 'if0_42538523_padangcermin'));
+    define('DB_USER', env('DB_USER', 'if0_42538523'));
+    define('DB_PASS', env('DB_PASS', 'Myrizkyhxr12321'));
+}
 
 if (APP_ENV === 'production') {
     ini_set('display_errors', '0');

@@ -3,10 +3,21 @@ declare(strict_types=1);
 
 $judulHalaman = 'Manajemen Potensi Desa';
 
+/* Stats */
+$db = getDb();
+$statPotensi = $db->query("
+    SELECT
+        COUNT(*) AS total,
+        SUM(status = 'aktif') AS aktif,
+        SUM(status = 'nonaktif') AS nonaktif,
+        COUNT(DISTINCT kategori) AS total_kategori
+    FROM potensi_desa
+")->fetch();
+
 require __DIR__ . '/../layout.php';
 ?>
 <section>
-<div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 md:mb-section-gap gap-4 md:gap-0">
+<div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-6 md:mb-section-gap gap-4 md:gap-0">
 <div class="flex flex-col gap-2">
 <span class="text-label-mono font-label-mono text-primary uppercase tracking-widest">Potensi Desa</span>
 <h1 class="text-headline-xl-mobile md:text-headline-xl font-headline-xl text-on-background m-0">Manajemen Potensi Desa</h1>
@@ -15,6 +26,34 @@ require __DIR__ . '/../layout.php';
 <span class="material-symbols-outlined text-[20px] transition-transform group-hover:rotate-90">psychiatry</span>
 Tambah Potensi
 </a>
+</div>
+
+<!-- Stat Cards -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">psychiatry</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Total Potensi</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none"><?= (int) $statPotensi['total'] ?></p></div>
+  </div>
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">check_circle</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Aktif</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none"><?= (int) $statPotensi['aktif'] ?></p></div>
+  </div>
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">unpublished</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Nonaktif</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none"><?= (int) $statPotensi['nonaktif'] ?></p></div>
+  </div>
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">category</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Kategori</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none"><?= (int) $statPotensi['total_kategori'] ?></p></div>
+  </div>
 </div>
 
 <div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg relative overflow-hidden">
@@ -39,6 +78,7 @@ Tambah Potensi
 <table class="w-full text-left border-collapse min-w-[720px]">
 <thead>
 <tr class="text-label-mono font-label-mono text-on-surface-variant border-b border-glass-border/50">
+<th class="py-4 px-4 font-medium w-10 text-center">No</th>
 <th class="py-4 px-4 font-medium">Judul Potensi</th>
 <th class="py-4 px-4 font-medium">Kategori</th>
 <th class="py-4 px-4 font-medium text-center">Urutan</th>
@@ -59,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
     AdminUI.initAjaxTable({
         name: 'potensi',
         container: '#potensi-table',
-        onRender: function () { MediaHelpers.initSkeleton(); },
+        onRender: function (container) { if (window.MediaHelpers) MediaHelpers.initSkeleton(container); },
         actions: {
             delete: function (btn) {
                 AdminUI.confirmModal('Hapus Potensi', btn.dataset.pesan || 'Yakin ingin menghapus data ini?', 'Hapus', function () {

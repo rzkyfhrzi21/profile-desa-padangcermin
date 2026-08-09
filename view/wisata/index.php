@@ -70,7 +70,7 @@ $deskripsiPage = truncate('Temukan keindahan alam dan kekayaan budaya Pekon Pada
 <a href="<?= APP_BASE ?>/wisata/<?= e($w['slug']) ?>" class="relative w-full aspect-video overflow-hidden block">
 <div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent z-10 opacity-60"></div>
 <?php if ($gambarUtama !== null): ?>
-<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="<?= e($gambarUtama['alt_text'] !== '' ? $gambarUtama['alt_text'] : $w['nama']) ?>" loading="lazy" src="<?= e(uploadUrl($gambarUtama['path_gambar'])) ?>"/>
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="<?= e($w['nama']) ?>" loading="lazy" src="<?= e(uploadUrl($gambarUtama['path_gambar'])) ?>"/>
 <?php else: ?>
 <div class="w-full h-full bg-surface-container-high flex items-center justify-center">
 <span class="material-symbols-outlined text-on-surface-variant text-[48px]">landscape</span>

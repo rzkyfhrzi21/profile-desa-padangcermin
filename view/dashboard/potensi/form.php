@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $kategori = trim((string) ($_POST['kategori'] ?? ''));
     $urutan = trim((string) ($_POST['urutan'] ?? ''));
     $status = ($_POST['status'] ?? 'aktif') === 'nonaktif' ? 'nonaktif' : 'aktif';
-    $alt = trim((string) ($_POST['alt_gambar'] ?? ''));
     $ikon = trim((string) ($_POST['ikon'] ?? ''));
     $gambarLama = $potensi['gambar'] ?? null;
 
@@ -40,11 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $gambar = $gambarLama;
     $adaFile = ($_FILES['gambar']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
-    if ($adaFile && $alt === '') {
-        $errors[] = 'Alt text gambar wajib diisi.';
-    }
     if ($adaFile && $errors === []) {
-        $up = handleUpload($_FILES['gambar'], 'potensi', $alt);
+        $up = handleUpload($_FILES['gambar'], 'potensi', $judul);
         if (!$up['ok']) {
             $errors[] = $up['error'];
         } else {
@@ -69,27 +65,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'status' => $status,
     ];
 
-    if ($editId > 0) {
-        if (updatePotensi($editId, $data)) {
-            if ($adaFile && !empty($gambarLama) && $gambarLama !== $gambar) {
-                $file = UPLOAD_PATH . '/' . $gambarLama;
-                if (is_file($file)) {
-                    @unlink($file);
+    try {
+        if ($editId > 0) {
+            if (updatePotensi($editId, $data)) {
+                if ($adaFile && !empty($gambarLama) && $gambarLama !== $gambar) {
+                    $file = UPLOAD_PATH . '/' . $gambarLama;
+                    if (is_file($file)) { @unlink($file); }
                 }
+                catatLog('edit potensi: ' . $judul, 'potensi_desa', $editId);
+                flash('success', 'Potensi berhasil diperbarui.');
+            } else {
+                flash('error', 'Gagal memperbarui potensi.');
             }
-            catatLog('edit potensi: ' . $judul, 'potensi_desa', $editId);
-            flash('success', 'Potensi berhasil diperbarui.');
         } else {
-            flash('error', 'Gagal memperbarui potensi.');
+            $newId = savePotensi($data);
+            if ($newId > 0) {
+                catatLog('tambah potensi: ' . $judul, 'potensi_desa', $newId);
+                flash('success', 'Potensi berhasil disimpan.');
+            } else {
+                flash('error', 'Gagal menyimpan potensi.');
+            }
         }
-    } else {
-        $newId = savePotensi($data);
-        if ($newId > 0) {
-            catatLog('tambah potensi: ' . $judul, 'potensi_desa', $newId);
-            flash('success', 'Potensi berhasil disimpan.');
-        } else {
-            flash('error', 'Gagal menyimpan potensi.');
-        }
+    } catch (Throwable $ex) {
+        flash('error', 'Terjadi kesalahan: ' . $ex->getMessage());
     }
     redirect('/dashboard/potensi');
 }
@@ -151,6 +149,21 @@ require __DIR__ . '/../layout.php';
 <input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-label-mono font-label-mono text-on-surface-variant focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all" id="urutan" name="urutan" min="0" placeholder="0" type="number" value="<?= $editId === 0 && $v('urutan') === '' ? '0' : $v('urutan') ?>"/>
 </div>
 <div class="flex flex-col gap-2 relative z-10">
+<div class="flex items-center justify-between">
+<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="ikon">Ikon Material</label>
+<a href="https://fonts.google.com/icons" target="_blank" rel="noopener" class="flex items-center gap-1 text-primary text-[11px] hover:underline" title="Buka referensi ikon Material Symbols">
+<span class="material-symbols-outlined text-[13px]">open_in_new</span>Referensi Ikon
+</a>
+</div>
+<div class="relative flex items-center gap-2">
+<div class="w-10 h-10 rounded-xl bg-surface-container border border-glass-border flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[20px]" id="ikon-preview" style="font-variation-settings:'FILL' 1"><?= $v('ikon') !== '' ? $v('ikon') : 'add_reaction' ?></span>
+</div>
+<input class="flex-1 bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="ikon" name="ikon" placeholder="Contoh: local_florist" type="text" value="<?= $v('ikon') ?>"/>
+</div>
+<p class="text-[11px] text-on-surface-variant m-0">Nama ikon dari <a href="https://fonts.google.com/icons" target="_blank" class="text-primary hover:underline">Material Symbols</a> (huruf kecil, underscore).</p>
+</div>
+<div class="flex flex-col gap-2 relative z-10">
 <span class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]">Status</span>
 <div class="flex gap-2">
 <label class="flex-1 cursor-pointer">
@@ -172,17 +185,24 @@ require __DIR__ . '/../layout.php';
 </div>
 <?php if ($editId > 0 && !empty($potensi['gambar'])): ?>
 <div class="relative z-10">
-<img class="w-full h-40 object-cover rounded-xl border border-glass-border" alt="Gambar potensi <?= e($potensi['judul']) ?>" src="<?= uploadUrl($potensi['gambar']) ?>"/>
+<img class="w-full h-40 object-cover rounded-xl border border-glass-border cursor-pointer"
+     data-lightbox="<?= uploadUrl($potensi['gambar']) ?>"
+     data-skeleton
+     alt="Gambar potensi <?= e($potensi['judul']) ?>"
+     src="<?= uploadUrl($potensi['gambar']) ?>"/>
+<p class="text-[11px] text-on-surface-variant mt-1">Klik gambar untuk lihat full-size</p>
 </div>
 <?php endif; ?>
 <div class="flex flex-col gap-2 relative z-10">
 <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="gambar">Unggah Gambar</label>
 <input class="w-full text-caption font-caption text-on-surface-variant file:mr-4 file:rounded-xl file:border-0 file:bg-surface-container-highest file:px-4 file:py-2.5 file:text-on-surface file:cursor-pointer hover:file:bg-surface-container transition-colors" id="gambar" name="gambar" type="file" accept="image/jpeg,image/png,image/webp,image/gif"/>
 </div>
-<div class="flex flex-col gap-2 relative z-10">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="alt_gambar">Alt Text (wajib)</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-caption font-caption text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="alt_gambar" name="alt_gambar" placeholder="Deskripsi singkat gambar untuk aksesibilitas & SEO" type="text" value="<?= e(trim((string) ($_POST['alt_gambar'] ?? ''))) ?>"/>
+<!-- Preview gambar baru -->
+<div id="gambar-preview-wrap" class="hidden relative z-10">
+<img id="gambar-preview-img" src="" alt="Preview gambar" class="w-full h-40 object-cover rounded-xl border border-primary/30"/>
+<p class="text-[11px] text-primary mt-1">Preview gambar yang akan diupload</p>
 </div>
+<p class="text-[11px] text-on-surface-variant relative z-10 m-0">Max 2 MB · JPG, PNG, WEBP · Kosongkan jika tidak ganti gambar</p>
 </div>
 
 <div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg flex items-center justify-between gap-4">
@@ -200,9 +220,36 @@ require __DIR__ . '/../layout.php';
 </form>
 </section>
 <script>
-document.getElementById('ikon').addEventListener('input', function() {
-    var preview = document.getElementById('ikon-preview');
-    if (preview) preview.textContent = this.value.trim() || 'add_reaction';
+document.addEventListener('DOMContentLoaded', function () {
+    /* Ikon preview */
+    var ikonInput = document.getElementById('ikon');
+    var ikonPreview = document.getElementById('ikon-preview');
+    if (ikonInput && ikonPreview) {
+        ikonInput.addEventListener('input', function () {
+            ikonPreview.textContent = this.value.trim() || 'add_reaction';
+        });
+    }
+
+    /* Gambar file preview */
+    var gambarInput = document.getElementById('gambar');
+    var previewWrap = document.getElementById('gambar-preview-wrap');
+    var previewImg  = document.getElementById('gambar-preview-img');
+    if (gambarInput && previewWrap && previewImg) {
+        gambarInput.addEventListener('change', function () {
+            var file = this.files && this.files[0];
+            if (!file) { previewWrap.classList.add('hidden'); return; }
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                previewImg.src = e.target.result;
+                previewWrap.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    /* Skeleton & lightbox init */
+    if (typeof MediaHelpers !== 'undefined') MediaHelpers.initSkeleton(document.body);
 });
 </script>
 <?php require __DIR__ . '/../layout_close.php'; ?>
+

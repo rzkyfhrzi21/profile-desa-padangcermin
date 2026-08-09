@@ -31,7 +31,7 @@ return [
     '/dashboard/berita'     => ['function' => ['berita.php', 'upload.php', 'csrf.php', 'log.php'], 'view' => 'dashboard/berita/index.php'],
     '/dashboard/berita/form' => ['function' => ['berita.php', 'upload.php', 'csrf.php', 'log.php'], 'view' => 'dashboard/berita/form.php'],
 
-    '/dashboard/admin/profil' => ['function' => ['auth.php', 'upload.php', 'csrf.php', 'log.php'], 'view' => 'dashboard/admin/profil.php'],
+    '/dashboard/admin/profil' => ['function' => ['upload.php', 'csrf.php', 'log.php'], 'view' => 'dashboard/admin/profil.php'],
 
     '/dashboard/ajax/{modul}/{aksi}' => ['function' => ['ajax.php', 'profil.php', 'struktur.php', 'kependudukan.php', 'potensi.php', 'wisata.php', 'berita.php', 'upload.php', 'csrf.php', 'log.php'], 'view' => 'dashboard/ajax.php'],
 ];

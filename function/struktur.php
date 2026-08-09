@@ -45,19 +45,12 @@ function getStrukturById(int $id): ?array
     return $stmt->fetch() ?: null;
 }
 
-function getKontakPerson(): array
-{
-    $db = getDb();
-    $stmt = $db->query('SELECT * FROM struktur_organisasi WHERE tampil_di_kontak = 1 ORDER BY urutan ASC, id ASC');
-    return $stmt->fetchAll();
-}
-
 function saveStruktur(array $data): int
 {
     $db = getDb();
     $stmt = $db->prepare(
-        'INSERT INTO struktur_organisasi (parent_id, nama, jabatan, pendidikan_terakhir, foto, tampil_di_kontak, urutan)
-         VALUES (?, ?, ?, ?, ?, ?, ?)'
+        'INSERT INTO struktur_organisasi (parent_id, nama, jabatan, pendidikan_terakhir, foto, urutan)
+         VALUES (?, ?, ?, ?, ?, ?)'
     );
     $stmt->execute([
         $data['parent_id'] === '' ? null : (int) $data['parent_id'],
@@ -65,7 +58,6 @@ function saveStruktur(array $data): int
         $data['jabatan'],
         $data['pendidikan_terakhir'] === '' ? null : $data['pendidikan_terakhir'],
         $data['foto'] ?? null,
-        isset($data['tampil_di_kontak']) ? 1 : 0,
         (int) ($data['urutan'] ?? 0),
     ]);
     return (int) $db->lastInsertId();
@@ -76,7 +68,7 @@ function updateStruktur(int $id, array $data): bool
     $db = getDb();
     $stmt = $db->prepare(
         'UPDATE struktur_organisasi SET parent_id = ?, nama = ?, jabatan = ?, pendidikan_terakhir = ?,
-         foto = ?, tampil_di_kontak = ?, urutan = ? WHERE id = ?'
+         foto = ?, urutan = ? WHERE id = ?'
     );
     return $stmt->execute([
         $data['parent_id'] === '' ? null : (int) $data['parent_id'],
@@ -84,7 +76,6 @@ function updateStruktur(int $id, array $data): bool
         $data['jabatan'],
         $data['pendidikan_terakhir'] === '' ? null : $data['pendidikan_terakhir'],
         $data['foto'] ?? null,
-        isset($data['tampil_di_kontak']) ? 1 : 0,
         (int) ($data['urutan'] ?? 0),
         $id,
     ]);

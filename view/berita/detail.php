@@ -13,7 +13,7 @@ if ($berita === null) {
 tambahViewBerita((int) $berita['id']);
 $penulisNama = getAdminName((int) $berita['penulis_id']);
 $beritaTerkait = array_values(array_filter(getBeritaList(true, 5), fn($b) => $b['id'] !== $berita['id']));
-$judulPage = $berita['judul'] . ' — Warta Pekon';
+$judulPage = $berita['judul'] . ' — Berita Desa';
 $deskripsiPage = truncate($berita['konten'], 155);
 $ogImage = $berita['gambar_utama'] !== null && $berita['gambar_utama'] !== '' ? APP_URL . '/uploads/' . $berita['gambar_utama'] : '';
 $shareUrl = urlencode(APP_URL . '/berita/' . $berita['slug']);
@@ -85,7 +85,8 @@ $shareUrl = urlencode(APP_URL . '/berita/' . $berita['slug']);
 </div>
 </header>
 <div class="w-full aspect-[16/9] lg:aspect-[21/9] rounded-[24px] overflow-hidden relative shadow-xl mt-4 z-10 group">
-<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cursor-zoom-in" data-lightbox data-skeleton alt="<?= e($berita['alt_gambar'] !== '' ? $berita['alt_gambar'] : $berita['judul']) ?>" src="<?= $berita['gambar_utama'] !== null && $berita['gambar_utama'] !== '' ? e(uploadUrl($berita['gambar_utama'])) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuDmjxvf4L6LYk7lrcIgYMfBWQG9c09vKS2AwmbY-AhPdZPBaeY5X5IaVfBULE8PLX_T-Tdi-fr0l2RoFrXpceuB2TfZRkQVBF9fgWfxxAgimEE4TnY7suqXbTCgJ5pRYpgyH3CLOoZ3mBcu27pg6_NjUq9fHz4QjntigxOcEAaEJRE4NAOlArsJ9Q6WUdBIohHAVxSqAdbi7IoarvMh2yUUqEIBoe-X_a8OVIAjQZgi2CGi-GgHIb_F' ?>"/>
+<?php $imgBerita = ($berita['gambar_utama'] !== null && $berita['gambar_utama'] !== '') ? uploadUrl($berita['gambar_utama']) : assetUrl('img/placeholder.webp'); ?>
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cursor-zoom-in" data-lightbox="<?= e($imgBerita) ?>" data-skeleton alt="<?= e($berita['judul']) ?>" src="<?= e($imgBerita) ?>"/>
 <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80 pointer-events-none"></div>
 </div>
 <div class="prose prose-invert prose-lg max-w-none text-on-surface-variant font-body-lg z-10 mt-6 space-y-6">
@@ -110,7 +111,7 @@ $shareUrl = urlencode(APP_URL . '/berita/' . $berita['slug']);
 <?php foreach ($beritaTerkait as $bt): ?>
 <a class="group flex gap-4 items-start" href="<?= APP_BASE ?>/berita/<?= e($bt['slug']) ?>">
 <div class="w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-surface-container-highest">
-<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" alt="<?= e($bt['alt_gambar'] !== '' ? $bt['alt_gambar'] : $bt['judul']) ?>" src="<?= $bt['gambar_utama'] !== null && $bt['gambar_utama'] !== '' ? e(uploadUrl($bt['gambar_utama'])) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuCEZQXtT2xMXJJ_v5WDTXOEBOKrh8mhkb5gMIUWVVmtI8cDhaE_ABlW39pVJspXTcgAFf5p8ab2QuhNKrxGZ0KT08hhlwmCi_uu2fl2jl5ingVeAfHWDk5hhTDghG7P44flHU2_cL08r1Y_GiG_pS530cHkygnRTbGh8SILyGMURHUNESYfJJ74rJTD_45bDzu9qBrmijPQYdurYJczXAaYKHjzenwYr7bjwUq-RDe1Xz0HlsCW5hqM' ?>"/>
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" alt="<?= e($bt['judul']) ?>" src="<?= $bt['gambar_utama'] !== null && $bt['gambar_utama'] !== '' ? e(uploadUrl($bt['gambar_utama'])) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuCEZQXtT2xMXJJ_v5WDTXOEBOKrh8mhkb5gMIUWVVmtI8cDhaE_ABlW39pVJspXTcgAFf5p8ab2QuhNKrxGZ0KT08hhlwmCi_uu2fl2jl5ingVeAfHWDk5hhTDghG7P44flHU2_cL08r1Y_GiG_pS530cHkygnRTbGh8SILyGMURHUNESYfJJ74rJTD_45bDzu9qBrmijPQYdurYJczXAaYKHjzenwYr7bjwUq-RDe1Xz0HlsCW5hqM' ?>"/>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-mono text-[11px] text-primary uppercase tracking-wider"><?= e($bt['kategori_nama'] ?? 'Berita') ?></span>

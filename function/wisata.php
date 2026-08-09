@@ -77,7 +77,7 @@ function saveWisata(array $data): int
 {
     $db = getDb();
     $stmt = $db->prepare(
-        'INSERT INTO wisata_desa (nama, slug, deskripsi, alamat, latitude, longitude, harga_tiket, jam_buka, status)
+        'INSERT INTO wisata_desa (nama, slug, deskripsi, alamat, maps_embed_url, harga_tiket, jam_buka, wa_kontak, status)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
     );
     $stmt->execute([
@@ -85,10 +85,10 @@ function saveWisata(array $data): int
         $data['slug'],
         $data['deskripsi'],
         $data['alamat'],
-        $data['latitude'] === '' ? null : (float) $data['latitude'],
-        $data['longitude'] === '' ? null : (float) $data['longitude'],
+        $data['maps_embed_url'] === '' ? null : $data['maps_embed_url'],
         $data['harga_tiket'] === '' ? null : $data['harga_tiket'],
         $data['jam_buka'] === '' ? null : $data['jam_buka'],
+        $data['wa_kontak'] === '' ? null : $data['wa_kontak'],
         $data['status'] ?? 'draft',
     ]);
     return (int) $db->lastInsertId();
@@ -98,21 +98,59 @@ function updateWisata(int $id, array $data): bool
 {
     $db = getDb();
     $stmt = $db->prepare(
-        'UPDATE wisata_desa SET nama = ?, slug = ?, deskripsi = ?, alamat = ?, latitude = ?, longitude = ?,
-         harga_tiket = ?, jam_buka = ?, status = ? WHERE id = ?'
+        'UPDATE wisata_desa SET nama = ?, slug = ?, deskripsi = ?, alamat = ?,
+         maps_embed_url = ?, harga_tiket = ?, jam_buka = ?, wa_kontak = ?, status = ? WHERE id = ?'
     );
     return $stmt->execute([
         $data['nama'],
         $data['slug'],
         $data['deskripsi'],
         $data['alamat'],
-        $data['latitude'] === '' ? null : (float) $data['latitude'],
-        $data['longitude'] === '' ? null : (float) $data['longitude'],
+        $data['maps_embed_url'] === '' ? null : $data['maps_embed_url'],
         $data['harga_tiket'] === '' ? null : $data['harga_tiket'],
         $data['jam_buka'] === '' ? null : $data['jam_buka'],
+        $data['wa_kontak'] === '' ? null : $data['wa_kontak'],
         $data['status'] ?? 'draft',
         $id,
     ]);
+}
+
+function getWisataFasilitas(int $wisataId): array
+{
+    $db = getDb();
+    $stmt = $db->prepare('SELECT * FROM wisata_fasilitas WHERE wisata_id = ? ORDER BY urutan ASC, id ASC');
+    $stmt->execute([$wisataId]);
+    return $stmt->fetchAll();
+}
+
+function getWisataFasilitasById(int $id): ?array
+{
+    $db = getDb();
+    $stmt = $db->prepare('SELECT * FROM wisata_fasilitas WHERE id = ?');
+    $stmt->execute([$id]);
+    return $stmt->fetch() ?: null;
+}
+
+function saveWisataFasilitas(int $wisataId, string $ikon, string $judul, string $deskripsi, int $urutan): int
+{
+    $db = getDb();
+    $stmt = $db->prepare('INSERT INTO wisata_fasilitas (wisata_id, ikon, judul, deskripsi, urutan) VALUES (?, ?, ?, ?, ?)');
+    $stmt->execute([$wisataId, $ikon, $judul, $deskripsi, $urutan]);
+    return (int) $db->lastInsertId();
+}
+
+function updateWisataFasilitas(int $id, string $ikon, string $judul, string $deskripsi, int $urutan): bool
+{
+    $db = getDb();
+    $stmt = $db->prepare('UPDATE wisata_fasilitas SET ikon = ?, judul = ?, deskripsi = ?, urutan = ? WHERE id = ?');
+    return $stmt->execute([$ikon, $judul, $deskripsi, $urutan, $id]);
+}
+
+function deleteWisataFasilitas(int $id): bool
+{
+    $db = getDb();
+    $stmt = $db->prepare('DELETE FROM wisata_fasilitas WHERE id = ?');
+    return $stmt->execute([$id]);
 }
 
 function addWisataImage(int $wisataId, string $path, int $urutan = 0): void

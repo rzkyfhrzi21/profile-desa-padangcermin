@@ -130,7 +130,7 @@ Catatan penting agar routing dev sama dengan prod:
 | sambutan_kepala_pekon | TEXT NULL | opsional, section publik disembunyikan kalau NULL |
 | foto_kepala_pekon | VARCHAR(255) NULL | |
 | alamat_kantor | VARCHAR(255) | |
-| latitude, longitude | DECIMAL(10,7) | untuk embed Google Maps |
+| maps_embed_url | VARCHAR(500) NULL | URL Google Maps share/embed |
 | telepon, email, whatsapp | VARCHAR(50) NULL | |
 | updated_at | TIMESTAMP | |
 
@@ -143,7 +143,6 @@ Catatan penting agar routing dev sama dengan prod:
 | jabatan | VARCHAR(100) | |
 | pendidikan_terakhir | VARCHAR(20) NULL | SLTA/D3/S1 dst |
 | foto | VARCHAR(255) NULL | |
-| tampil_di_kontak | BOOLEAN DEFAULT 0 | dipakai ulang untuk section "Kontak Person" — hindari duplikasi data |
 | urutan | INT DEFAULT 0 | urutan antar sibling |
 | created_at, updated_at | TIMESTAMP | |
 
@@ -181,7 +180,7 @@ Catatan penting agar routing dev sama dengan prod:
 id PK, judul, deskripsi TEXT, gambar, kategori VARCHAR NULL, urutan INT, status ENUM('aktif','nonaktif'), created_at, updated_at
 
 ### `wisata_desa`
-id PK, nama, slug UNIQUE, deskripsi TEXT, alamat, latitude/longitude NULL, harga_tiket VARCHAR NULL, jam_buka VARCHAR NULL, status ENUM('draft','publish'), created_at, updated_at
+id PK, nama, slug UNIQUE, deskripsi TEXT, alamat, maps_embed_url VARCHAR NULL, harga_tiket VARCHAR NULL, jam_buka VARCHAR NULL, status ENUM('draft','publish'), created_at, updated_at
 
 ### `wisata_gambar`
 id PK, wisata_id FK → wisata_desa.id, path_gambar, urutan INT
@@ -213,7 +212,6 @@ log_aktivitas.admin_id         → admins.id
 | Tabel | Kolom | Tipe index | Alasan |
 |---|---|---|---|
 | struktur_organisasi | parent_id | INDEX | query tree by parent |
-| struktur_organisasi | tampil_di_kontak | INDEX | filter section kontak person |
 | wisata_desa | slug | UNIQUE | lookup detail by slug, cegah duplikat |
 | wisata_desa | status | INDEX | filter publish-only di publik |
 | wisata_gambar | wisata_id | INDEX | join/lookup gambar per wisata |

@@ -19,8 +19,8 @@ SET nama_pekon = 'Desa Padang Cermin'
 WHERE id = 1;
 
 -- ============ STRUKTUR ORGANISASI (isi minimal, bagan asli belum tersedia) ============
-INSERT INTO struktur_organisasi (id, parent_id, nama, jabatan, pendidikan_terakhir, foto, tampil_di_kontak, urutan) VALUES
-(1, NULL, 'Dra. Purwanti', 'Kepala Desa', 'S1', NULL, 1, 1);
+INSERT INTO struktur_organisasi (id, parent_id, nama, jabatan, pendidikan_terakhir, foto, urutan) VALUES
+(1, NULL, 'Dra. Purwanti', 'Kepala Desa', 'S1', NULL, 1);
 
 -- ============ KEPENDUDUKAN (rekap April 2026, data per 01 Juli 2026) ============
 INSERT INTO data_kependudukan (periode, jumlah_kk, jumlah_jiwa, jumlah_laki, jumlah_perempuan, keterangan) VALUES

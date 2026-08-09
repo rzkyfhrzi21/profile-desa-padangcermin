@@ -5,6 +5,11 @@ $judulHalaman = 'Manajemen Profil';
 
 $profil = getProfil();
 
+/* Ambil data Kepala Desa dari tabel struktur (parent_id = NULL, urutan terendah) */
+$db = getDb();
+$stmtKades = $db->query("SELECT * FROM struktur_organisasi WHERE parent_id IS NULL ORDER BY urutan ASC LIMIT 1");
+$kades = $stmtKades->fetch() ?: null;
+
 $fieldsKelengkapan = ['nama_pekon', 'visi', 'misi', 'sambutan_kepala_pekon', 'alamat_kantor', 'telepon', 'email', 'whatsapp'];
 $terisi = 0;
 foreach ($fieldsKelengkapan as $f) {
@@ -72,15 +77,8 @@ Edit Profil
 </div>
 <h2 class="text-headline-md font-headline-md text-on-surface m-0">Sambutan Kepala Pekon</h2>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md relative z-10">
-<?php if (!empty($profil['foto_kepala_pekon'])): ?>
-<div class="md:col-span-1">
-<img class="w-full aspect-[3/4] object-cover rounded-xl border border-glass-border" alt="Foto Kepala Pekon Padang Cermin" src="<?= uploadUrl($profil['foto_kepala_pekon']) ?>"/>
-</div>
-<?php endif; ?>
-<div class="<?= !empty($profil['foto_kepala_pekon']) ? 'md:col-span-2' : 'md:col-span-3' ?> flex items-center">
+<div class="relative z-10">
 <p class="text-body-md font-body-md text-on-surface-variant m-0 leading-relaxed whitespace-pre-line"><?= $tampil('sambutan_kepala_pekon') ?></p>
-</div>
 </div>
 </div>
 
@@ -93,19 +91,26 @@ Edit Profil
 <h2 class="text-headline-md font-headline-md text-on-surface m-0">Lokasi &amp; Kontak</h2>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-gutter gap-y-2 relative z-10 divide-y md:divide-y-0 md:divide-x divide-glass-border/50">
-<div class="flex flex-col gap-1 py-4 md:py-0 md:pr-gutter">
-<span class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]">Titik Koordinat</span>
-<span class="text-body-md font-body-md text-on-surface font-label-mono"><?= $tampil('latitude') ?>, <?= $tampil('longitude') ?></span>
+<div class="flex flex-col gap-1 py-4 md:py-0 md:pr-gutter md:col-span-2">
+<span class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]">Google Maps</span>
+<?php
+$mapsVal = trim((string) ($profil['maps_embed_url'] ?? ''));
+if ($mapsVal !== ''):
+?>
+<a href="<?= e($mapsVal) ?>" target="_blank" rel="noopener" class="text-body-md font-body-md text-primary hover:underline break-all"><?= e(mb_strlen($mapsVal) > 60 ? mb_substr($mapsVal, 0, 60) . '…' : $mapsVal) ?></a>
+<?php else: ?>
+<span class="text-body-md font-body-md text-on-surface">-</span>
+<?php endif; ?>
 </div>
-<div class="flex flex-col gap-1 py-4 md:py-0 md:px-gutter">
+<div class="flex flex-col gap-1 py-4 md:py-0 md:pr-gutter">
 <span class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]">Telepon</span>
 <span class="text-body-md font-body-md text-on-surface"><?= $tampil('telepon') ?></span>
 </div>
-<div class="flex flex-col gap-1 py-4 md:py-0 md:pr-gutter">
+<div class="flex flex-col gap-1 py-4 md:py-0 md:px-gutter">
 <span class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]">Email</span>
 <span class="text-body-md font-body-md text-on-surface"><?= $tampil('email') ?></span>
 </div>
-<div class="flex flex-col gap-1 py-4 md:py-0 md:px-gutter">
+<div class="flex flex-col gap-1 py-4 md:py-0 md:pr-gutter">
 <span class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]">WhatsApp</span>
 <span class="text-body-md font-body-md text-on-surface"><?= $tampil('whatsapp') ?></span>
 </div>
@@ -121,14 +126,60 @@ Edit Profil
 <h2 class="text-headline-md font-headline-md text-on-surface m-0">Foto Kepala Pekon</h2>
 </div>
 <div class="relative z-10">
-<?php if (!empty($profil['foto_kepala_pekon'])): ?>
-<div class="aspect-[3/4] rounded-xl overflow-hidden border border-glass-border">
-<img class="w-full h-full object-cover" alt="Foto Kepala Pekon Padang Cermin" src="<?= uploadUrl($profil['foto_kepala_pekon']) ?>"/>
+<?php
+/* Prioritas foto: dari tabel struktur (kepala desa), fallback ke profil */
+$fotoKades = null;
+$namaKades = '-';
+$jabatanKades = 'Kepala Pekon';
+if ($kades !== null) {
+    $namaKades    = $kades['nama'];
+    $jabatanKades = $kades['jabatan'];
+    $fotoKades    = !empty($kades['foto']) ? uploadUrl($kades['foto']) : null;
+}
+/* Fallback ke foto_kepala_pekon dari tabel profil */
+if ($fotoKades === null && !empty($profil['foto_kepala_pekon'])) {
+    $fotoKades = uploadUrl($profil['foto_kepala_pekon']);
+}
+?>
+<?php if ($fotoKades !== null): ?>
+<div class="aspect-[3/4] rounded-xl overflow-hidden border border-glass-border relative group cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+     data-lightbox="<?= e($fotoKades) ?>"
+     data-skeleton
+     alt="Foto <?= e($namaKades) ?>"
+     src="<?= e($fotoKades) ?>"/>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+<span class="material-symbols-outlined text-white text-[32px]">zoom_in</span>
+</div>
+</div>
+<div class="mt-3 text-center">
+<p class="text-body-md font-semibold text-on-surface"><?= e($namaKades) ?></p>
+<p class="text-caption text-primary"><?= e($jabatanKades) ?></p>
+<?php if ($kades !== null && !empty($kades['pendidikan_terakhir'])): ?>
+<p class="text-[11px] text-on-surface-variant"><?= e($kades['pendidikan_terakhir']) ?></p>
+<?php endif; ?>
+<a href="<?= APP_BASE ?>/dashboard/struktur/form?id=<?= (int) ($kades['id'] ?? 0) ?>"
+   class="mt-2 inline-flex items-center gap-1 text-[11px] text-primary/70 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[13px]">edit</span> Edit data kepala desa
+</a>
 </div>
 <?php else: ?>
-<div class="aspect-[3/4] rounded-xl border-2 border-dashed border-glass-border bg-surface-container-highest flex flex-col items-center justify-center gap-2">
+<div class="aspect-[3/4] rounded-xl border-2 border-dashed border-glass-border bg-surface-container-highest flex flex-col items-center justify-center gap-3">
 <span class="material-symbols-outlined text-[40px] text-on-surface-variant/40">person</span>
-<span class="text-caption font-caption text-on-surface-variant">Belum ada foto</span>
+<span class="text-caption font-caption text-on-surface-variant text-center px-4">
+<?= $kades !== null ? 'Foto ' . e($kades['nama']) . ' belum diupload di modul Struktur' : 'Belum ada data Kepala Desa di modul Struktur' ?>
+</span>
+<?php if ($kades !== null): ?>
+<a href="<?= APP_BASE ?>/dashboard/struktur/form?id=<?= (int) $kades['id'] ?>"
+   class="px-4 py-2 rounded-xl bg-primary/10 border border-primary/30 text-caption text-primary hover:bg-primary/20 transition-all flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">add_photo_alternate</span> Upload Foto
+</a>
+<?php else: ?>
+<a href="<?= APP_BASE ?>/dashboard/struktur/form"
+   class="px-4 py-2 rounded-xl bg-primary/10 border border-primary/30 text-caption text-primary hover:bg-primary/20 transition-all flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">add</span> Tambah Kepala Desa
+</a>
+<?php endif; ?>
 </div>
 <?php endif; ?>
 </div>
@@ -154,16 +205,13 @@ Edit Profil
 </div>
 </div>
 
-<div class="bg-gradient-to-br from-surface-container-high to-surface-container rounded-[20px] p-6 border border-glass-border shadow-lg">
-<div class="flex items-start gap-3">
-<span class="material-symbols-outlined text-primary mt-1">lightbulb</span>
-<p class="font-body-md text-on-surface-variant text-sm leading-relaxed m-0">
-<strong class="text-on-surface block mb-1">Tips Penulisan Profil</strong>
-Gunakan bahasa yang jelas dan inspiratif untuk Visi &amp; Misi. Hindari singkatan internal agar mudah dipahami masyarakat umum dan pihak luar.
-</p>
-</div>
-</div>
 </div>
 </div>
 </section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof MediaHelpers !== 'undefined') MediaHelpers.initSkeleton(document.body);
+});
+</script>
 <?php require __DIR__ . '/../layout_close.php'; ?>
+

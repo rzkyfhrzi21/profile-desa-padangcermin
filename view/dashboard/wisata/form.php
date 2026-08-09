@@ -9,6 +9,13 @@ if ($editId > 0 && $wisata === null) {
     redirect('/dashboard/wisata');
 }
 $galeri = $editId > 0 ? getWisataImages($editId) : [];
+$fasilitasList = $editId > 0 ? getWisataFasilitas($editId) : [];
+$ikonFasilitas = [
+    'photo_camera', 'restaurant', 'directions_walk', 'local_florist',
+    'forest', 'camera_roll', 'hiking', 'water', 'terrain',
+    'night_shelter', 'wc', 'local_parking', 'storefront',
+    'volunteer_activism', 'celebration', 'park', 'kayaking', 'shower',
+];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrfValidate();
@@ -30,12 +37,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $slug = trim((string) ($_POST['slug'] ?? ''));
     $deskripsi = trim((string) ($_POST['deskripsi'] ?? ''));
     $alamat = trim((string) ($_POST['alamat'] ?? ''));
-    $latitude = trim((string) ($_POST['latitude'] ?? ''));
-    $longitude = trim((string) ($_POST['longitude'] ?? ''));
+    $mapsUrl = trim((string) ($_POST['maps_embed_url'] ?? ''));
+    if (str_contains($mapsUrl, '<iframe')) {
+        preg_match('/src=["\']([^"\']+)["\']/', $mapsUrl, $m);
+        $mapsUrl = $m[1] ?? '';
+    }
     $hargaTiket = trim((string) ($_POST['harga_tiket'] ?? ''));
     $jamBuka = trim((string) ($_POST['jam_buka'] ?? ''));
+    $waKontak = preg_replace('/[^0-9]/', '', (string) ($_POST['wa_kontak'] ?? ''));
     $status = ($_POST['status'] ?? 'draft') === 'publish' ? 'publish' : 'draft';
-    $alt = trim((string) ($_POST['alt_gambar'] ?? ''));
 
     $errors = [];
     if ($nama === '') {
@@ -47,12 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($slug === '' || slugExistsWisata($slug, $editId > 0 ? $editId : null)) {
         $errors[] = 'Slug kosong atau sudah dipakai wisata lain.';
     }
-    if ($latitude !== '' && !is_numeric($latitude)) {
-        $errors[] = 'Latitude harus berupa angka.';
-    }
-    if ($longitude !== '' && !is_numeric($longitude)) {
-        $errors[] = 'Longitude harus berupa angka.';
-    }
 
     $galeriBaru = [];
     if (($files = $_FILES['galeri'] ?? null) !== null && isset($files['error']) && is_array($files['error'])) {
@@ -60,18 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($err === UPLOAD_ERR_NO_FILE) {
                 continue;
             }
-            $bagian = [
-                'name' => $files['name'][$i],
-                'type' => $files['type'][$i],
+            $galeriBaru[] = [
+                'name'     => $files['name'][$i],
+                'type'     => $files['type'][$i],
                 'tmp_name' => $files['tmp_name'][$i],
-                'error' => $err,
-                'size' => $files['size'][$i],
+                'error'    => $err,
+                'size'     => $files['size'][$i],
             ];
-            $galeriBaru[] = $bagian;
         }
-    }
-    if ($galeriBaru !== [] && $alt === '') {
-        $errors[] = 'Alt text wajib diisi jika mengunggah gambar galeri.';
     }
 
     if ($errors !== []) {
@@ -82,15 +82,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $data = [
-        'nama' => $nama,
-        'slug' => $slug,
-        'deskripsi' => $deskripsi,
-        'alamat' => $alamat,
-        'latitude' => $latitude,
-        'longitude' => $longitude,
-        'harga_tiket' => $hargaTiket,
-        'jam_buka' => $jamBuka,
-        'status' => $status,
+        'nama'           => $nama,
+        'slug'           => $slug,
+        'deskripsi'      => $deskripsi,
+        'alamat'         => $alamat,
+        'maps_embed_url' => $mapsUrl,
+        'harga_tiket'    => $hargaTiket,
+        'jam_buka'       => $jamBuka,
+        'wa_kontak'      => $waKontak,
+        'status'         => $status,
     ];
 
     if ($editId > 0) {
@@ -105,14 +105,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($newId > 0) {
             $editId = $newId;
             catatLog('tambah wisata: ' . $nama, 'wisata_desa', $newId);
-            flash('success', 'Wisata berhasil disimpan. Tambahkan galeri gambar di bawah.');
+            flash('success', 'Wisata berhasil disimpan.');
         } else {
             flash('error', 'Gagal menyimpan wisata.');
+            redirect('/dashboard/wisata/form');
         }
     }
 
     foreach ($galeriBaru as $bagian) {
-        $up = handleUpload($bagian, 'wisata', $alt);
+        $up = handleUpload($bagian, 'wisata', $nama);
         if ($up['ok']) {
             addWisataImage($editId, $up['path']);
         } else {
@@ -120,7 +121,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    redirect('/dashboard/wisata/form' . ($editId > 0 ? '?id=' . $editId : ''));
+    $hapusFasilitas = array_map('intval', (array) ($_POST['hapus_fasilitas'] ?? []));
+    foreach ($hapusFasilitas as $fid) {
+        if ($fid > 0) {
+            deleteWisataFasilitas($fid);
+        }
+    }
+
+    foreach ((array) ($_POST['fas_lama'] ?? []) as $fid => $row) {
+        if (!is_array($row) || (int) $fid <= 0) {
+            continue;
+        }
+        updateWisataFasilitas(
+            (int) $fid,
+            trim((string) ($row['ikon'] ?? 'eco')) !== '' ? trim((string) $row['ikon']) : 'eco',
+            trim((string) ($row['judul'] ?? '')),
+            trim((string) ($row['deskripsi'] ?? '')),
+            (int) ($row['urutan'] ?? 0)
+        );
+    }
+
+    foreach ((array) ($_POST['fas_baru'] ?? []) as $row) {
+        if (!is_array($row)) {
+            continue;
+        }
+        $fJudul = trim((string) ($row['judul'] ?? ''));
+        if ($fJudul === '') {
+            continue;
+        }
+        saveWisataFasilitas(
+            $editId,
+            trim((string) ($row['ikon'] ?? 'eco')) !== '' ? trim((string) $row['ikon']) : 'eco',
+            $fJudul,
+            trim((string) ($row['deskripsi'] ?? '')),
+            (int) ($row['urutan'] ?? 0)
+        );
+    }
+
+    redirect('/dashboard/wisata');
 }
 
 $v = static function (string $field) use ($wisata): string {
@@ -149,30 +187,45 @@ require __DIR__ . '/../layout.php';
 <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md relative z-10">
 <div class="flex flex-col gap-2">
 <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="nama">Nama Wisata</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="nama" name="nama" required type="text" value="<?= $v('nama') ?>"/>
+<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="nama" name="nama" placeholder="Contoh: Curug Embun, Kebun Teh..." required type="text" value="<?= $v('nama') ?>"/>
 </div>
 <div class="flex flex-col gap-2">
 <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="slug">Slug URL</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-label-mono font-label-mono text-on-surface-variant focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="slug" name="slug" type="text" value="<?= $v('slug') ?>"/>
+<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-label-mono font-label-mono text-on-surface-variant focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="slug" name="slug" placeholder="otomatis dari nama" type="text" value="<?= $v('slug') ?>"/>
 </div>
 </div>
 <div class="flex flex-col gap-2 relative z-10">
 <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="deskripsi">Deskripsi</label>
-<textarea class="w-full min-h-[200px] bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50 resize-y" id="deskripsi" name="deskripsi" required><?= $v('deskripsi') ?></textarea>
+<textarea class="w-full min-h-[200px] bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50 resize-y" id="deskripsi" name="deskripsi" placeholder="Ceritakan tentang wisata ini: keindahan alam, fasilitas, akses, dll..." required><?= $v('deskripsi') ?></textarea>
 </div>
 <div class="flex flex-col gap-2 relative z-10">
 <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="alamat">Alamat / Lokasi</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="alamat" name="alamat" type="text" value="<?= $v('alamat') ?>"/>
+<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="alamat" name="alamat" placeholder="Contoh: Dusun II, Pekon Padang Cermin" type="text" value="<?= $v('alamat') ?>"/>
 </div>
-<div class="grid grid-cols-2 gap-stack-md relative z-10">
-<div class="flex flex-col gap-2">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="latitude">Latitude</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-label-mono font-label-mono text-on-surface-variant focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all" id="latitude" name="latitude" type="text" placeholder="-5.3123" value="<?= $v('latitude') ?>"/>
+<div class="flex flex-col gap-2 relative z-10">
+<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="maps-wisata">Peta Google Maps <span class="text-on-surface-variant/50 normal-case">(opsional)</span></label>
+<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50"
+       id="maps-wisata" name="maps_embed_url" type="text"
+       placeholder="https://maps.app.goo.gl/... atau paste kode &lt;iframe&gt;"
+       value="<?= e($wisata['maps_embed_url'] ?? '') ?>"/>
+<p class="text-caption font-caption text-on-surface-variant m-0">Paste link share (<code class="text-primary">goo.gl/...</code>) atau kode <code class="text-primary">&lt;iframe&gt;</code> — sistem otomatis ekstrak URL.</p>
 </div>
-<div class="flex flex-col gap-2">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="longitude">Longitude</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-label-mono font-label-mono text-on-surface-variant focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all" id="longitude" name="longitude" type="text" placeholder="104.8123" value="<?= $v('longitude') ?>"/>
+<?php
+$wMapsVal = trim((string) ($wisata['maps_embed_url'] ?? ''));
+$wMapsIsEmbed = str_contains($wMapsVal, 'google.com/maps/embed');
+$wMapsIsShort = !$wMapsIsEmbed && ($wMapsVal !== '') && (str_contains($wMapsVal, 'goo.gl') || str_contains($wMapsVal, 'maps.google') || str_contains($wMapsVal, 'maps.app.goo.gl'));
+?>
+<div id="wisata-maps-preview" class="<?= empty($wMapsVal) ? 'hidden' : '' ?>">
+<div id="wisata-maps-iframe-wrap" class="overflow-hidden rounded-xl <?= $wMapsIsShort ? 'hidden' : '' ?>">
+<iframe id="wisata-maps-iframe" class="w-full h-48 border-0 rounded-xl"
+        src="<?= $wMapsIsEmbed ? e($wMapsVal) : '' ?>"
+        allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
 </div>
+<a id="wisata-maps-link" href="<?= e($wMapsIsShort ? $wMapsVal : '#') ?>" target="_blank" rel="noopener"
+   class="<?= $wMapsIsShort ? '' : 'hidden' ?> mt-2 inline-flex items-center gap-2 bg-surface-container border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-primary hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[20px]">open_in_new</span>
+Buka di Google Maps
+</a>
 </div>
 </div>
 </div>
@@ -192,6 +245,11 @@ require __DIR__ . '/../layout.php';
 <input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="jam_buka" name="jam_buka" placeholder="08.00 - 17.00 WIB" type="text" value="<?= $v('jam_buka') ?>"/>
 </div>
 <div class="flex flex-col gap-2 relative z-10">
+<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="wa_kontak">WhatsApp Kontak <span class="text-on-surface-variant/50 normal-case">(untuk pesan tiket)</span></label>
+<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="wa_kontak" name="wa_kontak" placeholder="6285173200421" type="tel" value="<?= $v('wa_kontak') ?>"/>
+<p class="text-caption font-caption text-on-surface-variant m-0">Format internasional, angka saja (contoh: 6285173200421).</p>
+</div>
+<div class="flex flex-col gap-2 relative z-10">
 <span class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]">Status</span>
 <div class="flex gap-2">
 <label class="flex-1 cursor-pointer">
@@ -208,6 +266,54 @@ require __DIR__ . '/../layout.php';
 
 <div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg flex flex-col gap-stack-md relative overflow-hidden">
 <div class="flex items-center gap-3 relative z-10">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">deck</span>
+<h2 class="text-headline-md font-headline-md text-on-surface m-0">Aktivitas &amp; Fasilitas</h2>
+</div>
+<div id="fas-list" class="flex flex-col gap-3 relative z-10">
+<?php foreach ($fasilitasList as $f): ?>
+<div class="fas-row flex flex-col gap-2 p-3 rounded-xl border border-glass-border bg-surface-container-highest/60">
+<div class="flex gap-2 items-center">
+<select name="fas_lama[<?= (int) $f['id'] ?>][ikon]" class="flex-1 min-w-0 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all">
+<?php foreach ($ikonFasilitas as $ikon): ?>
+<option value="<?= e($ikon) ?>" <?= $f['ikon'] === $ikon ? 'selected' : '' ?>><?= e($ikon) ?></option>
+<?php endforeach; ?>
+</select>
+<input name="fas_lama[<?= (int) $f['id'] ?>][urutan]" type="number" min="0" value="<?= (int) $f['urutan'] ?>" class="w-16 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all" title="Urutan"/>
+<label class="flex items-center gap-1 cursor-pointer shrink-0" title="Hapus fasilitas">
+<input type="checkbox" name="hapus_fasilitas[]" value="<?= (int) $f['id'] ?>" class="peer sr-only"/>
+<span class="material-symbols-outlined text-on-surface-variant peer-checked:text-red-400 text-[20px]">delete</span>
+</label>
+</div>
+<input name="fas_lama[<?= (int) $f['id'] ?>][judul]" type="text" value="<?= e($f['judul']) ?>" placeholder="Judul fasilitas" class="w-full bg-surface-container-highest border border-glass-border rounded-lg px-3 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all"/>
+<textarea name="fas_lama[<?= (int) $f['id'] ?>][deskripsi]" rows="2" placeholder="Deskripsi singkat" class="w-full bg-surface-container-highest border border-glass-border rounded-lg px-3 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all resize-y"><?= e($f['deskripsi']) ?></textarea>
+</div>
+<?php endforeach; ?>
+</div>
+<div id="fas-new-wrap" class="flex flex-col gap-3 relative z-10"></div>
+<button type="button" id="fas-add-btn" class="relative z-10 w-full flex items-center justify-center gap-2 border border-dashed border-primary/40 rounded-xl px-4 py-3 text-caption font-caption text-primary hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span> Tambah Fasilitas
+</button>
+<template id="fas-template">
+<div class="fas-row flex flex-col gap-2 p-3 rounded-xl border border-glass-border bg-surface-container-highest/60">
+<div class="flex gap-2 items-center">
+<select name="fas_baru[][ikon]" class="flex-1 min-w-0 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all">
+<?php foreach ($ikonFasilitas as $ikon): ?>
+<option value="<?= e($ikon) ?>"><?= e($ikon) ?></option>
+<?php endforeach; ?>
+</select>
+<input name="fas_baru[][urutan]" type="number" min="0" value="0" class="w-16 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all" title="Urutan"/>
+<button type="button" data-fas-hapus class="shrink-0 text-on-surface-variant hover:text-red-400 transition-colors" title="Buang baris">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<input name="fas_baru[][judul]" type="text" placeholder="Judul fasilitas" class="w-full bg-surface-container-highest border border-glass-border rounded-lg px-3 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all"/>
+<textarea name="fas_baru[][deskripsi]" rows="2" placeholder="Deskripsi singkat" class="w-full bg-surface-container-highest border border-glass-border rounded-lg px-3 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all resize-y"></textarea>
+</div>
+</template>
+</div>
+
+<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg flex flex-col gap-stack-md relative overflow-hidden">
+<div class="flex items-center gap-3 relative z-10">
 <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">photo_library</span>
 <h2 class="text-headline-md font-headline-md text-on-surface m-0">Galeri Gambar</h2>
 </div>
@@ -216,9 +322,7 @@ require __DIR__ . '/../layout.php';
 <?php foreach ($galeri as $g): ?>
 <div class="relative group/thumb rounded-xl overflow-hidden border border-glass-border bg-surface-container-high">
     <img class="w-full h-24 object-cover block" alt="Galeri <?= e($wisata['nama']) ?>" src="<?= uploadUrl($g['path_gambar']) ?>"/>
-    <!-- Overlay tengah: muncul saat hover -->
     <div class="absolute inset-0 bg-black/55 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center gap-2 pointer-events-none group-hover/thumb:pointer-events-auto">
-        <!-- Tombol lihat besar -->
         <button type="button"
                 class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/30 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white transition-all"
                 title="Lihat gambar"
@@ -227,7 +331,6 @@ require __DIR__ . '/../layout.php';
                 data-alt="Galeri <?= e($wisata['nama']) ?>">
             <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1">zoom_in</span>
         </button>
-        <!-- Tombol hapus -->
         <button type="button"
                 class="w-9 h-9 rounded-full bg-red-500/70 hover:bg-red-500 backdrop-blur-sm border border-red-400/30 flex items-center justify-center text-white transition-all"
                 title="Hapus gambar"
@@ -236,7 +339,6 @@ require __DIR__ . '/../layout.php';
             <span class="material-symbols-outlined text-[18px]">delete</span>
         </button>
     </div>
-    <!-- Hidden form hapus per gambar (di-submit via JS) -->
     <form class="hidden" method="post" action="<?= APP_BASE ?>/dashboard/wisata/form?id=<?= $editId ?>" data-delete-form="<?= (int) $g['id'] ?>">
         <?= csrfField() ?>
         <input type="hidden" name="hapus_gambar" value="<?= (int) $g['id'] ?>"/>
@@ -248,10 +350,11 @@ require __DIR__ . '/../layout.php';
 <div class="flex flex-col gap-2 relative z-10">
 <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="galeri">Tambah Gambar (bisa banyak)</label>
 <input class="w-full text-caption font-caption text-on-surface-variant file:mr-4 file:rounded-xl file:border-0 file:bg-surface-container-highest file:px-4 file:py-2.5 file:text-on-surface file:cursor-pointer hover:file:bg-surface-container transition-colors" id="galeri" name="galeri[]" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple/>
+<p class="text-[11px] text-on-surface-variant m-0">Max 2 MB per file · JPG, PNG, WEBP · Kosongkan jika tidak ganti gambar</p>
 </div>
-<div class="flex flex-col gap-2 relative z-10">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="alt_gambar">Alt Text (wajib)</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-caption font-caption text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="alt_gambar" name="alt_gambar" placeholder="Deskripsi gambar untuk aksesibilitas & SEO" type="text"/>
+<div id="galeri-preview-wrap" class="hidden relative z-10">
+<div id="galeri-preview-grid" class="grid grid-cols-3 gap-2"></div>
+<p class="text-[11px] text-hijau mt-1">Preview gambar yang akan diupload</p>
 </div>
 </div>
 
@@ -270,7 +373,6 @@ require __DIR__ . '/../layout.php';
 </form>
 </section>
 <script>
-/* ---- Slug auto-generate ---- */
 (function() {
     var nama = document.getElementById('nama');
     var slug = document.getElementById('slug');
@@ -283,98 +385,154 @@ require __DIR__ . '/../layout.php';
     });
 })();
 
-/* ---- Galeri: lightbox preview + confirm delete ---- */
+(function () {
+    var input = document.getElementById('galeri');
+    var wrap  = document.getElementById('galeri-preview-wrap');
+    var grid  = document.getElementById('galeri-preview-grid');
+    if (!input || !wrap || !grid) return;
+    input.addEventListener('change', function () {
+        grid.innerHTML = '';
+        var files = Array.from(this.files || []);
+        if (!files.length) { wrap.classList.add('hidden'); return; }
+        wrap.classList.remove('hidden');
+        files.forEach(function (file) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = 'Preview';
+                img.className = 'w-full h-20 object-cover rounded-lg border border-primary/30';
+                grid.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+})();
+
 (function() {
-    /* ======= LIGHTBOX ======= */
+    var CSS = {
+        overlay: 'position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);',
+        overlayConfirm: 'position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);',
+        lbWrap: 'position:relative;max-width:92vw;max-height:92vh;display:flex;flex-direction:column;align-items:center;',
+        lbClose: 'position:absolute;top:-40px;right:0;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:background .2s;',
+        lbImg: 'max-width:100%;max-height:85vh;object-fit:contain;border-radius:12px;box-shadow:0 25px 50px rgba(0,0,0,0.5);display:block;',
+        confirmBox: 'background:var(--color-surface-container-highest,#182b21);border:1px solid rgba(255,255,255,0.1);border-radius:16px;box-shadow:0 25px 50px rgba(0,0,0,0.5);padding:24px;max-width:360px;width:calc(100% - 32px);display:flex;flex-direction:column;gap:20px;',
+        confirmHeader: 'display:flex;align-items:center;gap:12px;',
+        confirmIcon: 'width:40px;height:40px;border-radius:10px;background:rgba(239,68,68,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;',
+        confirmTitle: 'font-size:15px;font-weight:600;color:var(--color-on-surface,#e2ede7);line-height:1.3;margin:0;',
+        confirmDesc: 'font-size:13px;color:var(--color-on-surface-variant,#9aab9e);margin:4px 0 0;',
+        confirmFooter: 'display:flex;gap:10px;justify-content:flex-end;',
+        btnCancel: 'padding:8px 16px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);color:var(--color-on-surface-variant,#9aab9e);background:transparent;font-size:13px;cursor:pointer;',
+        btnDelete: 'padding:8px 16px;border-radius:10px;border:none;background:#ef4444;color:#fff;font-size:13px;font-weight:500;cursor:pointer;',
+    };
     function openLightbox(src, alt) {
-        var overlay = document.createElement('div');
-        overlay.id = 'gallery-lightbox';
-        overlay.className = 'fixed inset-0 z-[200] flex items-center justify-center bg-black/85 backdrop-blur-sm';
-        overlay.setAttribute('role', 'dialog');
-        overlay.setAttribute('aria-modal', 'true');
-        overlay.innerHTML =
-            '<div class="relative max-w-[92vw] max-h-[92vh] flex flex-col items-center">' +
-            '  <button type="button" id="gallery-lb-close"' +
-            '    class="absolute -top-10 right-0 w-9 h-9 rounded-full bg-white/15 hover:bg-white/30 border border-white/20 flex items-center justify-center text-white transition-all"' +
-            '    aria-label="Tutup">' +
-            '    <span class="material-symbols-outlined text-[20px]">close</span>' +
-            '  </button>' +
-            '  <img src="' + src + '" alt="' + alt + '"' +
-            '    class="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl block"/>' +
-            '</div>';
-
-        document.body.appendChild(overlay);
+        var overlay = document.createElement('div'); overlay.setAttribute('style', CSS.overlay);
+        var wrap = document.createElement('div'); wrap.setAttribute('style', CSS.lbWrap);
+        var closeBtn = document.createElement('button'); closeBtn.type = 'button'; closeBtn.setAttribute('style', CSS.lbClose);
+        closeBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:20px;line-height:1">close</span>';
+        var img = document.createElement('img'); img.src = src; img.alt = alt; img.setAttribute('style', CSS.lbImg);
+        wrap.appendChild(closeBtn); wrap.appendChild(img); overlay.appendChild(wrap); document.body.appendChild(overlay);
         document.body.style.overflow = 'hidden';
-
-        function closeLb() {
-            overlay.remove();
-            document.body.style.overflow = '';
-            document.removeEventListener('keydown', onKey);
-        }
+        function closeLb() { overlay.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); }
         function onKey(e) { if (e.key === 'Escape') closeLb(); }
         document.addEventListener('keydown', onKey);
-        overlay.addEventListener('click', function(e) {
-            if (e.target === overlay) closeLb();
-        });
-        document.getElementById('gallery-lb-close').addEventListener('click', closeLb);
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) closeLb(); });
+        closeBtn.addEventListener('click', closeLb);
     }
-
-    /* ======= CONFIRM DELETE MODAL ======= */
     function openConfirmDelete(gambarId) {
-        var overlay = document.createElement('div');
-        overlay.id = 'gallery-confirm';
-        overlay.className = 'fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm';
-        overlay.innerHTML =
-            '<div class="bg-surface-container-highest border border-glass-border rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 flex flex-col gap-5">' +
-            '  <div class="flex items-center gap-3">' +
-            '    <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center shrink-0">' +
-            '      <span class="material-symbols-outlined text-red-400" style="font-variation-settings:\'FILL\' 1">delete</span>' +
-            '    </div>' +
-            '    <div>' +
-            '      <h3 class="text-base font-semibold text-on-surface leading-tight">Hapus Gambar</h3>' +
-            '      <p class="text-sm text-on-surface-variant mt-0.5">Gambar yang dihapus tidak dapat dikembalikan.</p>' +
-            '    </div>' +
-            '  </div>' +
-            '  <div class="flex gap-3 justify-end">' +
-            '    <button type="button" id="gallery-confirm-cancel"' +
-            '      class="px-4 py-2 rounded-xl border border-glass-border text-on-surface-variant hover:text-on-surface text-sm transition-colors">Batal</button>' +
-            '    <button type="button" id="gallery-confirm-ok"' +
-            '      class="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-colors">Hapus</button>' +
-            '  </div>' +
-            '</div>';
-
-        document.body.appendChild(overlay);
+        var overlay = document.createElement('div'); overlay.setAttribute('style', CSS.overlayConfirm);
+        var box = document.createElement('div'); box.setAttribute('style', CSS.confirmBox);
+        var header = document.createElement('div'); header.setAttribute('style', CSS.confirmHeader);
+        var iconWrap = document.createElement('div'); iconWrap.setAttribute('style', CSS.confirmIcon);
+        iconWrap.innerHTML = '<span class="material-symbols-outlined" style="color:#f87171;font-size:22px;font-variation-settings:\'FILL\' 1">delete</span>';
+        var textWrap = document.createElement('div');
+        var title = document.createElement('p'); title.setAttribute('style', CSS.confirmTitle); title.textContent = 'Hapus Gambar';
+        var desc = document.createElement('p'); desc.setAttribute('style', CSS.confirmDesc); desc.textContent = 'Gambar yang dihapus tidak dapat dikembalikan.';
+        textWrap.appendChild(title); textWrap.appendChild(desc);
+        header.appendChild(iconWrap); header.appendChild(textWrap);
+        var footer = document.createElement('div'); footer.setAttribute('style', CSS.confirmFooter);
+        var btnCancel = document.createElement('button'); btnCancel.type = 'button'; btnCancel.setAttribute('style', CSS.btnCancel); btnCancel.textContent = 'Batal';
+        var btnOk = document.createElement('button'); btnOk.type = 'button'; btnOk.setAttribute('style', CSS.btnDelete); btnOk.textContent = 'Hapus';
+        footer.appendChild(btnCancel); footer.appendChild(btnOk);
+        box.appendChild(header); box.appendChild(footer); overlay.appendChild(box); document.body.appendChild(overlay);
         document.body.style.overflow = 'hidden';
-
-        function closeConfirm() {
-            overlay.remove();
-            document.body.style.overflow = '';
-            document.removeEventListener('keydown', onKey);
-        }
+        function closeConfirm() { overlay.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); }
         function onKey(e) { if (e.key === 'Escape') closeConfirm(); }
         document.addEventListener('keydown', onKey);
         overlay.addEventListener('click', function(e) { if (e.target === overlay) closeConfirm(); });
-        document.getElementById('gallery-confirm-cancel').addEventListener('click', closeConfirm);
-        document.getElementById('gallery-confirm-ok').addEventListener('click', function() {
+        btnCancel.addEventListener('click', closeConfirm);
+        btnOk.addEventListener('click', function() {
             var form = document.querySelector('[data-delete-form="' + gambarId + '"]');
             if (form) form.submit();
         });
     }
-
-    /* ======= BIND EVENTS ======= */
     document.addEventListener('click', function(e) {
-        /* Preview */
         var previewBtn = e.target.closest('[data-gallery-preview]');
-        if (previewBtn) {
-            openLightbox(previewBtn.dataset.src, previewBtn.dataset.alt || '');
-            return;
-        }
-        /* Delete */
+        if (previewBtn) { openLightbox(previewBtn.dataset.src, previewBtn.dataset.alt || ''); return; }
         var deleteBtn = e.target.closest('[data-gallery-delete]');
-        if (deleteBtn) {
-            openConfirmDelete(deleteBtn.dataset.gambarId);
-        }
+        if (deleteBtn) { openConfirmDelete(deleteBtn.dataset.gambarId); }
     });
+})();
+
+(function() {
+    var addBtn = document.getElementById('fas-add-btn');
+    var tpl = document.getElementById('fas-template');
+    var wrap = document.getElementById('fas-new-wrap');
+    if (addBtn && tpl && wrap) {
+        addBtn.addEventListener('click', function () {
+            var row = tpl.content.firstElementChild.cloneNode(true);
+            wrap.appendChild(row);
+            row.scrollIntoView({ block: 'nearest' });
+        });
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-fas-hapus]');
+            if (btn && wrap.contains(btn)) {
+                btn.closest('.fas-row').remove();
+            }
+        });
+    }
+})();
+
+(function() {
+    var mapsInput   = document.getElementById('maps-wisata');
+    var mapsPreview = document.getElementById('wisata-maps-preview');
+    var iframeWrap  = document.getElementById('wisata-maps-iframe-wrap');
+    var mapsIframe  = document.getElementById('wisata-maps-iframe');
+    var mapsLink    = document.getElementById('wisata-maps-link');
+    if (!mapsInput) return;
+    function classifyUrl(raw) {
+        var m = raw.match(/src=["']([^"']+)["']/i);
+        var url = m ? m[1].trim() : raw.trim();
+        if (!url) return { url: '', type: 'empty' };
+        if (url.includes('google.com/maps/embed')) return { url: url, type: 'embed' };
+        if (url.includes('goo.gl') || url.includes('maps.google') || url.includes('maps.app.goo.gl')) return { url: url, type: 'short' };
+        return { url: url, type: 'unknown' };
+    }
+    function updateMapsPreview() {
+        var val = mapsInput.value.trim();
+        var result = classifyUrl(val);
+        mapsInput.dataset.cleanUrl = result.url;
+        if (result.type === 'embed') {
+            if (mapsIframe) mapsIframe.src = result.url;
+            if (iframeWrap) iframeWrap.classList.remove('hidden');
+            if (mapsLink) mapsLink.classList.add('hidden');
+            if (mapsPreview) mapsPreview.classList.remove('hidden');
+        } else if (result.type === 'short') {
+            if (iframeWrap) iframeWrap.classList.add('hidden');
+            if (mapsLink) { mapsLink.href = result.url; mapsLink.classList.remove('hidden'); }
+            if (mapsPreview) mapsPreview.classList.remove('hidden');
+        } else {
+            if (mapsPreview) mapsPreview.classList.add('hidden');
+        }
+    }
+    mapsInput.addEventListener('input', updateMapsPreview);
+    updateMapsPreview();
+    var form = mapsInput.closest('form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            if (mapsInput.dataset.cleanUrl) mapsInput.value = mapsInput.dataset.cleanUrl;
+        });
+    }
 })();
 </script>
 <?php require __DIR__ . '/../layout_close.php'; ?>

@@ -3,6 +3,17 @@ declare(strict_types=1);
 
 $judulHalaman = 'Manajemen Wisata';
 
+/* Stats */
+$db = getDb();
+$statWisata = $db->query("
+    SELECT
+        COUNT(*) AS total,
+        SUM(status = 'publish') AS published,
+        SUM(status = 'draft') AS draft
+    FROM wisata_desa
+")->fetch();
+$totalGambar = (int) $db->query("SELECT COUNT(*) FROM wisata_gambar")->fetchColumn();
+
 require __DIR__ . '/../layout.php';
 ?>
 <section>
@@ -15,6 +26,34 @@ require __DIR__ . '/../layout.php';
 <span class="material-symbols-outlined text-[20px] transition-transform group-hover:rotate-90">add_location_alt</span>
 Tambah Wisata
 </a>
+</div>
+
+<!-- Stat Cards -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">landscape</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Total Wisata</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none"><?= (int) $statWisata['total'] ?></p></div>
+  </div>
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">public</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Published</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none"><?= (int) $statWisata['published'] ?></p></div>
+  </div>
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">edit_document</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Draft</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none"><?= (int) $statWisata['draft'] ?></p></div>
+  </div>
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">photo_library</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Total Foto</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none"><?= $totalGambar ?></p></div>
+  </div>
 </div>
 
 <div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg relative overflow-hidden">

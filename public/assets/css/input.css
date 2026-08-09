@@ -207,6 +207,30 @@
     }
 }
 
+/* ===== LIGHT THEME DASHBOARD =====
+   Override token gelap (theme landing) hanya di area konten admin.
+   Scoped #admin-main-wrap agar sidebar, topbar, dropdown, modal tetap konsisten. */
+#admin-main-wrap .text-on-surface { color: #33291E; }
+#admin-main-wrap .text-on-background { color: #33291E; }
+#admin-main-wrap .text-on-surface-variant { color: #6B655C; }
+#admin-main-wrap .text-on-surface-variant\/20,
+#admin-main-wrap .text-on-surface-variant\/30,
+#admin-main-wrap .text-on-surface-variant\/40,
+#admin-main-wrap .text-on-surface-variant\/50,
+#admin-main-wrap .text-on-surface-variant\/60 { color: #6B655C; }
+#admin-main-wrap .text-primary { color: #426900; }
+#admin-main-wrap .text-primary\/60,
+#admin-main-wrap .text-primary\/70 { color: #4A6A10; }
+#admin-main-wrap .text-secondary { color: #6B655C; }
+#admin-main-wrap .bg-glass-fill { background-color: rgba(255, 255, 255, 0.85); }
+#admin-main-wrap .bg-surface-container { background-color: #FFFFFF; }
+#admin-main-wrap .bg-surface-container-low { background-color: #F4F7F3; }
+#admin-main-wrap .bg-surface-container-lowest { background-color: #FFFFFF; }
+#admin-main-wrap .bg-surface-container-high { background-color: #EDF1EC; }
+#admin-main-wrap .bg-surface-container-highest { background-color: #FFFFFF; }
+#admin-main-wrap .border-glass-border { border-color: rgba(51, 41, 30, 0.12); }
+#admin-main-wrap tbody tr:hover { background-color: #F4F7F3; }
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

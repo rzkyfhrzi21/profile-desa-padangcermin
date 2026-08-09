@@ -32,8 +32,7 @@ Tidak ada peran "Kepala Pekon sebagai approver/reviewer" di v1 — semua admin p
 | 1 | Visi & Misi | `profil_desa` | Teks, dikelola admin |
 | 2 | Sambutan Kepala Pekon | `profil_desa` (opsional) | Boleh kosong — kalau kosong, section disembunyikan otomatis, bukan tampil placeholder kosong |
 | 3 | Struktur Organisasi | `struktur_organisasi` (tree) | Diagram visual, lihat §4.4 |
-| 4 | Kontak Person | `struktur_organisasi.tampil_di_kontak = true` | Reuse data staf, bukan tabel terpisah — lihat ARSITEKTUR.md kenapa |
-| 5 | Peta Kantor Pekon | `profil_desa.latitude/longitude` | Embed Google Maps iframe, bukan API berbayar |
+| 4 | Peta Kantor Pekon | `profil_desa.maps_embed_url` | URL Google Maps share/embed, bukan lat/lng |
 | 6 | Data Kependudukan | `data_kependudukan` | Jumlah KK + jiwa per periode + grafik tren antar periode |
 | 7 | Potensi Desa | `potensi_desa` | Kartu/list, gambar + deskripsi |
 | 8 | Wisata Desa | `wisata_desa` + `wisata_gambar` | Preview di landing, detail penuh di halaman terpisah |

@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pendidikan = trim((string) ($_POST['pendidikan_terakhir'] ?? ''));
     $urutan = (int) ($_POST['urutan'] ?? 0);
     $parentId = (int) ($_POST['parent_id'] ?? 0);
-    $altFoto = trim((string) ($_POST['alt_foto'] ?? ''));
     $fotoLama = $struktur['foto'] ?? null;
 
     $errors = [];
@@ -42,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $foto = $fotoLama;
     $adaFile = ($_FILES['foto']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
     if ($adaFile) {
-        $up = handleUpload($_FILES['foto'], 'struktur', $altFoto);
+        $up = handleUpload($_FILES['foto'], 'struktur', $nama);
         if (!$up['ok']) {
             $errors[] = $up['error'];
         } else {
@@ -65,9 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'foto' => $foto,
         'urutan' => $urutan,
     ];
-    if (isset($_POST['tampil_di_kontak'])) {
-        $data['tampil_di_kontak'] = 1;
-    }
 
     if ($editId > 0) {
         if (updateStruktur($editId, $data)) {
@@ -126,7 +122,7 @@ require __DIR__ . '/../layout.php';
 </div>
 <div class="flex flex-col gap-2">
 <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="urutan">Urutan</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-label-mono font-label-mono text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all" id="urutan" name="urutan" min="0" type="number" value="<?= $v('urutan') ?>"/>
+<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-label-mono font-label-mono text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="urutan" name="urutan" min="0" placeholder="0" type="number" value="<?= $v('urutan') !== '' ? $v('urutan') : '0' ?>"/>
 </div>
 </div>
 </div>
@@ -157,34 +153,48 @@ require __DIR__ . '/../layout.php';
 </div>
 <?php if ($editId > 0 && !empty($struktur['foto'])): ?>
 <div class="relative z-10 flex items-center gap-4">
-<img class="w-20 h-20 rounded-2xl object-cover border border-glass-border" alt="Foto <?= e($struktur['nama']) ?>" src="<?= uploadUrl($struktur['foto']) ?>"/>
+<a href="<?= uploadUrl($struktur['foto']) ?>" data-lightbox="<?= uploadUrl($struktur['foto']) ?>" title="Klik untuk preview">
+<img class="w-20 h-20 rounded-2xl object-cover border border-glass-border hover:ring-2 hover:ring-primary/60 transition-all cursor-zoom-in" data-skeleton alt="Foto <?= e($struktur['nama']) ?>" src="<?= uploadUrl($struktur['foto']) ?>"/>
+</a>
 <div class="flex flex-col">
 <span class="text-label-mono font-label-mono text-primary text-[12px] uppercase tracking-widest">Foto Saat Ini</span>
-<span class="text-caption font-caption text-on-surface-variant">Ganti dengan mengunggah foto baru.</span>
+<span class="text-caption font-caption text-on-surface-variant">Klik foto untuk preview. Ganti dengan unggah foto baru.</span>
 </div>
 </div>
 <?php endif; ?>
-<div class="flex flex-col gap-2 relative z-10">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="foto">Unggah Foto</label>
-<input class="w-full text-caption font-caption text-on-surface-variant file:mr-4 file:rounded-xl file:border-0 file:bg-surface-container-highest file:px-4 file:py-2.5 file:text-on-surface file:cursor-pointer hover:file:bg-surface-container transition-colors" id="foto" name="foto" type="file" accept="image/jpeg,image/png,image/webp,image/gif"/>
+<!-- Preview foto baru sebelum upload -->
+<div id="foto-preview-wrap" class="hidden relative z-10">
+<img id="foto-preview-img" class="w-24 h-24 rounded-2xl object-cover border-2 border-primary/40" alt="Preview foto baru" src=""/>
+<span class="text-[11px] text-primary mt-1 block">Preview foto yang akan diupload</span>
 </div>
 <div class="flex flex-col gap-2 relative z-10">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="alt_foto">Alt Text (wajib)</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-caption font-caption text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="alt_foto" name="alt_foto" placeholder="Deskripsi singkat foto untuk aksesibilitas" type="text" value="<?= e(trim((string) ($_POST['alt_foto'] ?? ''))) ?>"/>
+<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="foto">Unggah Foto Baru</label>
+<input class="w-full text-caption font-caption text-on-surface-variant file:mr-4 file:rounded-xl file:border-0 file:bg-surface-container-highest file:px-4 file:py-2.5 file:text-on-surface file:cursor-pointer hover:file:bg-surface-container transition-colors" id="foto" name="foto" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif"/>
+<p class="text-caption font-caption text-on-surface-variant m-0">Max 2 MB · JPG, PNG, WEBP, GIF · Kosongkan jika tidak ganti foto</p>
 </div>
 </div>
-
-<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg flex flex-col gap-stack-md relative overflow-hidden">
-<div class="flex items-center gap-3 relative z-10">
-<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">contact_phone</span>
-<h2 class="text-headline-md font-headline-md text-on-surface m-0">Tampil di Kontak</h2>
-</div>
-<label class="flex items-center gap-3 cursor-pointer relative z-10">
-<input class="sr-only peer" name="tampil_di_kontak" type="checkbox" value="1" <?= isset($_POST['tampil_di_kontak']) ? ((int) $_POST['tampil_di_kontak'] === 1 ? 'checked' : '') : ((int) $v('tampil_di_kontak') === 1 ? 'checked' : '') ?>/>
-<div class="relative w-9 h-5 bg-surface-container-high rounded-full transition-colors peer-checked:bg-muted-forest after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface-variant after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full peer-checked:after:bg-primary"></div>
-<span class="text-body-md font-body-md text-on-surface">Tampilkan di bagian kontak publik</span>
-</label>
-</div>
+<script>
+(function () {
+    var fotoInput = document.getElementById('foto');
+    var prevWrap  = document.getElementById('foto-preview-wrap');
+    var prevImg   = document.getElementById('foto-preview-img');
+    if (fotoInput && prevWrap && prevImg) {
+        fotoInput.addEventListener('change', function () {
+            var file = this.files[0];
+            if (!file) { prevWrap.classList.add('hidden'); return; }
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                prevImg.src = e.target.result;
+                prevWrap.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    if (window.MediaHelpers && window.MediaHelpers.initSkeleton) {
+        MediaHelpers.initSkeleton(document.body);
+    }
+})();
+</script>
 
 <div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg flex items-center justify-between gap-4">
 <div class="flex flex-col gap-1">

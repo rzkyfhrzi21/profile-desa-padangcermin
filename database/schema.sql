@@ -1,6 +1,6 @@
 -- Schema Pekon Padang Cermin — source of truth skema (ARSITEKTUR.md §3 & §5)
-CREATE DATABASE IF NOT EXISTS padang_cermin_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE padang_cermin_db;
+CREATE DATABASE IF NOT EXISTS if0_42538523_padangcermin CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE if0_42538523_padangcermin;
 
 CREATE TABLE IF NOT EXISTS admins (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -20,8 +20,7 @@ CREATE TABLE IF NOT EXISTS profil_desa (
     sambutan_kepala_pekon TEXT NULL,
     foto_kepala_pekon VARCHAR(255) NULL,
     alamat_kantor VARCHAR(255) NOT NULL,
-    latitude DECIMAL(10,7) NOT NULL DEFAULT 0,
-    longitude DECIMAL(10,7) NOT NULL DEFAULT 0,
+    maps_embed_url VARCHAR(500) NULL,
     telepon VARCHAR(50) NULL,
     email VARCHAR(50) NULL,
     whatsapp VARCHAR(50) NULL,
@@ -35,13 +34,11 @@ CREATE TABLE IF NOT EXISTS struktur_organisasi (
     jabatan VARCHAR(100) NOT NULL,
     pendidikan_terakhir VARCHAR(20) NULL,
     foto VARCHAR(255) NULL,
-    tampil_di_kontak TINYINT(1) NOT NULL DEFAULT 0,
     urutan INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_struktur_parent FOREIGN KEY (parent_id) REFERENCES struktur_organisasi(id) ON DELETE SET NULL,
-    INDEX idx_struktur_parent (parent_id),
-    INDEX idx_struktur_kontak (tampil_di_kontak)
+    INDEX idx_struktur_parent (parent_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS data_kependudukan (
@@ -86,10 +83,10 @@ CREATE TABLE IF NOT EXISTS wisata_desa (
     slug VARCHAR(180) NOT NULL UNIQUE,
     deskripsi TEXT NOT NULL,
     alamat VARCHAR(255) NOT NULL,
-    latitude DECIMAL(10,7) NULL,
-    longitude DECIMAL(10,7) NULL,
+    maps_embed_url VARCHAR(500) NULL,
     harga_tiket VARCHAR(100) NULL,
     jam_buka VARCHAR(100) NULL,
+    wa_kontak VARCHAR(20) NULL,
     status ENUM('draft','publish') NOT NULL DEFAULT 'draft',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -100,10 +97,20 @@ CREATE TABLE IF NOT EXISTS wisata_gambar (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     wisata_id INT UNSIGNED NOT NULL,
     path_gambar VARCHAR(255) NOT NULL,
-    alt_text VARCHAR(255) NOT NULL DEFAULT '',
     urutan INT NOT NULL DEFAULT 0,
     CONSTRAINT fk_wisata_gambar FOREIGN KEY (wisata_id) REFERENCES wisata_desa(id) ON DELETE CASCADE,
     INDEX idx_wisata_gambar (wisata_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS wisata_fasilitas (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    wisata_id INT UNSIGNED NOT NULL,
+    ikon VARCHAR(60) NOT NULL DEFAULT 'eco',
+    judul VARCHAR(120) NOT NULL,
+    deskripsi VARCHAR(500) NOT NULL,
+    urutan INT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_wisata_fasilitas FOREIGN KEY (wisata_id) REFERENCES wisata_desa(id) ON DELETE CASCADE,
+    INDEX idx_wisata_fasilitas (wisata_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS berita_kategori (
@@ -119,7 +126,6 @@ CREATE TABLE IF NOT EXISTS berita_desa (
     kategori_id INT UNSIGNED NULL,
     konten MEDIUMTEXT NOT NULL,
     gambar_utama VARCHAR(255) NULL,
-    alt_gambar VARCHAR(255) NOT NULL DEFAULT '',
     penulis_id INT UNSIGNED NOT NULL,
     status ENUM('draft','publish') NOT NULL DEFAULT 'draft',
     views INT NOT NULL DEFAULT 0,
@@ -161,6 +167,6 @@ CREATE TABLE IF NOT EXISTS log_aktivitas (
 ) ENGINE=InnoDB;
 
 -- Baris profil default (single-row config)
-INSERT INTO profil_desa (id, nama_pekon, visi, misi, alamat_kantor, latitude, longitude)
-VALUES (1, 'Pekon Padang Cermin', '', '', '', 0, 0)
+INSERT INTO profil_desa (id, nama_pekon, visi, misi, alamat_kantor, maps_embed_url)
+VALUES (1, 'Pekon Padang Cermin', '', '', '', NULL)
 ON DUPLICATE KEY UPDATE id = id;

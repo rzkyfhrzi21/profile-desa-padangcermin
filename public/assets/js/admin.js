@@ -125,9 +125,9 @@
         var existing = document.querySelector('.admin-modal');
         if (existing) existing.remove();
         var overlay = document.createElement('div');
-        overlay.className = 'admin-modal modal-overlay fixed inset-0 z-[90] flex items-start md:items-center justify-center p-4 md:p-6 bg-black/70 backdrop-blur-sm overflow-y-auto';
+        overlay.className = 'admin-modal modal-overlay fixed inset-0 z-[210] flex items-start md:items-center justify-center p-4 md:p-6 bg-black/75 backdrop-blur-sm overflow-y-auto';
         var panel = document.createElement('div');
-        panel.className = 'modal-panel relative w-full z-[91] ' + (opts.large ? 'max-w-4xl' : 'max-w-lg') + ' bg-surface-container-high border border-glass-border rounded-2xl shadow-2xl my-auto';
+        panel.className = 'modal-panel relative w-full z-[211] ' + (opts.large ? 'max-w-4xl' : 'max-w-lg') + ' bg-surface-container-high border border-glass-border rounded-2xl shadow-2xl my-auto';
         panel.innerHTML = html;
         overlay.appendChild(panel);
         document.body.appendChild(overlay);
@@ -328,7 +328,7 @@
             if (window.MediaHelpers && window.MediaHelpers.initSkeleton) {
                 window.MediaHelpers.initSkeleton(table.container);
             }
-            if (table.cfg.onRender) table.cfg.onRender(res);
+            if (table.cfg.onRender) table.cfg.onRender(table.container);
         }).catch(function (e) {
             table.loading = false;
             if (spinnerEl) spinnerEl.remove();

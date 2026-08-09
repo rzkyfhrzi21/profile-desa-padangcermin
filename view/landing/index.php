@@ -11,12 +11,10 @@ $totalPerempuan = $penduduk['jumlah_perempuan'] ?? 0;
 $periodeKependudukan = $penduduk['periode'] ?? '';
 $dusunList = getKependudukanDusun();
 $potensiList = getPotensiList(true);
-$wisataList = getWisataWithGambar(getWisataList(true, 2));
-$wisataCount = count($wisataList);
-$beritaList = getBeritaList(true, 2);
+$wisataList = getWisataWithGambar(getWisataList(true, 6));
+$wisataCount = count(getWisataList(true));
+$beritaList = getBeritaList(true, 3);
 $strukturTree = getStrukturTree();
-$strukturRoot = $strukturTree[0] ?? null;
-$strukturAnak = $strukturRoot['children'] ?? [];
 $pctLaki = $totalJiwa > 0 ? (int) round($totalLaki / $totalJiwa * 100) : 0;
 $judulPage = $namaPekon . ' — Profil, Potensi & Wisata Alam';
 $deskripsiPage = truncate('Portal resmi ' . $namaPekon . ', Kecamatan Padang Cermin, Kabupaten Pesawaran, Lampung. Sentra produksi pisang 152 hektare, 8 dusun, dan wisata air terjun Kampung Penyarian.', 155);
@@ -195,26 +193,26 @@ Lihat Data Desa
 <?php require __DIR__ . '/partials/section_wisata.php'; ?>
 <?php require __DIR__ . '/partials/section_berita.php'; ?>
 <!-- Profil Desa -->
-<section id="profil" class="w-full py-section-gap px-margin-mobile lg:px-margin-desktop bg-surface relative reveal">
+<section id="profil" class="w-full py-14 px-margin-mobile lg:px-margin-desktop bg-surface relative reveal">
 <div class="max-w-container-max mx-auto">
 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-stack-lg gap-4">
 <div>
 <h2 class="font-label-mono text-label-mono text-primary mb-2">PROFIL</h2>
-<h3 class="font-headline-lg text-[24px] md:text-headline-lg text-on-surface max-w-lg">Visi &amp; Misi <?= e($namaPekon) ?>.</h3>
+<h3 class="font-headline-lg text-[20px] md:text-[22px] text-on-surface max-w-lg">Visi &amp; Misi <?= e($namaPekon) ?>.</h3>
 </div>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter items-stretch">
-<div class="bg-glass-fill backdrop-blur-md rounded-[20px] p-6 lg:p-8 border border-glass-border relative overflow-hidden flex flex-col">
+<div class="bg-glass-fill backdrop-blur-md rounded-[20px] p-5 lg:p-6 border border-glass-border relative overflow-hidden flex flex-col">
 <div class="absolute -top-6 -right-6 text-[96px] text-primary/10 leading-none select-none pointer-events-none">"</div>
-<div class="flex items-center gap-3 mb-5 relative z-10">
-<span class="w-11 h-11 rounded-none bg-muted-forest/60 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[24px]">visibility</span></span>
+<div class="flex items-center gap-3 mb-4 relative z-10">
+<span class="w-10 h-10 rounded-none bg-muted-forest/60 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[22px]">visibility</span></span>
 <h4 class="font-headline-md text-headline-md text-on-surface">Visi</h4>
 </div>
-<p class="font-body-lg text-body-lg text-on-surface leading-relaxed border-l-4 border-primary pl-4"><?= e($profil['visi'] ?? '') ?></p>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed border-l-4 border-primary pl-4"><?= e($profil['visi'] ?? '') ?></p>
 </div>
-<div class="bg-glass-fill backdrop-blur-md rounded-[20px] p-6 lg:p-8 border border-glass-border flex flex-col">
-<div class="flex items-center gap-3 mb-5">
-<span class="w-11 h-11 rounded-none bg-muted-forest/60 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[24px]">flag</span></span>
+<div class="bg-glass-fill backdrop-blur-md rounded-[20px] p-5 lg:p-6 border border-glass-border flex flex-col">
+<div class="flex items-center gap-3 mb-4">
+<span class="w-10 h-10 rounded-none bg-muted-forest/60 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[22px]">flag</span></span>
 <h4 class="font-headline-md text-headline-md text-on-surface">Misi</h4>
 </div>
 <ol class="flex flex-col">
@@ -222,7 +220,7 @@ Lihat Data Desa
 $misiBaris = array_values(array_filter(array_map('trim', explode("\n", $profil['misi'] ?? '')), fn($m) => $m !== ''));
 foreach ($misiBaris as $i => $m):
 ?>
-<li class="flex items-start gap-4 py-4 <?= $i < count($misiBaris) - 1 ? 'border-b border-glass-border/40' : 'pb-0' ?>">
+<li class="flex items-start gap-4 py-3 <?= $i < count($misiBaris) - 1 ? 'border-b border-glass-border/40' : 'pb-0' ?>">
 <span class="shrink-0 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center font-label-mono text-[12px] text-primary font-bold"><?= $i + 1 ?></span>
 <span class="font-body-md text-body-md text-on-surface-variant leading-relaxed pt-1"><?= e($m) ?></span>
 </li>

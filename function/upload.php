@@ -22,15 +22,10 @@ const UPLOAD_VIDEO_EXT = [
 /**
  * Validasi & simpan upload foto (maks 2 MB).
  * Cek MIME asli via finfo (bukan ekstensi), rename ke nama random.
- * Alt text WAJIB diisi (parameter $alt) — ditolak kalau kosong.
+ * $alt opsional (label konteks saja, tidak disimpan ke DB).
  */
-function handleUpload(array $file, string $subfolder, string $alt, int $maxBytes = 2 * 1024 * 1024): array
+function handleUpload(array $file, string $subfolder, string $alt = '', int $maxBytes = 2 * 1024 * 1024): array
 {
-    $alt = trim($alt);
-    if ($alt === '') {
-        return ['ok' => false, 'error' => 'Alt text gambar wajib diisi.'];
-    }
-
     if ($file['error'] !== UPLOAD_ERR_OK) {
         return ['ok' => false, 'error' => 'Upload gagal. Coba lagi.'];
     }

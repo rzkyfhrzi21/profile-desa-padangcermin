@@ -21,12 +21,12 @@ WHERE id = 1;
 -- ============================================================
 -- struktur_organisasi
 -- ============================================================
-INSERT INTO struktur_organisasi (id, parent_id, nama, jabatan, pendidikan_terakhir, foto, tampil_di_kontak, urutan) VALUES
-(1, NULL, 'Budi Santoso',       'Kepala Pekon',       'S2', 'struktur/struktur-kades.jpg',           1, 1),
-(2, 1,     'Siti Aminah',       'Sekretaris Desa',    'S1', 'struktur/struktur-sekdes.jpg',          0, 2),
-(3, 1,     'Ahmad Fauzi',       'Kasi Pemerintahan',  'SMA', 'struktur/struktur-kasi-pemerintahan.jpg', 0, 3),
-(4, 1,     '',                  'Kasi Kesejahteraan', NULL, NULL,                                    0, 4),
-(5, 1,     'Ratna Dewi',        'Kaur Keuangan',      'S1', 'struktur/struktur-kaur-keuangan.jpg',  1, 5);
+INSERT INTO struktur_organisasi (id, parent_id, nama, jabatan, pendidikan_terakhir, foto, urutan) VALUES
+(1, NULL, 'Budi Santoso',       'Kepala Pekon',       'S2', 'struktur/struktur-kades.jpg',           1),
+(2, 1,     'Siti Aminah',       'Sekretaris Desa',    'S1', 'struktur/struktur-sekdes.jpg',          2),
+(3, 1,     'Ahmad Fauzi',       'Kasi Pemerintahan',  'SMA', 'struktur/struktur-kasi-pemerintahan.jpg', 3),
+(4, 1,     '',                  'Kasi Kesejahteraan', NULL, NULL,                                    4),
+(5, 1,     'Ratna Dewi',        'Kaur Keuangan',      'S1', 'struktur/struktur-kaur-keuangan.jpg',  5);
 
 -- ============================================================
 -- data_kependudukan

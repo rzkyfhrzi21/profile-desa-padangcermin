@@ -12,7 +12,16 @@ if ($wisata === null) {
 
 $gambar = getWisataImages((int) $wisata['id']);
 $gambarUtama = $gambar[0] ?? null;
-$judulPage = $wisata['nama'] . ' — Wisata Pekon Padang Cermin';
+$fasilitas = getWisataFasilitas((int) $wisata['id']);
+$waKontak = preg_replace('/[^0-9]/', '', (string) ($wisata['wa_kontak'] ?? ''));
+if ($waKontak === '') {
+    $waKontak = '6285173200421';
+}
+if (str_starts_with($waKontak, '0')) {
+    $waKontak = '62' . substr($waKontak, 1);
+}
+$waUrl = 'https://wa.me/' . $waKontak . '?text=' . rawurlencode('Halo, saya ingin memesan tiket wisata ' . $wisata['nama'] . '. Apakah tersedia untuk tanggal kunjungan?');
+$judulPage = $wisata['nama'] . ' — Wisata Desa Padang Cermin';
 $deskripsiPage = truncate($wisata['deskripsi'], 155);
 $ogImage = $gambarUtama !== null ? APP_URL . '/uploads/' . $gambarUtama['path_gambar'] : '';
 ?>
@@ -96,45 +105,22 @@ $ogImage = $gambarUtama !== null ? APP_URL . '/uploads/' . $gambarUtama['path_ga
 <p class="font-body-lg text-body-lg text-on-surface leading-relaxed mb-6">
 <?= nl2br(e($wisata['deskripsi'])) ?>
 </p>
+<?php if ($fasilitas !== []): ?>
 <h3 class="font-headline-md text-headline-md text-primary mt-10 mb-4">Aktivitas &amp; Fasilitas</h3>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+<?php foreach ($fasilitas as $f): ?>
 <div class="bg-surface-container-low p-6 rounded-2xl flex items-start gap-4 hover:-translate-y-1 transition-transform duration-300">
 <div class="bg-surface-container p-3 rounded-xl">
-<span class="material-symbols-outlined text-primary text-[24px]">photo_camera</span>
+<span class="material-symbols-outlined text-primary text-[24px]"><?= e($f['ikon']) ?></span>
 </div>
 <div>
-<h4 class="font-headline-md text-body-lg text-on-surface mb-2">Spot Fotografi</h4>
-<p class="font-body-md text-caption text-on-surface-variant">Gardu pandang khusus disediakan untuk mengambil foto lanskap terbaik saat matahari terbit dan terbenam.</p>
+<h4 class="font-headline-md text-body-lg text-on-surface mb-2"><?= e($f['judul']) ?></h4>
+<p class="font-body-md text-caption text-on-surface-variant"><?= e($f['deskripsi']) ?></p>
 </div>
 </div>
-<div class="bg-surface-container-low p-6 rounded-2xl flex items-start gap-4 hover:-translate-y-1 transition-transform duration-300">
-<div class="bg-surface-container p-3 rounded-xl">
-<span class="material-symbols-outlined text-primary text-[24px]">restaurant</span>
+<?php endforeach; ?>
 </div>
-<div>
-<h4 class="font-headline-md text-body-lg text-on-surface mb-2">Saung Kuliner</h4>
-<p class="font-body-md text-caption text-on-surface-variant">Menikmati kopi lokal dan hidangan tradisional khas desa di saung bambu yang menghadap langsung ke hamparan alam.</p>
-</div>
-</div>
-<div class="bg-surface-container-low p-6 rounded-2xl flex items-start gap-4 hover:-translate-y-1 transition-transform duration-300">
-<div class="bg-surface-container p-3 rounded-xl">
-<span class="material-symbols-outlined text-primary text-[24px]">directions_walk</span>
-</div>
-<div>
-<h4 class="font-headline-md text-body-lg text-on-surface mb-2">Trekking Alam</h4>
-<p class="font-body-md text-caption text-on-surface-variant">Jalur trekking ringan menyusuri pinggiran bukit dan sungai kecil yang mengaliri area wisata.</p>
-</div>
-</div>
-<div class="bg-surface-container-low p-6 rounded-2xl flex items-start gap-4 hover:-translate-y-1 transition-transform duration-300">
-<div class="bg-surface-container p-3 rounded-xl">
-<span class="material-symbols-outlined text-primary text-[24px]">local_florist</span>
-</div>
-<div>
-<h4 class="font-headline-md text-body-lg text-on-surface mb-2">Edukasi Lingkungan</h4>
-<p class="font-body-md text-caption text-on-surface-variant">Program edukasi singkat tentang konservasi alam dan budaya lokal bersama warga sekitar.</p>
-</div>
-</div>
-</div>
+<?php endif; ?>
 </div>
 </div>
 <div class="lg:col-span-4 flex flex-col gap-8">
@@ -163,18 +149,28 @@ Informasi Kunjungan
 <?php endif; ?>
 <div class="flex flex-col gap-3">
 <span class="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Lokasi</span>
-<div class="w-full h-32 rounded-xl overflow-hidden" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD3a7EOOoJRHD7r0wz1Wk64TYuqKaQgFoNVfLWnIUZe7IaQkHamuKEvDQ7XIJb_h9hUBLw6EE-DK3zlIxZOPGeecpShyS32oaDp9Z3SZvIki3h_R32jbN0ZNhSmJW3vrBy-FddNstSzOU3oj2mV1Q7PkVn-0_uBNdjdeQj4Mlir5cRhbef-gMzKvYRA5zQXlPM3-SQH4gVv2dPpgqqGRDbx48k9L2kt4pjH0p5gDNo2nhrOllgK9k3Z'); background-size: cover; background-position: center;"></div>
+<?php
+$wMaps = trim((string) ($wisata['maps_embed_url'] ?? ''));
+$wMapsEmbed = str_contains($wMaps, 'google.com/maps/embed');
+?>
+<?php if ($wMapsEmbed): ?>
+<div class="w-full h-40 rounded-xl overflow-hidden border border-glass-border">
+<iframe class="w-full h-full border-0" src="<?= e($wMaps) ?>" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+</div>
+<?php elseif ($wMaps !== ''): ?>
+<a href="<?= e($wMaps) ?>" target="_blank" rel="noopener" class="w-full h-32 rounded-xl border border-glass-border bg-surface-container flex items-center justify-center gap-2 text-primary hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[20px]">open_in_new</span>
+Buka di Google Maps
+</a>
+<?php endif; ?>
 <p class="font-body-md text-caption text-on-surface-variant mt-2 flex items-start gap-2">
 <span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">location_on</span>
 <?= e($wisata['alamat']) ?>
 </p>
 </div>
-<button class="w-full bg-primary text-on-primary py-4 rounded-full font-body-md font-bold mt-4 hover:shadow-lime-glow transition-all duration-300 flex justify-center items-center gap-2 group-hover:-translate-y-1">
-Pesan Tiket Sekarang <span class="material-symbols-outlined text-[18px]">confirmation_number</span>
-</button>
-<button class="w-full bg-transparent border border-outline-variant text-on-surface py-3 rounded-full font-body-md hover:bg-surface-container transition-colors flex justify-center items-center gap-2">
-Simpan ke Rencana <span class="material-symbols-outlined text-[18px]">bookmark_add</span>
-</button>
+<a href="<?= e($waUrl) ?>" target="_blank" rel="noopener" class="w-full bg-primary text-on-primary py-4 rounded-full font-body-md font-bold mt-4 hover:shadow-lime-glow transition-all duration-300 flex justify-center items-center gap-2 group-hover:-translate-y-1">
+Pesan Tiket Sekarang <span class="material-symbols-outlined text-[18px]">chat</span>
+</a>
 </div>
 </div>
 <?php if ($gambar !== []): ?>
@@ -186,7 +182,7 @@ Simpan ke Rencana <span class="material-symbols-outlined text-[18px]">bookmark_a
 <?php foreach ($gambar as $i => $g): ?>
 <div class="carousel-slide">
 <div class="w-full aspect-video rounded-2xl overflow-hidden cursor-pointer group">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" data-lightbox data-skeleton alt="<?= e($g['alt_text'] !== '' ? $g['alt_text'] : $wisata['nama']) ?>" src="<?= e(uploadUrl($g['path_gambar'])) ?>"/>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" data-lightbox="<?= e(uploadUrl($g['path_gambar'])) ?>" data-skeleton alt="<?= e($wisata['nama']) ?>" src="<?= e(uploadUrl($g['path_gambar'])) ?>"/>
 </div>
 </div>
 <?php endforeach; ?>

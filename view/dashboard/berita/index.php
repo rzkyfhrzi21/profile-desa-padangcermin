@@ -5,43 +5,47 @@ $judulHalaman = 'Manajemen Berita';
 
 $kategoriList = getBeritaKategoriList();
 $statistik = getStatistikBerita();
-$viewsChart = getViewsPerKategori();
 
 require __DIR__ . '/../layout.php';
 ?>
 <section>
-<div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 md:mb-section-gap gap-4 md:gap-0">
+<div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-6 gap-4">
 <div class="flex flex-col gap-2">
-<span class="text-label-mono font-label-mono text-primary uppercase tracking-widest">Publikasi Desa</span>
-<h1 class="text-headline-xl-mobile md:text-headline-xl font-headline-xl text-on-background m-0">Manajemen Berita &amp; Publikasi</h1>
+<span class="text-label-mono font-label-mono text-primary uppercase tracking-widest">Konten Desa</span>
+<h1 class="text-headline-xl-mobile md:text-headline-xl font-headline-xl text-on-background m-0">Manajemen Berita</h1>
 </div>
 <a class="bg-primary text-on-primary font-caption text-caption px-6 py-3 rounded-full flex items-center gap-2 hover:shadow-lime-glow transition-all duration-300 group whitespace-nowrap" href="<?= APP_BASE ?>/dashboard/berita/form">
-<span class="material-symbols-outlined text-[20px] transition-transform group-hover:rotate-90">edit_document</span>
-Tulis Berita Baru
+<span class="material-symbols-outlined text-[20px] transition-transform group-hover:rotate-90">add</span>
+Tulis Berita
 </a>
 </div>
 
-<div class="grid grid-cols-12 gap-gutter mb-8 md:mb-section-gap relative z-10 flex-1">
-<div class="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-gutter mb-4">
-<div class="bg-surface-container rounded-[20px] p-4 relative overflow-hidden group">
-<div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-<div class="bg-background rounded-xl p-4 border border-glass-border/30 flex flex-col gap-1 relative z-10">
-<span class="text-label-mono font-label-mono text-on-surface-variant">Total Berita</span>
-<span class="text-headline-lg font-headline-lg text-primary"><?= $statistik['total'] ?></span>
-</div>
-</div>
-<div class="bg-surface-container rounded-[20px] p-4 relative overflow-hidden group">
-<div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-<div class="bg-background rounded-xl p-4 border border-glass-border/30 flex flex-col gap-1 relative z-10">
-<span class="text-label-mono font-label-mono text-on-surface-variant">Bulan Ini</span>
-<span class="text-headline-lg font-headline-lg text-on-surface">+<?= $statistik['bulan_ini'] ?></span>
-</div>
-</div>
-<div class="bg-surface-container rounded-[20px] p-4 relative overflow-hidden group flex flex-col">
-<div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-<span class="text-label-mono font-label-mono text-on-surface-variant relative z-10 mb-2">News Engagement (Views)</span>
-<div class="w-full h-[60px] relative z-10" id="engagementChart"></div>
-</div>
+<!-- Stat Cards -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">newspaper</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Total Berita</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none"><?= $statistik['total'] ?></p></div>
+  </div>
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">calendar_month</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Bulan Ini</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none">+<?= $statistik['bulan_ini'] ?></p></div>
+  </div>
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">publish</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Published</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none"><?= $statistik['published'] ?></p></div>
+  </div>
+  <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 border border-glass-border/40">
+    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">draft</span>
+    </div>
+    <div><p class="text-[11px] text-on-surface-variant uppercase tracking-wide">Draft</p><p class="text-[22px] font-bold font-mono text-on-surface leading-none"><?= $statistik['draft'] ?></p></div>
+  </div>
 </div>
 
 <div class="col-span-12 flex flex-col gap-stack-lg">
@@ -76,8 +80,9 @@ Tulis Berita Baru
 <table class="w-full text-left border-collapse min-w-[600px]">
 <thead>
 <tr class="text-label-mono font-label-mono text-on-surface-variant border-b border-glass-border/50">
+<th class="py-4 px-4 font-medium w-10 text-center">No</th>
 <th class="py-4 px-4 font-medium w-16">Foto</th>
-<th class="py-4 px-4 font-medium w-1/2">Judul Artikel</th>
+<th class="py-4 px-4 font-medium">Judul</th>
 <th class="py-4 px-4 font-medium">Kategori</th>
 <th class="py-4 px-4 font-medium">Tanggal</th>
 <th class="py-4 px-4 font-medium text-right">Status</th>
@@ -98,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
     AdminUI.initAjaxTable({
         name: 'berita',
         container: '#berita-table',
-        onRender: function () { MediaHelpers.initSkeleton(); },
+        onRender: function (container) { if (typeof MediaHelpers !== 'undefined') MediaHelpers.initSkeleton(container); },
         actions: {
             delete: function (btn) {
                 AdminUI.confirmModal('Hapus Berita', btn.dataset.pesan || 'Yakin ingin menghapus data ini?', 'Hapus', function () {
@@ -116,45 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
-
-    var options = {
-        series: [{
-            name: 'Views',
-            data: <?= json_encode(array_map(static fn($v) => (int) $v['total_views'], $viewsChart)) ?>
-        }],
-        chart: {
-            type: 'bar',
-            height: 60,
-            toolbar: { show: false },
-            background: 'transparent',
-            sparkline: { enabled: true }
-        },
-        plotOptions: {
-            bar: {
-                borderRadius: 4,
-                horizontal: true,
-                barHeight: '60%',
-            }
-        },
-        dataLabels: { enabled: false },
-        xaxis: {
-            categories: <?= json_encode(array_map(static fn($v) => $v['nama'], $viewsChart)) ?>,
-            labels: { show: false },
-            axisBorder: { show: false },
-            axisTicks: { show: false }
-        },
-        yaxis: {
-            labels: {
-                show: true,
-                style: { colors: '#c1cab0', fontSize: '12px', fontFamily: 'Plus Jakarta Sans' }
-            }
-        },
-        colors: ['#c8ff80'],
-        grid: { show: false },
-        theme: { mode: 'dark' }
-    };
-    var chart = new ApexCharts(document.querySelector("#engagementChart"), options);
-    chart.render();
 });
 </script>
+
 <?php require __DIR__ . '/../layout_close.php'; ?>

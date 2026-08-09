@@ -92,7 +92,7 @@
 
         overlay = document.createElement('div');
         overlay._trigger = el;
-        overlay.className = 'fixed inset-0 z-[90] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm modal-overlay';
+        overlay.className = 'fixed inset-0 z-[210] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm';
 
         var panel = document.createElement('div');
         panel.className = 'relative max-w-5xl w-full modal-panel';

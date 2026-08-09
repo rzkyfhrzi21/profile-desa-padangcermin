@@ -13,8 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $misi = trim((string) ($_POST['misi'] ?? ''));
     $sambutan = trim((string) ($_POST['sambutan_kepala_pekon'] ?? ''));
     $alamat = trim((string) ($_POST['alamat_kantor'] ?? ''));
-    $latitude = trim((string) ($_POST['latitude'] ?? ''));
-    $longitude = trim((string) ($_POST['longitude'] ?? ''));
     $mapsUrl = trim((string) ($_POST['maps_embed_url'] ?? ''));
     if (str_contains($mapsUrl, '<iframe')) {
         preg_match('/src=["\']([^"\']+)["\']/', $mapsUrl, $m);
@@ -23,18 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $telepon = trim((string) ($_POST['telepon'] ?? ''));
     $email = trim((string) ($_POST['email'] ?? ''));
     $whatsapp = trim((string) ($_POST['whatsapp'] ?? ''));
-    $altFoto = trim((string) ($_POST['alt_foto'] ?? ''));
     $fotoLama = $profil['foto_kepala_pekon'] ?? null;
 
     $errors = [];
     if ($nama === '') {
         $errors[] = 'Nama pekon wajib diisi.';
-    }
-    if ($latitude !== '' && !is_numeric($latitude)) {
-        $errors[] = 'Latitude harus berupa angka.';
-    }
-    if ($longitude !== '' && !is_numeric($longitude)) {
-        $errors[] = 'Longitude harus berupa angka.';
     }
     if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = 'Format email tidak valid.';
@@ -42,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $fotoBaru = null;
     $adaFile = ($_FILES['foto']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
-    if ($adaFile) {
-        $up = handleUpload($_FILES['foto'], 'profil', $altFoto);
+    if ($adaFile && $errors === []) {
+        $up = handleUpload($_FILES['foto'], 'profil', 'Foto Kepala Pekon ' . $nama);
         if (!$up['ok']) {
             $errors[] = $up['error'];
         } else {
@@ -59,17 +50,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $data = [
-        'nama_pekon' => $nama,
-        'visi' => $visi,
-        'misi' => $misi,
+        'nama_pekon'            => $nama,
+        'visi'                  => $visi,
+        'misi'                  => $misi,
         'sambutan_kepala_pekon' => $sambutan,
-        'alamat_kantor' => $alamat,
-        'latitude' => $latitude,
-        'longitude' => $longitude,
-        'maps_embed_url' => $mapsUrl,
-        'telepon' => $telepon,
-        'email' => $email,
-        'whatsapp' => $whatsapp,
+        'alamat_kantor'         => $alamat,
+        'maps_embed_url'        => $mapsUrl,
+        'telepon'               => $telepon,
+        'email'                 => $email,
+        'whatsapp'              => $whatsapp,
     ];
 
     if (updateProfil($data)) {
@@ -197,20 +186,17 @@ require __DIR__ . '/../layout.php';
 <?php if (!empty($profil['foto_kepala_pekon'])): ?>
 <div class="relative z-10">
 <img class="w-full aspect-[3/4] object-cover rounded-xl border border-glass-border" alt="Foto Kepala Pekon saat ini" src="<?= uploadUrl($profil['foto_kepala_pekon']) ?>"/>
+<p class="text-[11px] text-on-surface-variant mt-1">Foto saat ini. Unggah baru untuk mengganti.</p>
 </div>
 <?php endif; ?>
 <div class="flex flex-col gap-2 relative z-10">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="foto">Unggah Foto</label>
+<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="foto">Unggah Foto Baru</label>
 <input class="w-full text-caption font-caption text-on-surface-variant file:mr-4 file:rounded-xl file:border-0 file:bg-surface-container-highest file:px-4 file:py-2.5 file:text-on-surface file:cursor-pointer hover:file:bg-surface-container transition-colors" id="foto" name="foto" type="file" accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/heic,image/heif,image/x-icon"/>
-<div id="foto-preview-container" class="relative z-10 mt-2 <?= !empty($profil['foto_kepala_pekon']) ? '' : 'hidden' ?>">
-    <img id="foto-preview" class="w-full aspect-[3/4] object-cover rounded-xl border border-glass-border" 
-         alt="Preview foto" 
-         src="<?= !empty($profil['foto_kepala_pekon']) ? uploadUrl($profil['foto_kepala_pekon']) : '' ?>"/>
+<p class="text-[11px] text-on-surface-variant m-0">Max 2 MB · JPG, PNG, WEBP · Kosongkan jika tidak ganti foto</p>
 </div>
-</div>
-<div class="flex flex-col gap-2 relative z-10">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="alt_foto">Alt Text (wajib)</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-caption font-caption text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="alt_foto" name="alt_foto" placeholder="Deskripsi singkat foto untuk aksesibilitas & SEO" type="text" value="<?= e(trim((string) ($_POST['alt_foto'] ?? ''))) ?>"/>
+<div id="foto-preview-container" class="hidden relative z-10">
+<img id="foto-preview" class="w-full aspect-[3/4] object-cover rounded-xl border-2 border-primary/40" alt="Preview foto baru" src=""/>
+<p class="text-[11px] text-primary mt-1">Preview foto yang akan diupload</p>
 </div>
 </div>
 
@@ -221,17 +207,29 @@ require __DIR__ . '/../layout.php';
 </div>
 <div class="flex flex-col gap-2 relative z-10">
 <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="maps_embed_url">URL Google Maps</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" 
-       id="maps_embed_url" name="maps_embed_url" 
-       placeholder="https://maps.app.goo.gl/... atau paste kode iframe" 
-       type="text" 
+<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50"
+       id="maps_embed_url" name="maps_embed_url"
+       placeholder="https://maps.app.goo.gl/... atau paste kode &lt;iframe&gt;"
+       type="text"
        value="<?= e($profil['maps_embed_url'] ?? '') ?>"/>
-<p class="text-caption font-caption text-on-surface-variant m-0">Paste link Google Maps share atau kode embed &lt;iframe&gt; — sistem otomatis ekstrak URL embed-nya.</p>
+<p class="text-caption font-caption text-on-surface-variant m-0">Paste link Google Maps share (<code class="text-primary">goo.gl/...</code>) atau kode embed <code class="text-primary">&lt;iframe&gt;</code> — sistem otomatis ekstrak URL-nya.</p>
 </div>
-<div id="maps-preview" class="relative z-10 overflow-hidden rounded-xl <?= empty($profil['maps_embed_url']) ? 'hidden' : '' ?>">
-<iframe id="maps-iframe" class="w-full h-56 border-0 rounded-xl" 
-        src="<?= e($profil['maps_embed_url'] ?? '') ?>" 
+<?php
+$mapsVal = trim((string) ($profil['maps_embed_url'] ?? ''));
+$mapsIsEmbed = str_contains($mapsVal, 'google.com/maps/embed');
+$mapsIsShort = !$mapsIsEmbed && ($mapsVal !== '') && (str_contains($mapsVal, 'goo.gl') || str_contains($mapsVal, 'maps.google') || str_contains($mapsVal, 'maps.app.goo.gl'));
+?>
+<div id="maps-preview" class="relative z-10 <?= empty($mapsVal) ? 'hidden' : '' ?>">
+<div id="maps-iframe-wrap" class="overflow-hidden rounded-xl <?= $mapsIsShort ? 'hidden' : '' ?>">
+<iframe id="maps-iframe" class="w-full h-56 border-0 rounded-xl"
+        src="<?= $mapsIsEmbed ? e($mapsVal) : '' ?>"
         allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+</div>
+<a id="maps-link-btn" href="<?= e($mapsIsShort ? $mapsVal : '#') ?>" target="_blank" rel="noopener"
+   class="<?= $mapsIsShort ? '' : 'hidden' ?> mt-2 inline-flex items-center gap-2 bg-surface-container border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-primary hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[20px]">open_in_new</span>
+Buka di Google Maps
+</a>
 </div>
 </div>
 
@@ -250,32 +248,51 @@ Simpan Perubahan
 </form>
 </section>
 <script>
-document.getElementById('foto').addEventListener('change', function(e) {
-    var file = e.target.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-        var img = document.getElementById('foto-preview');
-        var container = document.getElementById('foto-preview-container');
-        if (img) img.src = ev.target.result;
-        if (container) container.classList.remove('hidden');
-    };
-    reader.readAsDataURL(file);
-});
-(function() {
-    var input = document.getElementById('maps_embed_url');
-    var preview = document.getElementById('maps-preview');
-    var iframe = document.getElementById('maps-iframe');
+(function () {
+    var fotoInput = document.getElementById('foto');
+    var previewContainer = document.getElementById('foto-preview-container');
+    var previewImg = document.getElementById('foto-preview');
+    if (fotoInput && previewContainer && previewImg) {
+        fotoInput.addEventListener('change', function () {
+            var file = this.files && this.files[0];
+            if (!file) { previewContainer.classList.add('hidden'); return; }
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                previewImg.src = e.target.result;
+                previewContainer.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    var input      = document.getElementById('maps_embed_url');
+    var preview    = document.getElementById('maps-preview');
+    var iframeWrap = document.getElementById('maps-iframe-wrap');
+    var iframeEl   = document.getElementById('maps-iframe');
+    var linkBtn    = document.getElementById('maps-link-btn');
     if (!input) return;
+
+    function classifyUrl(raw) {
+        var m = raw.match(/src=["']([^"']+)["']/i);
+        var url = m ? m[1].trim() : raw.trim();
+        if (!url) return { url: '', type: 'empty' };
+        if (url.includes('google.com/maps/embed')) return { url: url, type: 'embed' };
+        if (url.includes('goo.gl') || url.includes('maps.google') || url.includes('maps.app.goo.gl')) return { url: url, type: 'short' };
+        return { url: url, type: 'unknown' };
+    }
+
     function updatePreview() {
         var val = input.value.trim();
-        // Try to extract src from iframe HTML
-        var m = val.match(/src=["']([^"']+)["']/i);
-        var url = m ? m[1] : val;
-        // Store clean URL in the input value before form submit
-        input.dataset.cleanUrl = url;
-        if (url && url.includes('google.com/maps')) {
-            if (iframe) iframe.src = url;
+        var result = classifyUrl(val);
+        input.dataset.cleanUrl = result.url;
+        if (result.type === 'embed') {
+            if (iframeEl) iframeEl.src = result.url;
+            if (iframeWrap) iframeWrap.classList.remove('hidden');
+            if (linkBtn) linkBtn.classList.add('hidden');
+            if (preview) preview.classList.remove('hidden');
+        } else if (result.type === 'short') {
+            if (iframeWrap) iframeWrap.classList.add('hidden');
+            if (linkBtn) { linkBtn.href = result.url; linkBtn.classList.remove('hidden'); }
             if (preview) preview.classList.remove('hidden');
         } else {
             if (preview) preview.classList.add('hidden');
@@ -283,10 +300,9 @@ document.getElementById('foto').addEventListener('change', function(e) {
     }
     input.addEventListener('input', updatePreview);
     updatePreview();
-    // On form submit, clean up the value if it was an iframe paste
     var form = input.closest('form');
     if (form) {
-        form.addEventListener('submit', function() {
+        form.addEventListener('submit', function () {
             if (input.dataset.cleanUrl) input.value = input.dataset.cleanUrl;
         });
     }

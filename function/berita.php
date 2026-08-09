@@ -214,5 +214,8 @@ function getStatistikBerita(): array
     $stmt = $db->prepare("SELECT COUNT(*) FROM berita_desa WHERE published_at IS NOT NULL AND DATE_FORMAT(published_at, '%Y-%m') = ?");
     $stmt->execute([date('Y-m')]);
     $bulanIni = (int) $stmt->fetchColumn();
-    return ['total' => $total, 'bulan_ini' => $bulanIni];
+    $published = (int) $db->query("SELECT COUNT(*) FROM berita_desa WHERE status = 'publish'")->fetchColumn();
+    $draft = $total - $published;
+    return ['total' => $total, 'bulan_ini' => $bulanIni, 'published' => $published, 'draft' => $draft];
 }
+

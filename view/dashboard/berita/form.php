@@ -31,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $slug = trim((string) ($_POST['slug'] ?? ''));
     $kategoriId = (int) ($_POST['kategori_id'] ?? 0);
     $status = ($_POST['status'] ?? 'draft') === 'publish' ? 'publish' : 'draft';
-    $alt = trim((string) ($_POST['alt_gambar'] ?? ''));
     $gambarLama = $berita['gambar_utama'] ?? null;
 
     $errors = [];
@@ -51,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $gambar = $gambarLama;
     $adaFile = ($_FILES['gambar_utama']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
     if ($adaFile) {
-        $up = handleUpload($_FILES['gambar_utama'], 'berita', $alt);
+        $up = handleUpload($_FILES['gambar_utama'], 'berita', $judul !== '' ? $judul : 'Berita');
         if (!$up['ok']) {
             $errors[] = $up['error'];
         } else {
@@ -173,16 +172,23 @@ require __DIR__ . '/../layout.php';
 </div>
 <?php if ($editId > 0 && !empty($berita['gambar_utama'])): ?>
 <div class="relative z-10">
-<img class="w-full h-40 object-cover rounded-xl border border-glass-border" alt="Gambar utama berita <?= e($berita['judul']) ?>" src="<?= uploadUrl($berita['gambar_utama']) ?>"/>
+<img class="w-full h-40 object-cover rounded-xl border border-glass-border cursor-pointer"
+     data-lightbox="<?= uploadUrl($berita['gambar_utama']) ?>"
+     data-skeleton
+     alt="Gambar utama berita <?= e($berita['judul']) ?>"
+     src="<?= uploadUrl($berita['gambar_utama']) ?>"/>
+<p class="text-[11px] text-on-surface-variant mt-1">Klik gambar untuk lihat full-size</p>
 </div>
 <?php endif; ?>
+
 <div class="flex flex-col gap-2 relative z-10">
 <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="gambar_utama">Unggah Gambar</label>
 <input class="w-full text-caption font-caption text-on-surface-variant file:mr-4 file:rounded-xl file:border-0 file:bg-surface-container-highest file:px-4 file:py-2.5 file:text-on-surface file:cursor-pointer hover:file:bg-surface-container transition-colors" id="gambar_utama" name="gambar_utama" type="file" accept="image/jpeg,image/png,image/webp,image/gif"/>
+<p class="text-[11px] text-on-surface-variant m-0">Max 2 MB · JPG, PNG, WEBP · Kosongkan jika tidak ganti gambar</p>
 </div>
-<div class="flex flex-col gap-2 relative z-10">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="alt_gambar">Alt Text (wajib)</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-caption font-caption text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50" id="alt_gambar" name="alt_gambar" placeholder="Deskripsi singkat gambar untuk aksesibilitas & SEO" type="text" value="<?= e(trim((string) ($_POST['alt_gambar'] ?? ''))) ?>"/>
+<div id="gambar-preview-wrap" class="hidden relative z-10">
+<img id="gambar-preview-img" src="" alt="Preview gambar" class="w-full h-40 object-cover rounded-xl border-2 border-primary/30"/>
+<p class="text-[11px] text-hijau mt-1">Preview gambar yang akan diupload</p>
 </div>
 </div>
 
@@ -212,5 +218,24 @@ require __DIR__ . '/../layout.php';
         slug.value = judul.value.toLowerCase().replace(/[^a-z0-9\s-]/g, '').trim().replace(/[\s-]+/g, '-');
     });
 })();
+(function () {
+    var input = document.getElementById('gambar_utama');
+    var wrap  = document.getElementById('gambar-preview-wrap');
+    var img   = document.getElementById('gambar-preview-img');
+    if (!input || !wrap || !img) return;
+    input.addEventListener('change', function () {
+        var file = this.files && this.files[0];
+        if (!file) { wrap.classList.add('hidden'); return; }
+        var reader = new FileReader();
+        reader.onload = function (e) { img.src = e.target.result; wrap.classList.remove('hidden'); };
+        reader.readAsDataURL(file);
+    });
+})();
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof MediaHelpers !== 'undefined') {
+        MediaHelpers.initSkeleton(document.body);
+    }
+});
 </script>
 <?php require __DIR__ . '/../layout_close.php'; ?>
+

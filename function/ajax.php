@@ -111,10 +111,14 @@ function ajaxListWisata(array $p): array
     $rows_data = getWisataWithGambar($stmt->fetchAll());
 
     $rows = [];
+    $noBase = ($p['page'] - 1) * $limit;
+    $noIdx  = 0;
     if ($rows_data === []) {
         $rows[] = '<div class="col-span-full py-16 flex flex-col items-center gap-3 text-center"><span class="material-symbols-outlined text-[48px] text-on-surface-variant/40">landscape</span><p class="text-body-md font-body-md text-on-surface-variant">' . ($p['q'] !== '' ? 'Tidak ada wisata yang cocok dengan pencarian.' : 'Belum ada data wisata.') . '</p></div>';
     }
     foreach ($rows_data as $w) {
+        $noIdx++;
+        $no = $noBase + $noIdx;
         $gambarUtama = $w['gambar'][0]['path_gambar'] ?? ($w['gambar_utama'] ?? '');
         $imgHtml = $gambarUtama !== ''
             ? '<img src="' . uploadUrl($gambarUtama) . '" alt="' . e($w['nama']) . '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-lightbox="' . uploadUrl($gambarUtama) . '" data-skeleton loading="lazy">'
@@ -125,6 +129,7 @@ function ajaxListWisata(array $p): array
         $card = '<div class="group relative bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border overflow-hidden hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">';
         $card .= '<div class="relative aspect-[4/3] overflow-hidden bg-surface-container-high">';
         $card .= $imgHtml;
+        $card .= '<div class="absolute top-2 left-2"><span class="bg-black/60 text-white text-[11px] font-mono px-2 py-0.5 rounded-full">#' . $no . '</span></div>';
         $card .= '<div class="absolute top-2 right-2">' . $statusBadge . '</div>';
         $card .= '</div>';
         $card .= '<div class="p-4">';
@@ -189,17 +194,19 @@ function ajaxListBerita(array $p): array
     $total = countBeritaAdmin($p['q'], $p['kategori'] > 0 ? $p['kategori'] : null, $p['status']);
 
     $html = '';
+    $noBase = ($p['page'] - 1) * $limit;
+    $noIdx  = 0;
     if ($berita === []) {
-        $html = ajaxEmptyState(5, 'newspaper', $p['q'] !== '' ? 'Tidak ada berita yang cocok dengan pencarian.' : 'Belum ada berita.');
+        $html = ajaxEmptyState(7, 'newspaper', $p['q'] !== '' ? 'Tidak ada berita yang cocok dengan pencarian.' : 'Belum ada berita.');
     }
     foreach ($berita as $b) {
+        $noIdx++;
+        $no = $noBase + $noIdx;
         $tgl = $b['published_at'] !== null ? date('d M Y', strtotime($b['published_at'])) : '-';
-        $thumb = !empty($b['gambar_utama'])
-            ? '<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden shrink-0 hidden sm:block"><img class="w-full h-full object-cover cursor-pointer" data-lightbox="' . uploadUrl($b['gambar_utama']) . '" data-skeleton alt="Thumbnail ' . e($b['judul']) . '" src="' . uploadUrl($b['gambar_utama']) . '"/></div>'
-            : '<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center shrink-0 border border-glass-border/50 hidden sm:flex"><span class="material-symbols-outlined text-on-surface-variant/50">image</span></div>';
         $html .= '<tr class="border-b border-glass-border/30 hover:bg-surface-container-highest/50 transition-colors group/row">'
+            . '<td class="py-4 px-4 text-center"><span class="text-label-mono font-label-mono text-[12px] text-on-surface-variant/60">' . $no . '</span></td>'
             . '<td class="py-3 px-4 w-16"><div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container-high flex-shrink-0">'
-            . (!empty($b['gambar_utama']) 
+            . (!empty($b['gambar_utama'])
                 ? '<img src="' . uploadUrl($b['gambar_utama']) . '" alt="" class="w-full h-full object-cover" data-lightbox="' . uploadUrl($b['gambar_utama']) . '">'
                 : '<span class="material-symbols-outlined text-on-surface-variant m-auto h-full flex items-center justify-center">image</span>')
             . '</div></td>'
@@ -277,16 +284,21 @@ function ajaxListPotensi(array $p): array
         'perikanan' => 'Perikanan', 'umkm' => 'UMKM', 'kerajinan' => 'Kerajinan',
     ];
     $html = '';
+    $noBase = ($p['page'] - 1) * $limit;
+    $noIdx  = 0;
     if ($rows === []) {
-        $html = ajaxEmptyState(5, 'psychiatry', $p['q'] !== '' ? 'Tidak ada potensi yang cocok dengan pencarian.' : 'Belum ada data potensi desa.');
+        $html = ajaxEmptyState(6, 'psychiatry', $p['q'] !== '' ? 'Tidak ada potensi yang cocok dengan pencarian.' : 'Belum ada data potensi desa.');
     }
     foreach ($rows as $po) {
+        $noIdx++;
+        $no = $noBase + $noIdx;
         $kat = trim((string) ($po['kategori'] ?? ''));
         $katLabel = $kat !== '' ? ($kategoriLabel[$kat] ?? ucwords(str_replace(['_', '-'], ' ', $kat))) : '-';
         $thumb = !empty($po['gambar'])
             ? '<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden shrink-0 hidden sm:block"><img class="w-full h-full object-cover cursor-pointer" data-lightbox="' . uploadUrl($po['gambar']) . '" data-skeleton alt="Thumbnail ' . e($po['judul']) . '" src="' . uploadUrl($po['gambar']) . '"/></div>'
             : '<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center shrink-0 border border-glass-border/50 hidden sm:flex"><span class="material-symbols-outlined text-on-surface-variant/50">psychiatry</span></div>';
         $html .= '<tr class="border-b border-glass-border/30 hover:bg-surface-container-highest/50 transition-colors group/row">'
+            . '<td class="py-4 px-4 text-center w-12"><span class="text-label-mono font-label-mono text-[12px] text-on-surface-variant/60">' . $no . '</span></td>'
             . '<td class="py-4 px-4"><div class="flex items-center gap-3">' . $thumb . '<span class="font-medium group-hover/row:text-primary transition-colors line-clamp-2 sm:line-clamp-1">' . e($po['judul']) . '</span></div></td>'
             . '<td class="py-4 px-4 text-on-surface-variant">' . e($katLabel) . '</td>'
             . '<td class="py-4 px-4 text-center text-label-mono font-label-mono text-on-surface-variant text-[13px] whitespace-nowrap">' . (int) $po['urutan'] . '</td>'
@@ -345,38 +357,60 @@ function ajaxListStruktur(array $p): array
     $where = [];
     $params = [];
     if ($p['q'] !== '') {
-        $where[] = '(nama LIKE ? OR jabatan LIKE ?)';
+        // Sertakan pencarian nama parent juga
+        $where[] = '(s.nama LIKE ? OR s.jabatan LIKE ? OR p.jabatan LIKE ?)';
+        $params[] = '%' . $p['q'] . '%';
         $params[] = '%' . $p['q'] . '%';
         $params[] = '%' . $p['q'] . '%';
     }
     $whereSql = $where === [] ? '' : ' WHERE ' . implode(' AND ', $where);
-    $stmtCount = $db->prepare('SELECT COUNT(*) FROM struktur_organisasi' . $whereSql);
+
+    // LEFT JOIN ke diri sendiri untuk ambil jabatan & nama atasan langsung
+    $baseSql = ' FROM struktur_organisasi s LEFT JOIN struktur_organisasi p ON s.parent_id = p.id';
+
+    $stmtCount = $db->prepare('SELECT COUNT(*)' . $baseSql . $whereSql);
     $stmtCount->execute($params);
     $total = (int) $stmtCount->fetchColumn();
 
-    $limit = AJAX_PAGE_LIMIT;
+    $limit  = AJAX_PAGE_LIMIT;
     $offset = max(0, $p['page'] - 1) * $limit;
-    $stmt = $db->prepare('SELECT * FROM struktur_organisasi' . $whereSql . ' ORDER BY urutan ASC, id ASC LIMIT ' . $limit . ' OFFSET ' . $offset);
+    $stmt   = $db->prepare(
+        'SELECT s.*, p.nama AS parent_nama, p.jabatan AS parent_jabatan'
+        . $baseSql . $whereSql
+        . ' ORDER BY s.urutan ASC, s.id ASC'
+        . ' LIMIT ' . $limit . ' OFFSET ' . $offset
+    );
     $stmt->execute($params);
     $rows = $stmt->fetchAll();
 
     $html = '';
+    $noBase = ($p['page'] - 1) * $limit;
+    $noIdx  = 0;
     if ($rows === []) {
-        $html = ajaxEmptyState(6, 'account_tree', $p['q'] !== '' ? 'Tidak ada pegawai yang cocok dengan pencarian.' : 'Belum ada data struktur organisasi.');
+        $html = ajaxEmptyState(7, 'account_tree', $p['q'] !== '' ? 'Tidak ada pegawai yang cocok dengan pencarian.' : 'Belum ada data struktur organisasi.');
     }
     foreach ($rows as $n) {
+        $noIdx++;
+        $no = $noBase + $noIdx;
         $foto = !empty($n['foto'])
             ? '<div class="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-glass-border/50"><img class="w-full h-full object-cover cursor-pointer" data-lightbox="' . uploadUrl($n['foto']) . '" data-skeleton alt="Foto ' . e($n['nama']) . '" src="' . uploadUrl($n['foto']) . '"/></div>'
             : '<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0 border border-glass-border/50"><span class="material-symbols-outlined text-[18px] text-on-surface-variant/50">person</span></div>';
-        $kontak = (int) ($n['tampil_di_kontak'] ?? 0) === 1
-            ? '<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted-forest text-primary border border-primary/20"><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span><span class="text-caption font-caption">Tampil di Kontak</span></div>'
-            : '<span class="text-caption font-caption text-on-surface-variant/60">-</span>';
+
+        $parentLabel = $n['parent_jabatan'] !== null
+            ? e($n['parent_jabatan'])
+            : '<span class="text-primary/70">Root</span>';
+        $urtLabel = '<div class="flex flex-col gap-0.5">'
+            . '<span class="text-label-mono font-label-mono text-[11px] text-on-surface-variant/50 leading-none">di bawah</span>'
+            . '<span class="text-caption font-caption text-on-surface-variant leading-tight">' . $parentLabel . '</span>'
+            . '<span class="text-label-mono font-label-mono text-primary text-[11px]">ke-' . (int) $n['urutan'] . '</span>'
+            . '</div>';
+
         $html .= '<tr class="border-b border-glass-border/30 hover:bg-surface-container-highest/50 transition-colors group/row">'
+            . '<td class="py-4 px-4 text-center w-12"><span class="text-label-mono font-label-mono text-[12px] text-on-surface-variant/60">' . $no . '</span></td>'
             . '<td class="py-4 px-4"><div class="flex items-center gap-3">' . $foto . '<span class="font-medium group-hover/row:text-primary transition-colors">' . e($n['nama']) . '</span></div></td>'
             . '<td class="py-4 px-4 text-on-surface-variant">' . e($n['jabatan']) . '</td>'
             . '<td class="py-4 px-4 text-on-surface-variant">' . e($n['pendidikan_terakhir'] ?? '-') . '</td>'
-            . '<td class="py-4 px-4 text-label-mono font-label-mono text-on-surface-variant text-[13px] whitespace-nowrap">' . (int) $n['urutan'] . '</td>'
-            . '<td class="py-4 px-4">' . $kontak . '</td>'
+            . '<td class="py-4 px-4">' . $urtLabel . '</td>'
             . '<td class="py-4 px-4 text-right">' . ajaxAksiButtons(APP_BASE . '/dashboard/struktur/form?id=' . (int) $n['id'], (int) $n['id'], $n['nama'], 'Hapus jabatan &quot;' . $n['nama'] . '&quot;?') . '</td>'
             . '</tr>';
     }
@@ -419,7 +453,6 @@ function ajaxDetailStruktur(int $id): array
         . '<div class="flex flex-wrap gap-2">'
         . '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-high border border-glass-border text-caption font-caption text-on-surface-variant"><span class="material-symbols-outlined text-[14px]">school</span>' . e($n['pendidikan_terakhir'] ?? '-') . '</span>'
         . '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-high border border-glass-border text-caption font-caption text-on-surface-variant"><span class="material-symbols-outlined text-[14px]">sort</span>Urutan ' . (int) $n['urutan'] . '</span>'
-        . ((int) ($n['tampil_di_kontak'] ?? 0) === 1 ? '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-caption font-caption text-primary"><span class="material-symbols-outlined text-[14px]">call</span>Tampil di Kontak</span>' : '')
         . '</div></div>';
     return ['ok' => true, 'html' => $html];
 }
@@ -535,30 +568,65 @@ function ajaxDispatch(string $modul, string $aksi): never
             if ($modul === 'kependudukan') {
                 $periode = trim((string) ($_POST['periode'] ?? ''));
                 if ($periode === '') { ajaxResponse(['ok' => false, 'message' => 'Periode kosong']); }
-                $rows = getDusunByPeriode($periode);
+
+                $db2 = getDb();
+                /* Semua dusun master (aktif), join ke data dusun di periode ini */
+                $stmt2 = $db2->prepare("
+                    SELECT dm.id AS master_id, dm.nama AS nama_dusun, dm.urutan,
+                           kd.id AS dusun_id,
+                           COALESCE(kd.jumlah_laki, 0) AS jumlah_laki,
+                           COALESCE(kd.jumlah_perempuan, 0) AS jumlah_perempuan,
+                           COALESCE(kd.jumlah_kk, 0) AS jumlah_kk,
+                           COALESCE(kd.jumlah_jiwa, 0) AS jumlah_jiwa
+                    FROM dusun_master dm
+                    LEFT JOIN kependudukan_dusun kd
+                        ON kd.nama_dusun = dm.nama AND kd.periode = ?
+                    WHERE dm.aktif = 1
+                    ORDER BY dm.urutan
+                ");
+                $stmt2->execute([$periode]);
+                $dusunRows = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
                 $h = '';
-                foreach ($rows as $d) {
-                    $h .= '<tr data-id="' . (int)$d['id'] . '">';
+                $rowsForJs = [];
+                foreach ($dusunRows as $d) {
+                    $did = $d['dusun_id'];
+                    $h .= '<tr data-id="' . (int)($did ?? 0) . '" data-nama="' . e($d['nama_dusun']) . '">';
                     $h .= '<td class="py-2 px-3 text-on-surface">' . e($d['nama_dusun']) . '</td>';
-                    $h .= '<td class="py-2 px-3 text-on-surface text-right font-label-mono">' . number_format((int)$d['jumlah_laki']) . '</td>';
-                    $h .= '<td class="py-2 px-3 text-on-surface text-right font-label-mono">' . number_format((int)$d['jumlah_perempuan']) . '</td>';
-                    $h .= '<td class="py-2 px-3 text-on-surface text-right font-label-mono">' . number_format((int)$d['jumlah_kk']) . '</td>';
-                    $h .= '<td class="py-2 px-3 text-on-surface text-right font-label-mono">' . number_format((int)$d['jumlah_jiwa']) . '</td>';
-                    $h .= '<td class="py-2 px-3 text-right"><button type="button" data-dusun-delete data-id="' . (int)$d['id'] . '" class="text-error hover:text-error/80 transition-colors"><span class="material-symbols-outlined text-[18px]">delete</span></button></td>';
+                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-1 text-label-mono text-right focus:border-primary focus:outline-none" data-field="laki" value="' . (int)$d['jumlah_laki'] . '"/></td>';
+                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-1 text-label-mono text-right focus:border-primary focus:outline-none" data-field="perempuan" value="' . (int)$d['jumlah_perempuan'] . '"/></td>';
+                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-1 text-label-mono text-right focus:border-primary focus:outline-none" data-field="kk" value="' . (int)$d['jumlah_kk'] . '"/></td>';
+                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-1 text-label-mono text-right focus:border-primary focus:outline-none" data-field="jiwa" value="' . (int)$d['jumlah_jiwa'] . '"/></td>';
                     $h .= '</tr>';
+                    $rowsForJs[] = [
+                        'jumlah_kk'        => (int)$d['jumlah_kk'],
+                        'jumlah_jiwa'      => (int)$d['jumlah_jiwa'],
+                        'jumlah_laki'      => (int)$d['jumlah_laki'],
+                        'jumlah_perempuan' => (int)$d['jumlah_perempuan'],
+                    ];
                 }
-                ajaxResponse(['ok' => true, 'html' => $h, 'rows' => $rows]);
+                ajaxResponse(['ok' => true, 'html' => $h, 'rows' => $rowsForJs]);
             }
             break;
         case 'dusun-save':
             if ($modul === 'kependudukan') {
                 csrfValidate();
-                $periode = trim((string) ($_POST['periode'] ?? ''));
+                $periode   = trim((string) ($_POST['periode'] ?? ''));
                 $namaDusun = trim((string) ($_POST['nama_dusun'] ?? ''));
                 if ($periode === '' || $namaDusun === '') { ajaxResponse(['ok' => false, 'message' => 'Periode dan nama dusun wajib diisi']); }
-                $data = ['periode' => $periode, 'nama_dusun' => $namaDusun, 'jumlah_laki' => (int)($_POST['jumlah_laki'] ?? 0), 'jumlah_perempuan' => (int)($_POST['jumlah_perempuan'] ?? 0), 'jumlah_kk' => (int)($_POST['jumlah_kk'] ?? 0), 'jumlah_jiwa' => (int)($_POST['jumlah_jiwa'] ?? 0)];
-                $did = saveDusunKependudukan($data);
-                ajaxResponse(['ok' => $did > 0, 'message' => $did > 0 ? 'Dusun berhasil disimpan.' : 'Gagal menyimpan dusun.']);
+                $db3 = getDb();
+                /* Upsert: update jika sudah ada, insert jika belum */
+                $existing = $db3->prepare('SELECT id FROM kependudukan_dusun WHERE periode = ? AND nama_dusun = ?');
+                $existing->execute([$periode, $namaDusun]);
+                $existId = $existing->fetchColumn();
+                if ($existId) {
+                    $upd = $db3->prepare('UPDATE kependudukan_dusun SET jumlah_laki=?, jumlah_perempuan=?, jumlah_kk=?, jumlah_jiwa=?, updated_at=NOW() WHERE id=?');
+                    $ok3 = $upd->execute([(int)($_POST['jumlah_laki']??0),(int)($_POST['jumlah_perempuan']??0),(int)($_POST['jumlah_kk']??0),(int)($_POST['jumlah_jiwa']??0),(int)$existId]);
+                } else {
+                    $ins = $db3->prepare('INSERT INTO kependudukan_dusun (periode,nama_dusun,jumlah_laki,jumlah_perempuan,jumlah_kk,jumlah_jiwa) VALUES (?,?,?,?,?,?)');
+                    $ok3 = $ins->execute([$periode,$namaDusun,(int)($_POST['jumlah_laki']??0),(int)($_POST['jumlah_perempuan']??0),(int)($_POST['jumlah_kk']??0),(int)($_POST['jumlah_jiwa']??0)]);
+                }
+                ajaxResponse(['ok' => (bool)$ok3, 'message' => $ok3 ? 'Data dusun ' . $namaDusun . ' disimpan.' : 'Gagal menyimpan.']);
             }
             break;
         case 'dusun-delete':
@@ -567,6 +635,42 @@ function ajaxDispatch(string $modul, string $aksi): never
                 $did = (int)($_POST['id'] ?? 0);
                 $ok = $did > 0 && deleteDusunKependudukan($did);
                 ajaxResponse(['ok' => $ok, 'message' => $ok ? 'Dusun dihapus.' : 'Gagal menghapus.']);
+            }
+            break;
+        case 'dusun-master-list':
+            if ($modul === 'kependudukan') {
+                $dm = getDb()->query('SELECT id, nama, urutan, aktif FROM dusun_master ORDER BY urutan')->fetchAll(PDO::FETCH_ASSOC);
+                $h = '';
+                foreach ($dm as $i => $row) {
+                    $h .= '<tr class="border-b border-glass-border/30"><td class="py-2 px-3">' . ($i+1) . '</td><td class="py-2 px-3">' . e($row['nama']) . '</td><td class="py-2 px-3 text-center">' . $row['urutan'] . '</td>';
+                    $h .= '<td class="py-2 px-3 text-right"><button type="button" data-master-delete data-id="' . (int)$row['id'] . '" data-nama="' . e($row['nama']) . '" class="text-error/70 hover:text-error transition-colors"><span class="material-symbols-outlined text-[17px]">delete</span></button></td></tr>';
+                }
+                ajaxResponse(['ok' => true, 'html' => $h, 'rows' => $dm]);
+            }
+            break;
+        case 'dusun-master-save':
+            if ($modul === 'kependudukan') {
+                csrfValidate();
+                $nama = trim((string)($_POST['nama'] ?? ''));
+                $urt  = max(0, (int)($_POST['urutan'] ?? 0));
+                if ($nama === '') { ajaxResponse(['ok' => false, 'message' => 'Nama dusun wajib diisi.']); }
+                $db4 = getDb();
+                if ($urt === 0) {
+                    $urt = (int)$db4->query('SELECT COALESCE(MAX(urutan),0)+1 FROM dusun_master')->fetchColumn();
+                }
+                $ins = $db4->prepare('INSERT IGNORE INTO dusun_master (nama, urutan) VALUES (?, ?)');
+                $ins->execute([$nama, $urt]);
+                $newId = (int)$db4->lastInsertId();
+                ajaxResponse(['ok' => $newId > 0, 'message' => $newId > 0 ? 'Dusun "' . $nama . '" ditambahkan.' : 'Nama dusun sudah ada.']);
+            }
+            break;
+        case 'dusun-master-delete':
+            if ($modul === 'kependudukan') {
+                csrfValidate();
+                $mid = (int)($_POST['id'] ?? 0);
+                if ($mid <= 0) { ajaxResponse(['ok' => false, 'message' => 'ID tidak valid.']); }
+                $ok5 = (bool)getDb()->prepare('DELETE FROM dusun_master WHERE id = ?')->execute([$mid]);
+                ajaxResponse(['ok' => $ok5, 'message' => $ok5 ? 'Dusun dihapus dari master.' : 'Gagal menghapus.']);
             }
             break;
         default:

@@ -3,10 +3,17 @@ declare(strict_types=1);
 
 $judulHalaman = 'Manajemen Kependudukan';
 
-$terbaru = getDataKependudukanTerbaru();
-$dusunList = getKependudukanDusun();
-$tren = getTrenKependudukan();
-$logTerbaru = getLogTerbaru(5);
+$terbaru    = getDataKependudukanTerbaru();
+$dusunList  = getKependudukanDusun();   // periode terbaru otomatis dari function
+$tren       = getTrenKependudukan();
+
+// Periode dusun: ambil dari dusunList jika ada, fallback dari $terbaru
+$periodeLabel = '';
+if ($dusunList !== []) {
+    $periodeLabel = $dusunList[0]['periode'];
+} elseif ($terbaru !== null) {
+    $periodeLabel = $terbaru['periode'];
+}
 
 require __DIR__ . '/../layout.php';
 ?>
@@ -28,6 +35,8 @@ Tambah Data Periode
 
 <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
 <div class="md:col-span-12 flex flex-col gap-gutter">
+
+<!-- Stat Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
 <div class="group relative bg-surface-container p-stack-lg rounded-[20px] bg-glass-fill backdrop-blur-[16px] border border-glass-border hover:border-primary/40 transition-colors shadow-lg overflow-hidden">
 <div class="absolute -right-12 -top-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors"></div>
@@ -75,20 +84,28 @@ Tambah Data Periode
 </div>
 </div>
 </div>
+
+<!-- Tren Pertumbuhan Chart -->
 <div class="bg-surface-container p-stack-lg rounded-[20px] bg-glass-fill backdrop-blur-[16px] border border-glass-border shadow-lg">
 <div class="flex items-center justify-between mb-6">
 <div class="flex flex-col">
 <h2 class="font-headline-md text-headline-md text-on-surface">Tren Pertumbuhan Penduduk</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">Jumlah jiwa & kepala keluarga per periode</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Jumlah jiwa &amp; kepala keluarga per periode</p>
 </div>
 <span class="font-label-mono text-caption text-primary bg-primary/10 px-3 py-1.5 rounded-full"><?= count($tren['periode']) ?> periode</span>
 </div>
-<div class="w-full h-64" id="trendChart"></div>
+<?php if ($tren['periode'] === []): ?>
+<div class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant/40">show_chart</span>
+<p class="text-body-md font-body-md text-on-surface-variant">Belum ada data tren. Tambah minimal 2 periode.</p>
 </div>
-</div>
+<?php else: ?>
+<div class="w-full" id="trendChart" style="min-height:256px;"></div>
+<?php endif; ?>
 </div>
 
-<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg relative overflow-hidden group hover:border-primary/40 transition-colors duration-500 hover:-translate-y-[3px] mt-6">
+<!-- Tabel Riwayat Periode -->
+<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg relative overflow-hidden group hover:border-primary/40 transition-colors duration-500">
 <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/3"></div>
 <div id="penduduk-table" class="relative z-10" data-endpoint="<?= APP_BASE ?>/dashboard/ajax/kependudukan/list">
 <form id="penduduk-filter" class="flex flex-col md:flex-row items-stretch md:items-center gap-3 mb-4 relative z-10" onsubmit="return false;">
@@ -123,14 +140,21 @@ Tambah Data Periode
 </div>
 </div>
 
+<!-- Rekap per Dusun — periode terbaru dari DB -->
 <?php if ($dusunList !== []): ?>
-<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg mt-6 relative overflow-hidden">
+<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg mt-2 relative overflow-hidden">
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">holiday_village</span>
-<h2 class="text-headline-md font-headline-md text-on-surface m-0">Rekap per Dusun (<?= e($dusunList[0]['periode']) ?>)</h2>
+<h2 class="text-headline-md font-headline-md text-on-surface m-0">Rekap per Dusun
+<?php if ($periodeLabel !== ''): ?>
+<span class="text-label-mono font-label-mono text-primary text-sm ml-2">(<?= e($periodeLabel) ?>)</span>
+<?php endif; ?>
+</h2>
 </div>
-<span class="text-caption font-caption text-on-surface-variant">Data agregat per dusun untuk periode terbaru — dikelola langsung di database (read-only di dashboard).</span>
+<a href="<?= APP_BASE ?>/dashboard/kependudukan/form" class="text-caption font-caption text-primary hover:opacity-75 flex items-center gap-1 transition-opacity">
+<span class="material-symbols-outlined text-[16px]">edit</span>Kelola Data Dusun
+</a>
 </div>
 <div class="overflow-x-auto relative z-10">
 <table class="w-full text-left border-collapse min-w-[640px]">
@@ -155,39 +179,25 @@ Tambah Data Periode
 <td class="py-3 px-4 text-right text-label-mono font-label-mono text-primary"><?= formatAngka($d['jumlah_jiwa']) ?></td>
 </tr>
 <?php endforeach; ?>
-<tr class="bg-surface-container-highest/60">
-<td class="py-3 px-4 font-bold">Total</td>
-<td class="py-3 px-4 text-right text-label-mono font-label-mono font-bold"><?= formatAngka($sumDusun['laki']) ?></td>
-<td class="py-3 px-4 text-right text-label-mono font-label-mono font-bold"><?= formatAngka($sumDusun['perempuan']) ?></td>
-<td class="py-3 px-4 text-right text-label-mono font-label-mono font-bold"><?= formatAngka($sumDusun['kk']) ?></td>
-<td class="py-3 px-4 text-right text-label-mono font-label-mono font-bold text-primary"><?= formatAngka($sumDusun['jiwa']) ?></td>
+<tr class="bg-surface-container-highest/60 font-bold border-t border-glass-border/50">
+<td class="py-3 px-4">Total</td>
+<td class="py-3 px-4 text-right text-label-mono font-label-mono"><?= formatAngka($sumDusun['laki']) ?></td>
+<td class="py-3 px-4 text-right text-label-mono font-label-mono"><?= formatAngka($sumDusun['perempuan']) ?></td>
+<td class="py-3 px-4 text-right text-label-mono font-label-mono"><?= formatAngka($sumDusun['kk']) ?></td>
+<td class="py-3 px-4 text-right text-label-mono font-label-mono text-primary"><?= formatAngka($sumDusun['jiwa']) ?></td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 <?php endif; ?>
+
+</div>
+</div>
 </section>
 <script>
+/* Tabel AJAX diinisiasi di DOMContentLoaded */
 document.addEventListener('DOMContentLoaded', function () {
-    var trenOptions = {
-        series: [
-            { name: 'Jumlah Jiwa', data: <?= json_encode(array_map('intval', $tren['jumlah_jiwa'])) ?> },
-            { name: 'KK', data: <?= json_encode(array_map('intval', $tren['jumlah_kk'])) ?> }
-        ],
-        chart: { type: 'line', height: 256, toolbar: { show: false }, background: 'transparent' },
-        stroke: { curve: 'smooth', width: 2 },
-        xaxis: { categories: <?= json_encode($tren['periode']) ?>, labels: { style: { colors: '#c1cab0', fontSize: '11px' } } },
-        yaxis: { labels: { style: { colors: '#c1cab0', fontSize: '11px' } } },
-        colors: ['#c8ff80', '#bdcac0'],
-        grid: { borderColor: 'rgba(255,255,255,0.06)' },
-        legend: { labels: { colors: '#c1cab0' } },
-        theme: { mode: 'dark' }
-    };
-    if (document.querySelector('#trendChart')) {
-        new ApexCharts(document.querySelector('#trendChart'), trenOptions).render();
-    }
-
     AdminUI.initAjaxTable({
         name: 'penduduk',
         container: '#penduduk-table',
@@ -209,5 +219,50 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+/* ApexCharts diinisiasi setelah window load agar CDN pasti tersedia */
+<?php if ($tren['periode'] !== []): ?>
+window.addEventListener('load', function () {
+    try {
+        if (typeof ApexCharts === 'undefined') return;
+        var chartEl = document.querySelector('#trendChart');
+        if (!chartEl) return;
+        new ApexCharts(chartEl, {
+            series: [
+                { name: 'Jumlah Jiwa', data: <?= json_encode(array_map('intval', $tren['jumlah_jiwa'])) ?> },
+                { name: 'KK', data: <?= json_encode(array_map('intval', $tren['jumlah_kk'])) ?> }
+            ],
+            chart: {
+                type: 'area',
+                height: 260,
+                toolbar: { show: false },
+                background: 'transparent',
+                animations: { enabled: true, easing: 'easeinout', speed: 600 }
+            },
+            stroke: { curve: 'smooth', width: [2, 2] },
+            fill: {
+                type: 'gradient',
+                gradient: { shadeIntensity: 1, opacityFrom: 0.25, opacityTo: 0.02, stops: [0, 90, 100] }
+            },
+            xaxis: {
+                categories: <?= json_encode($tren['periode']) ?>,
+                labels: { style: { colors: '#c1cab0', fontSize: '11px' } },
+                axisBorder: { show: false },
+                axisTicks: { show: false }
+            },
+            yaxis: { labels: { style: { colors: '#c1cab0', fontSize: '11px' } } },
+            colors: ['#c8ff80', '#bdcac0'],
+            grid: { borderColor: 'rgba(255,255,255,0.06)', strokeDashArray: 4 },
+            legend: { labels: { colors: '#c1cab0' }, position: 'top' },
+            tooltip: { theme: 'dark' },
+            theme: { mode: 'dark' },
+            markers: { size: 4, colors: ['#c8ff80', '#bdcac0'], strokeWidth: 0 }
+        }).render();
+    } catch (err) {
+        console.warn('Kependudukan chart error:', err);
+    }
+});
+<?php endif; ?>
 </script>
+
 <?php require __DIR__ . '/../layout_close.php'; ?>

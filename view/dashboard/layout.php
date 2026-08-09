@@ -10,14 +10,35 @@ if ($basePrefix !== '' && str_starts_with($pagePath, $basePrefix)) {
     $pagePath = substr($pagePath, strlen($basePrefix));
 }
 
-$menuAdmin = [
-    'dashboard' => ['label' => 'Dashboard',      'icon' => 'dashboard',    'route' => '/dashboard',               'aktif' => $pagePath === '/dashboard'],
-    'wisata'    => ['label' => 'Wisata',          'icon' => 'landscape',    'route' => '/dashboard/wisata',        'aktif' => str_starts_with($pagePath, '/dashboard/wisata')],
-    'berita'    => ['label' => 'Berita',          'icon' => 'newspaper',    'route' => '/dashboard/berita',        'aktif' => str_starts_with($pagePath, '/dashboard/berita')],
-    'penduduk'  => ['label' => 'Kependudukan',   'icon' => 'group',        'route' => '/dashboard/kependudukan',  'aktif' => str_starts_with($pagePath, '/dashboard/kependudukan')],
-    'potensi'   => ['label' => 'Potensi Desa',   'icon' => 'psychiatry',   'route' => '/dashboard/potensi',       'aktif' => str_starts_with($pagePath, '/dashboard/potensi')],
-    'profil'    => ['label' => 'Profil Desa',    'icon' => 'home_work',    'route' => '/dashboard/profil',        'aktif' => str_starts_with($pagePath, '/dashboard/profil')],
-    'struktur'  => ['label' => 'Struktur',        'icon' => 'account_tree', 'route' => '/dashboard/struktur',      'aktif' => str_starts_with($pagePath, '/dashboard/struktur')],
+$menuGroups = [
+    'main' => [
+        'label' => 'Menu Utama',
+        'items' => [
+            'dashboard' => ['label' => 'Dashboard', 'icon' => 'dashboard', 'route' => '/dashboard', 'aktif' => $pagePath === '/dashboard'],
+        ],
+    ],
+    'konten' => [
+        'label' => 'Konten Desa',
+        'items' => [
+            'wisata'  => ['label' => 'Wisata',    'icon' => 'landscape', 'route' => '/dashboard/wisata',  'aktif' => str_starts_with($pagePath, '/dashboard/wisata')],
+            'berita'  => ['label' => 'Berita',    'icon' => 'newspaper', 'route' => '/dashboard/berita',  'aktif' => str_starts_with($pagePath, '/dashboard/berita')],
+        ],
+    ],
+    'data' => [
+        'label' => 'Data & Profil',
+        'items' => [
+            'penduduk' => ['label' => 'Kependudukan', 'icon' => 'group',        'route' => '/dashboard/kependudukan', 'aktif' => str_starts_with($pagePath, '/dashboard/kependudukan')],
+            'potensi'  => ['label' => 'Potensi Desa', 'icon' => 'psychiatry',   'route' => '/dashboard/potensi',      'aktif' => str_starts_with($pagePath, '/dashboard/potensi')],
+            'profil'   => ['label' => 'Profil Desa',  'icon' => 'home_work',    'route' => '/dashboard/profil',       'aktif' => str_starts_with($pagePath, '/dashboard/profil') && !str_starts_with($pagePath, '/dashboard/profil_')],
+            'struktur' => ['label' => 'Struktur',     'icon' => 'account_tree', 'route' => '/dashboard/struktur',     'aktif' => str_starts_with($pagePath, '/dashboard/struktur')],
+        ],
+    ],
+    'akun' => [
+        'label' => 'Pengaturan',
+        'items' => [
+            'adminprofil' => ['label' => 'Profil Admin', 'icon' => 'manage_accounts', 'route' => '/dashboard/admin/profil', 'aktif' => str_starts_with($pagePath, '/dashboard/admin')],
+        ],
+    ],
 ];
 
 $flashJson = json_encode(getFlash(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -51,10 +72,10 @@ $initClock = date('H:i:s');
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 <link href="<?= assetUrl('css/tailwind.css') ?>" rel="stylesheet"/>
 </head>
-<body class="bg-background font-body-md text-on-surface">
+<body class="bg-admin-bg font-body-md text-on-surface">
 
 <!-- ===== SIDEBAR ===== -->
-<aside id="admin-sidebar" class="fixed left-0 top-0 h-full w-72 bg-muted-forest z-50 flex flex-col border-r border-glass-border overflow-hidden transition-[width,transform] duration-300 ease-in-out">
+<aside id="admin-sidebar" class="fixed left-0 top-0 h-full w-72 bg-gradient-to-br from-[#123B28] to-[#0A2418] z-50 flex flex-col border-r border-glass-border overflow-hidden transition-[width,transform] duration-300 ease-in-out">
 
     <!-- Brand -->
     <div class="sidebar-brand flex items-center gap-3 px-5 py-4 border-b border-glass-border/40 shrink-0 overflow-hidden">
@@ -70,11 +91,13 @@ $initClock = date('H:i:s');
 
     <!-- Nav -->
     <nav class="flex-1 overflow-y-auto overflow-x-hidden py-3">
-        <?php foreach ($menuAdmin as $item): ?>
+        <?php foreach ($menuGroups as $group): ?>
+        <div class="sidebar-label px-5 pt-4 pb-1.5 text-[10px] font-semibold tracking-[0.16em] uppercase text-primary/50 whitespace-nowrap"><?= e($group['label']) ?></div>
+        <?php foreach ($group['items'] as $key => $item): ?>
         <a class="sidebar-link group flex items-center gap-4 px-5 py-3.5 mx-2 rounded-xl transition-all duration-200 whitespace-nowrap overflow-hidden
             <?= $item['aktif']
-                ? 'bg-primary/15 text-primary'
-                : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface' ?>"
+                ? 'bg-hijau text-white shadow-lg shadow-black/25'
+                : 'text-on-surface-variant hover:bg-hijau/25 hover:text-white' ?>"
            title="<?= e($item['label']) ?>"
            href="<?= APP_BASE . $item['route'] ?>">
             <span class="material-symbols-outlined flex-shrink-0 text-[22px]
@@ -84,9 +107,10 @@ $initClock = date('H:i:s');
             </span>
             <span class="sidebar-label text-sm font-medium truncate"><?= $item['label'] ?></span>
             <?php if ($item['aktif']): ?>
-            <span class="ml-auto w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0 sidebar-label"></span>
+            <span class="ml-auto w-1.5 h-1.5 rounded-full bg-white flex-shrink-0 sidebar-label"></span>
             <?php endif; ?>
         </a>
+        <?php endforeach; ?>
         <?php endforeach; ?>
     </nav>
 
@@ -111,43 +135,38 @@ $initClock = date('H:i:s');
 <div id="admin-main-wrap" class="admin-main transition-[padding] duration-300 ease-in-out min-h-screen flex flex-col">
 
     <!-- ===== TOPBAR ===== -->
-    <header id="admin-topbar" class="fixed top-0 right-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-glass-border z-[45] flex items-center justify-between gap-3 px-4 lg:px-6 transition-[left] duration-300 ease-in-out" style="left: 0;">
+    <header id="admin-topbar" class="fixed top-0 right-0 h-16 bg-admin-topbar backdrop-blur-xl border-b border-black/8 z-[45] flex items-center justify-between gap-3 px-4 lg:px-6 transition-[left] duration-300 ease-in-out" style="left: 0;">
 
         <!-- Left: hamburger + breadcrumb -->
         <div class="flex items-center gap-3 min-w-0">
             <button id="sidebar-toggle" type="button"
-                class="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl border border-glass-border bg-surface-container-high text-on-surface-variant hover:text-primary hover:border-primary/40 transition-colors"
+                class="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl border border-black/10 bg-white/70 text-hijau hover:text-primary hover:border-primary/40 transition-colors shadow-sm"
                 aria-label="Toggle sidebar">
                 <span class="material-symbols-outlined text-[20px]">menu</span>
             </button>
-            <span class="hidden sm:block text-sm text-on-surface-variant font-medium truncate"><?= e($judulHalaman) ?></span>
+            <span class="hidden sm:block text-sm text-hijau/70 font-medium truncate"><?= e($judulHalaman) ?></span>
         </div>
 
         <!-- Right: clock + notif + admin dropdown -->
         <div class="flex items-center gap-2 md:gap-4 shrink-0">
 
             <!-- Clock + Date -->
-            <div class="hidden md:flex items-center gap-2 bg-surface-container-high px-3 py-1.5 rounded-full border border-glass-border font-mono text-xs text-on-surface-variant select-none">
-                <span class="material-symbols-outlined text-[15px] text-primary">schedule</span>
+            <div class="hidden md:flex items-center gap-2 bg-white/70 px-3 py-1.5 rounded-full border border-black/10 font-mono text-xs text-hijau/80 select-none shadow-sm">
+                <span class="material-symbols-outlined text-[15px] text-hijau">schedule</span>
                 <span id="live-clock"><?= $initClock ?></span>
-                <span class="text-on-surface-variant/40 mx-0.5">|</span>
+                <span class="text-hijau/30 mx-0.5">|</span>
                 <span id="live-date"><?= $initDate ?></span>
             </div>
 
-            <!-- Notifikasi -->
-            <button type="button" class="relative w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors" aria-label="Notifikasi">
-                <span class="material-symbols-outlined text-[20px]">notifications</span>
-                <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full ring-2 ring-surface"></span>
-            </button>
 
             <!-- Admin Dropdown -->
             <div class="relative" id="admin-dropdown-wrap">
                 <button type="button" id="admin-dropdown-btn"
-                    class="flex items-center gap-2 pl-2 pr-1 py-1 rounded-xl hover:bg-surface-container-high transition-colors border border-transparent hover:border-glass-border"
+                    class="flex items-center gap-2 pl-2 pr-1 py-1 rounded-xl hover:bg-black/5 transition-colors border border-transparent hover:border-black/10"
                     aria-haspopup="true" aria-expanded="false">
                     <div class="hidden lg:flex flex-col text-right leading-tight">
-                        <span class="text-sm font-medium text-on-surface"><?= e($admin['nama'] ?? 'Admin') ?></span>
-                        <span class="text-xs text-primary">Super Admin</span>
+                        <span class="text-sm font-medium text-coklat"><?= e($admin['nama'] ?? 'Admin') ?></span>
+                        <span class="text-xs text-hijau">Super Admin</span>
                     </div>
                     <?php if (!empty($admin['foto'])): ?>
                     <img src="<?= e(uploadUrl($admin['foto'])) ?>" alt="Foto <?= e($admin['nama'] ?? 'Admin') ?>"
@@ -157,7 +176,7 @@ $initClock = date('H:i:s');
                         <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1">admin_panel_settings</span>
                     </div>
                     <?php endif; ?>
-                    <span class="material-symbols-outlined text-on-surface-variant text-[18px] transition-transform duration-200" id="admin-dropdown-chevron">expand_more</span>
+                    <span class="material-symbols-outlined text-hijau/60 text-[18px] transition-transform duration-200" id="admin-dropdown-chevron">expand_more</span>
                 </button>
 
                 <!-- Dropdown Menu -->
