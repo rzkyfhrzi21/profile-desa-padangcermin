@@ -17,8 +17,10 @@ Options -Indexes
     RewriteRule ^(AGENTS|ARSITEKTUR|DESIGN|README)\.md$ - [F,L]
     RewriteRule ^\.(git|codebase-memory|rtk|opencode)(/.*)?$ - [F,L]
 
-    # Semua request lain dialihkan ke public/
-    RewriteCond %{REQUEST_URI} !/public/
+    # Semua request lain dialihkan ke public/ — kecuali file/folder nyata
+    # (mis. uploads/) supaya gambar & file yang sudah ter-upload tetap bisa diakses langsung.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 

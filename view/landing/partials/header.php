@@ -17,6 +17,8 @@ $namaPekon = $profil['nama_pekon'] ?? 'Desa Padang Cermin';
 <nav class="flex items-center gap-1 md:gap-2 lg:gap-stack-lg w-full md:w-auto overflow-x-auto whitespace-nowrap [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden" id="main-nav">
 <a class="nav-link text-on-surface-variant hover:text-primary transition-colors font-body-md px-3 py-1.5 rounded-full" data-path="beranda" href="<?= APP_BASE ?>/">Beranda</a>
 <a class="nav-link text-on-surface-variant hover:text-primary transition-colors font-body-md px-3 py-1.5 rounded-full" data-path="profil" href="<?= APP_BASE ?>/#profil">Profil</a>
+<a class="nav-link text-on-surface-variant hover:text-primary transition-colors font-body-md px-3 py-1.5 rounded-full" data-path="struktur" href="<?= APP_BASE ?>/#struktur">Struktur</a>
+<a class="nav-link text-on-surface-variant hover:text-primary transition-colors font-body-md px-3 py-1.5 rounded-full" data-path="data" href="<?= APP_BASE ?>/#data">Data Penduduk</a>
 <a class="nav-link text-on-surface-variant hover:text-primary transition-colors font-body-md px-3 py-1.5 rounded-full" data-path="potensi" href="<?= APP_BASE ?>/#potensi">Potensi</a>
 <a class="nav-link text-on-surface-variant hover:text-primary transition-colors font-body-md px-3 py-1.5 rounded-full" data-path="wisata" href="<?= APP_BASE ?>/wisata">Wisata</a>
 <a class="nav-link text-on-surface-variant hover:text-primary transition-colors font-body-md px-3 py-1.5 rounded-full" data-path="berita" href="<?= APP_BASE ?>/berita">Berita</a>
