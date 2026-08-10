@@ -17,6 +17,23 @@ function getDataKependudukanTerbaru(): ?array
     return $stmt->fetch() ?: null;
 }
 
+/**
+ * Jumlah dusun unik pada periode kependudukan terbaru.
+ * Membaca dari kependudukan_dusun (bukan tabel dusun_master) agar
+ * angka di homepage konsisten dengan data yang benar-benar terisi.
+ */
+function getJumlahDusunTerbaru(): int
+{
+    $db = getDb();
+    $periode = $db->query('SELECT periode FROM data_kependudukan ORDER BY periode DESC LIMIT 1')->fetchColumn();
+    if ($periode === false) {
+        return 0;
+    }
+    $stmt = $db->prepare('SELECT COUNT(DISTINCT nama_dusun) FROM kependudukan_dusun WHERE periode = ?');
+    $stmt->execute([$periode]);
+    return (int) $stmt->fetchColumn();
+}
+
 function getKependudukanDusun(?string $periode = null): array
 {
     $db = getDb();

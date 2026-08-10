@@ -94,8 +94,8 @@ require __DIR__ . '/../layout.php';
 <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 md:mb-section-gap gap-4 md:gap-0">
 <div class="flex flex-col gap-2">
 <span class="text-label-mono font-label-mono text-primary uppercase tracking-widest">Data Demografi</span>
-<h1 class="text-headline-xl-mobile md:text-headline-xl font-headline-xl text-on-background m-0"><?= $editId > 0 ? 'Edit' : 'Tambah' ?> Data Kependudukan</h1>
-<p class="text-body-md font-body-md text-on-surface-variant m-0">Input data per dusun — total agregat dihitung otomatis.</p>
+<h1 class="text-headline-xl-mobile md:text-headline-xl font-headline-xl text-coklat m-0"><?= $editId > 0 ? 'Edit' : 'Tambah' ?> Data Kependudukan</h1>
+<p class="text-body-md font-body-md text-abu m-0">Input data per dusun — total agregat dihitung otomatis.</p>
 </div>
 <a class="text-caption font-caption text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" href="<?= APP_BASE ?>/dashboard/kependudukan">
 <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali ke daftar
@@ -108,18 +108,18 @@ require __DIR__ . '/../layout.php';
 <div class="col-span-12 xl:col-span-8 flex flex-col gap-stack-lg">
 
 <!-- Card Periode -->
-<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg relative overflow-hidden">
+<div class="bg-white rounded-[20px] border border-black/8 p-4 md:p-stack-lg relative overflow-hidden shadow-sm">
 <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/3"></div>
 <div class="flex items-center gap-3 relative z-10 mb-4">
-<div class="w-10 h-10 rounded-xl bg-surface-container border border-glass-border flex items-center justify-center text-primary">
+<div class="w-10 h-10 rounded-xl bg-admin-bg border border-black/8 flex items-center justify-center text-hijau">
 <span class="material-symbols-outlined">calendar_month</span>
 </div>
-<h2 class="text-headline-md font-headline-md text-on-surface m-0">Periode Data</h2>
+<h2 class="text-headline-md font-headline-md text-coklat m-0">Periode Data</h2>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md relative z-10">
 <div class="flex flex-col gap-2">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="bulan">Bulan</label>
-<select class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all" id="bulan">
+<label class="text-label-mono font-label-mono text-abu uppercase tracking-widest text-[12px]" for="bulan">Bulan</label>
+<select class="w-full bg-admin-bg border border-black/10 rounded-xl px-4 py-3 text-body-md font-body-md text-coklat focus:outline-none focus:border-hijau transition-all" id="bulan">
 <option value="">-- Pilih Bulan --</option>
 <?php foreach ($months as $k => $m): ?>
 <option value="<?= $k ?>" <?= $bulanAwal === $k ? 'selected' : '' ?>><?= $m ?></option>
@@ -127,23 +127,23 @@ require __DIR__ . '/../layout.php';
 </select>
 </div>
 <div class="flex flex-col gap-2">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="tahun">Tahun</label>
-<input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all" id="tahun" placeholder="2026" type="number" min="2000" max="2100" value="<?= e($tahunAwal) ?>"/>
+<label class="text-label-mono font-label-mono text-abu uppercase tracking-widest text-[12px]" for="tahun">Tahun</label>
+<input class="w-full bg-admin-bg border border-black/10 rounded-xl px-4 py-3 text-body-md font-body-md text-coklat focus:outline-none focus:border-hijau transition-all" id="tahun" placeholder="2026" type="number" min="2000" max="2100" value="<?= e($tahunAwal) ?>"/>
 </div>
 </div>
-<p class="text-caption font-caption text-on-surface-variant mt-3 m-0 relative z-10">Format YYYY-MM. Satu periode = satu baris data unik.</p>
+<p class="text-caption font-caption text-abu mt-3 m-0 relative z-10">Format YYYY-MM. Satu periode = satu baris data unik.</p>
 </div>
 
 <!-- Card Data Per Dusun -->
-<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg relative overflow-hidden" id="dusun-section" style="display:none">
+<div class="bg-white rounded-[20px] border border-black/8 p-4 md:p-stack-lg relative overflow-hidden shadow-sm" id="dusun-section" style="display:none">
 <div class="flex items-center justify-between relative z-10 mb-4">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-xl bg-surface-container border border-glass-border flex items-center justify-center text-primary">
+<div class="w-10 h-10 rounded-xl bg-admin-bg border border-black/8 flex items-center justify-center text-hijau">
 <span class="material-symbols-outlined">holiday_village</span>
 </div>
 <div>
-<h2 class="text-headline-md font-headline-md text-on-surface m-0">Data Per Dusun</h2>
-<p class="text-caption font-caption text-on-surface-variant m-0" id="periode-label"></p>
+<h2 class="text-headline-md font-headline-md text-coklat m-0">Data Per Dusun</h2>
+<p class="text-caption font-caption text-abu m-0" id="periode-label"></p>
 </div>
 </div>
 </div>
@@ -151,7 +151,7 @@ require __DIR__ . '/../layout.php';
 <div class="overflow-x-auto relative z-10">
 <table class="w-full text-left border-collapse min-w-[620px]">
 <thead>
-<tr class="text-label-mono font-label-mono text-on-surface-variant border-b border-glass-border/50">
+<tr class="text-label-mono font-label-mono text-abu border-b border-black/8">
 <th class="py-3 px-3 font-medium">Nama Dusun</th>
 <th class="py-3 px-3 font-medium text-right">Laki-laki</th>
 <th class="py-3 px-3 font-medium text-right">Perempuan</th>
@@ -170,24 +170,24 @@ require __DIR__ . '/../layout.php';
 <span class="material-symbols-outlined text-[18px]">save</span> Simpan Semua Dusun
 </button>
 </div>
-<p class="text-[11px] text-on-surface-variant mt-2 relative z-10">Edit nilai langsung di tabel → klik <strong>Simpan Semua Dusun</strong> untuk menyimpan seluruh data sekaligus.</p>
+<p class="text-[11px] text-abu mt-2 relative z-10">Edit nilai langsung di tabel → klik <strong>Simpan Semua Dusun</strong> untuk menyimpan seluruh data sekaligus.</p>
 </div>
 
 <!-- Card Kelola Daftar Dusun -->
-<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg relative overflow-hidden">
+<div class="bg-white rounded-[20px] border border-black/8 p-4 md:p-stack-lg relative overflow-hidden shadow-sm">
 <div class="flex items-center gap-3 relative z-10 mb-4">
-<div class="w-10 h-10 rounded-xl bg-surface-container border border-glass-border flex items-center justify-center text-primary">
+<div class="w-10 h-10 rounded-xl bg-admin-bg border border-black/8 flex items-center justify-center text-hijau">
 <span class="material-symbols-outlined">manage_accounts</span>
 </div>
 <div>
-<h2 class="text-headline-md font-headline-md text-on-surface m-0">Kelola Daftar Dusun</h2>
-<p class="text-caption font-caption text-on-surface-variant m-0">Tambah atau hapus nama dusun secara permanen</p>
+<h2 class="text-headline-md font-headline-md text-coklat m-0">Kelola Daftar Dusun</h2>
+<p class="text-caption font-caption text-abu m-0">Tambah atau hapus nama dusun secara permanen</p>
 </div>
 </div>
 <div class="overflow-x-auto relative z-10 mb-4">
 <table class="w-full text-left border-collapse min-w-[300px] text-body-md font-body-md">
 <thead>
-<tr class="text-label-mono font-label-mono text-on-surface-variant border-b border-glass-border/50">
+<tr class="text-label-mono font-label-mono text-abu border-b border-black/8">
 <th class="py-2 px-3 font-medium w-8">No</th>
 <th class="py-2 px-3 font-medium">Nama Dusun</th>
 <th class="py-2 px-3 font-medium text-center w-16">Urutan</th>
@@ -201,8 +201,8 @@ require __DIR__ . '/../layout.php';
 </div>
 <form id="form-master-dusun" class="flex gap-3 items-end flex-wrap relative z-10" autocomplete="off">
 <div class="flex flex-col gap-1 flex-1 min-w-[160px]">
-<label class="text-[11px] text-on-surface-variant uppercase tracking-wide">Nama Dusun Baru</label>
-<input type="text" id="master-nama" required maxlength="100" placeholder="Dusun Baru" class="w-full bg-surface-container-highest border border-glass-border rounded-lg px-3 py-2.5 text-body-md text-on-surface focus:border-primary focus:outline-none transition-all"/>
+<label class="text-[11px] text-abu uppercase tracking-wide">Nama Dusun Baru</label>
+<input type="text" id="master-nama" required maxlength="100" placeholder="Dusun Baru" class="w-full bg-admin-bg border border-black/10 rounded-lg px-3 py-2.5 text-body-md text-coklat focus:border-hijau focus:outline-none transition-all"/>
 </div>
 <button type="submit" class="shrink-0 bg-primary text-on-primary px-5 py-2.5 rounded-xl font-caption text-caption hover:shadow-lime-glow transition-all flex items-center gap-2">
 <span class="material-symbols-outlined text-[18px]">add</span> Tambah Dusun
@@ -216,36 +216,36 @@ require __DIR__ . '/../layout.php';
 <div class="col-span-12 xl:col-span-4 flex flex-col gap-stack-lg">
 
 <!-- Card Ringkasan Agregat (READONLY) -->
-<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-primary/25 bg-primary/5 p-4 md:p-stack-lg relative overflow-hidden">
+<div class="bg-white rounded-[20px] border border-black/8 bg-hijau/5 p-4 md:p-stack-lg relative overflow-hidden shadow-sm">
 <div class="absolute -left-8 -top-8 w-32 h-32 bg-primary/15 rounded-full blur-2xl"></div>
 <div class="flex items-center gap-3 relative z-10 mb-4">
 <div class="w-10 h-10 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center">
 <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1">bar_chart</span>
 </div>
 <div>
-<h2 class="text-headline-md font-headline-md text-on-surface m-0">Ringkasan Agregat</h2>
-<p class="text-[11px] text-primary/70 m-0">Dihitung otomatis dari data dusun</p>
+<h2 class="text-headline-md font-headline-md text-coklat m-0">Ringkasan Agregat</h2>
+<p class="text-[11px] text-hijau m-0">Dihitung otomatis dari data dusun</p>
 </div>
 </div>
 <div class="grid grid-cols-2 gap-3 relative z-10">
-<div class="bg-surface-container rounded-xl p-3 border border-glass-border/50">
-<p class="text-[11px] text-on-surface-variant uppercase tracking-wide mb-1">Jumlah KK</p>
-<p class="text-[28px] font-bold font-mono text-on-surface leading-none" id="preview-kk">0</p>
+<div class="bg-admin-bg rounded-xl p-3 border border-black/8">
+<p class="text-[11px] text-abu uppercase tracking-wide mb-1">Jumlah KK</p>
+<p class="text-[28px] font-bold font-mono text-coklat leading-none" id="preview-kk">0</p>
 </div>
-<div class="bg-surface-container rounded-xl p-3 border border-glass-border/50">
-<p class="text-[11px] text-on-surface-variant uppercase tracking-wide mb-1">Total Jiwa</p>
+<div class="bg-admin-bg rounded-xl p-3 border border-black/8">
+<p class="text-[11px] text-abu uppercase tracking-wide mb-1">Total Jiwa</p>
 <p class="text-[28px] font-bold font-mono text-primary leading-none" id="preview-jiwa">0</p>
 </div>
-<div class="bg-surface-container rounded-xl p-3 border border-glass-border/50">
-<p class="text-[11px] text-on-surface-variant uppercase tracking-wide mb-1">Laki-laki</p>
-<p class="text-[28px] font-bold font-mono text-on-surface leading-none" id="preview-laki">0</p>
+<div class="bg-admin-bg rounded-xl p-3 border border-black/8">
+<p class="text-[11px] text-abu uppercase tracking-wide mb-1">Laki-laki</p>
+<p class="text-[28px] font-bold font-mono text-coklat leading-none" id="preview-laki">0</p>
 </div>
-<div class="bg-surface-container rounded-xl p-3 border border-glass-border/50">
-<p class="text-[11px] text-on-surface-variant uppercase tracking-wide mb-1">Perempuan</p>
-<p class="text-[28px] font-bold font-mono text-on-surface leading-none" id="preview-perempuan">0</p>
+<div class="bg-admin-bg rounded-xl p-3 border border-black/8">
+<p class="text-[11px] text-abu uppercase tracking-wide mb-1">Perempuan</p>
+<p class="text-[28px] font-bold font-mono text-coklat leading-none" id="preview-perempuan">0</p>
 </div>
 </div>
-<p class="text-[11px] text-on-surface-variant mt-3 relative z-10">Total di atas dihitung ulang dari tabel data per dusun saat menyimpan.</p>
+<p class="text-[11px] text-abu mt-3 relative z-10">Total di atas dihitung ulang dari tabel data per dusun saat menyimpan.</p>
 </div>
 
 <!-- Form Simpan Periode (hidden fields) -->
@@ -253,14 +253,14 @@ require __DIR__ . '/../layout.php';
 <?= csrfField() ?>
 <input type="hidden" name="aksi" value="save"/>
 <input type="hidden" id="periode-hidden" name="periode" required/>
-<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg flex flex-col gap-3">
+<div class="bg-white rounded-[20px] border border-black/8 p-4 md:p-stack-lg flex flex-col gap-3 shadow-sm">
 <div class="flex flex-col gap-2">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="keterangan">Keterangan <span class="text-on-surface-variant/50 normal-case">(opsional)</span></label>
-<textarea class="w-full min-h-[80px] bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50 resize-none" id="keterangan" name="keterangan" placeholder="Contoh: Data hasil pemutakhiran akhir tahun..."><?= e(trim((string) ($dataKep['keterangan'] ?? ''))) ?></textarea>
+<label class="text-label-mono font-label-mono text-abu uppercase tracking-widest text-[12px]" for="keterangan">Keterangan <span class="text-abu/50 normal-case">(opsional)</span></label>
+<textarea class="w-full min-h-[80px] bg-admin-bg border border-black/10 rounded-xl px-4 py-3 text-body-md font-body-md text-coklat focus:outline-none focus:border-hijau transition-all placeholder:text-abu/50 resize-none" id="keterangan" name="keterangan" placeholder="Contoh: Data hasil pemutakhiran akhir tahun..."><?= e(trim((string) ($dataKep['keterangan'] ?? ''))) ?></textarea>
 </div>
-<div class="flex items-center justify-between pt-2 border-t border-glass-border/40">
+<div class="flex items-center justify-between pt-2 border-t border-black/8">
 <div class="flex flex-col gap-0.5">
-<span class="text-caption font-caption text-on-surface-variant">Data sudah sesuai?</span>
+<span class="text-caption font-caption text-abu">Data sudah sesuai?</span>
 <span class="text-label-mono font-label-mono text-primary uppercase tracking-widest text-[11px]" id="label-periode-simpan"><?= $editId > 0 ? e($dataKep['periode']) : 'Belum dipilih' ?></span>
 </div>
 <button class="bg-primary text-on-primary font-caption text-caption px-6 py-3 rounded-full flex items-center gap-2 hover:shadow-lime-glow transition-all duration-300 whitespace-nowrap" type="submit" id="btn-simpan">

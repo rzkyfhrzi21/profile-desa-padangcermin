@@ -10,6 +10,7 @@ $totalLaki = $penduduk['jumlah_laki'] ?? 0;
 $totalPerempuan = $penduduk['jumlah_perempuan'] ?? 0;
 $periodeKependudukan = $penduduk['periode'] ?? '';
 $dusunList = getKependudukanDusun();
+$jumlahDusun = getJumlahDusunTerbaru();  // jumlah dusun unik dari data kependudukan terbaru
 $potensiList = getPotensiList(true);
 $wisataList = getWisataWithGambar(getWisataList(true, 6));
 $wisataCount = count(getWisataList(true));
@@ -137,7 +138,7 @@ Lihat Data Desa
 </div>
 <div class="flex justify-between items-center mt-2">
 <span class="font-caption text-caption text-on-surface-variant">Laki-laki <?= $pctLaki ?>%</span>
-<span class="font-caption text-caption text-on-surface-variant"><?= count($dusunList) ?> dusun</span>
+<span class="font-caption text-caption text-on-surface-variant"><?= $jumlahDusun ?> dusun</span>
 </div>
 </div>
 </div>
@@ -171,7 +172,7 @@ Lihat Data Desa
 <span class="material-symbols-outlined">holiday_village</span>
 </div>
 <div>
-<h4 class="font-headline-lg text-headline-lg text-on-surface"><?= count($dusunList) ?></h4>
+<h4 class="font-headline-lg text-headline-lg text-on-surface"><?= $jumlahDusun ?></h4>
 <p class="font-label-mono text-label-mono text-on-surface-variant">DUSUN</p>
 </div>
 </div>
