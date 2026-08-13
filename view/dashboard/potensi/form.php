@@ -15,10 +15,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $judul = trim((string) ($_POST['judul'] ?? ''));
     $deskripsi = trim((string) ($_POST['deskripsi'] ?? ''));
     $kategori = trim((string) ($_POST['kategori'] ?? ''));
+    if ($kategori === '__new__') {
+        $kategori = trim((string) ($_POST['kategori_baru'] ?? ''));
+    }
     $urutan = trim((string) ($_POST['urutan'] ?? ''));
     $status = ($_POST['status'] ?? 'aktif') === 'nonaktif' ? 'nonaktif' : 'aktif';
     $ikon = trim((string) ($_POST['ikon'] ?? ''));
-    $gambarLama = $potensi['gambar'] ?? null;
+    $gambar = $potensi['gambar'] ?? null;
 
     $errors = [];
     if ($judul === '') {
@@ -30,22 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($deskripsi === '') {
         $errors[] = 'Deskripsi potensi wajib diisi.';
     }
+    if (($_POST['kategori'] ?? '') === '__new__' && $kategori === '') {
+        $errors[] = 'Nama kategori baru wajib diisi.';
+    }
     if (mb_strlen($kategori) > 100) {
         $errors[] = 'Kategori maksimal 100 karakter.';
     }
     if ($urutan !== '' && !is_numeric($urutan)) {
         $errors[] = 'Urutan harus berupa angka.';
-    }
-
-    $gambar = $gambarLama;
-    $adaFile = ($_FILES['gambar']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
-    if ($adaFile && $errors === []) {
-        $up = handleUpload($_FILES['gambar'], 'potensi', $judul);
-        if (!$up['ok']) {
-            $errors[] = $up['error'];
-        } else {
-            $gambar = $up['path'];
-        }
     }
 
     if ($errors !== []) {
@@ -68,10 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if ($editId > 0) {
             if (updatePotensi($editId, $data)) {
-                if ($adaFile && !empty($gambarLama) && $gambarLama !== $gambar) {
-                    $file = UPLOAD_PATH . '/' . $gambarLama;
-                    if (is_file($file)) { @unlink($file); }
-                }
                 catatLog('edit potensi: ' . $judul, 'potensi_desa', $editId);
                 flash('success', 'Potensi berhasil diperbarui.');
             } else {
@@ -96,6 +87,20 @@ $v = static function (string $field) use ($potensi): string {
     return e(trim((string) ($_POST[$field] ?? ($potensi[$field] ?? ''))));
 };
 
+$currentKat = trim((string) ($_POST['kategori'] ?? ($potensi['kategori'] ?? '')));
+$kategoriOptions = getPotensiKategoriList();
+$hasMatch = false;
+foreach ($kategoriOptions as $katOpt) {
+    if (strtolower($currentKat) === strtolower($katOpt)) {
+        $hasMatch = true;
+        break;
+    }
+}
+$isNewKat = $currentKat === '__new__' || ($currentKat !== '' && !$hasMatch);
+$kategoriBaruVal = $isNewKat
+    ? trim((string) ($_POST['kategori_baru'] ?? ($potensi['kategori'] ?? '')))
+    : '';
+
 require __DIR__ . '/../layout.php';
 ?>
 <section>
@@ -109,7 +114,7 @@ require __DIR__ . '/../layout.php';
 </a>
 </div>
 
-<form method="post" action="<?= APP_BASE ?>/dashboard/potensi/form<?= $editId > 0 ? '?id=' . $editId : '' ?>" enctype="multipart/form-data">
+<form method="post" action="<?= APP_BASE ?>/dashboard/potensi/form<?= $editId > 0 ? '?id=' . $editId : '' ?>">
 <?= csrfField() ?>
 <div class="grid grid-cols-12 gap-gutter">
 <div class="col-span-12 xl:col-span-8 flex flex-col gap-stack-lg">
@@ -127,13 +132,13 @@ require __DIR__ . '/../layout.php';
 <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="kategori">Kategori</label>
 <select class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all" id="kategori" name="kategori">
 <option value="">— Tanpa kategori —</option>
-<option value="pertanian" <?= $v('kategori') === 'pertanian' ? 'selected' : '' ?>>Pertanian</option>
-<option value="perkebunan" <?= $v('kategori') === 'perkebunan' ? 'selected' : '' ?>>Perkebunan</option>
-<option value="peternakan" <?= $v('kategori') === 'peternakan' ? 'selected' : '' ?>>Peternakan</option>
-<option value="perikanan" <?= $v('kategori') === 'perikanan' ? 'selected' : '' ?>>Perikanan</option>
-<option value="umkm" <?= $v('kategori') === 'umkm' ? 'selected' : '' ?>>UMKM</option>
-<option value="kerajinan" <?= $v('kategori') === 'kerajinan' ? 'selected' : '' ?>>Kerajinan</option>
+<?php foreach ($kategoriOptions as $katOpt): ?>
+<option value="<?= e($katOpt) ?>" <?= strtolower($currentKat) === strtolower($katOpt) ? 'selected' : '' ?>><?= e($katOpt) ?></option>
+<?php endforeach; ?>
+<option value="__new__" <?= $isNewKat ? 'selected' : '' ?>>— Tambah kategori baru —</option>
 </select>
+<input class="w-full mt-2 bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all placeholder:text-on-surface-variant/50 <?= $isNewKat ? '' : 'hidden' ?>" id="kategori-baru" name="kategori_baru" placeholder="Nama kategori baru, contoh: Agrowisata" type="text" value="<?= e($kategoriBaruVal) ?>"/>
+<p class="text-[11px] text-on-surface-variant mt-1 <?= $isNewKat ? '' : 'hidden' ?>" id="kategori-baru-hint">Ketik nama kategori baru, atau pilih opsi lain untuk membatalkan.</p>
 </div>
 </div>
 </div>
@@ -178,33 +183,6 @@ require __DIR__ . '/../layout.php';
 </div>
 </div>
 
-<div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg flex flex-col gap-stack-md relative overflow-hidden">
-<div class="flex items-center gap-3 relative z-10">
-<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">image</span>
-<h2 class="text-headline-md font-headline-md text-on-surface m-0">Gambar Potensi</h2>
-</div>
-<?php if ($editId > 0 && !empty($potensi['gambar'])): ?>
-<div class="relative z-10">
-<img class="w-full h-40 object-cover rounded-xl border border-glass-border cursor-pointer"
-     data-lightbox="<?= uploadUrl($potensi['gambar']) ?>"
-     data-skeleton
-     alt="Gambar potensi <?= e($potensi['judul']) ?>"
-     src="<?= uploadUrl($potensi['gambar']) ?>"/>
-<p class="text-[11px] text-on-surface-variant mt-1">Klik gambar untuk lihat full-size</p>
-</div>
-<?php endif; ?>
-<div class="flex flex-col gap-2 relative z-10">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="gambar">Unggah Gambar</label>
-<input class="w-full text-caption font-caption text-on-surface-variant file:mr-4 file:rounded-xl file:border-0 file:bg-surface-container-highest file:px-4 file:py-2.5 file:text-on-surface file:cursor-pointer hover:file:bg-surface-container transition-colors" id="gambar" name="gambar" type="file" accept="image/jpeg,image/png,image/webp,image/gif"/>
-</div>
-<!-- Preview gambar baru -->
-<div id="gambar-preview-wrap" class="hidden relative z-10">
-<img id="gambar-preview-img" src="" alt="Preview gambar" class="w-full h-40 object-cover rounded-xl border border-primary/30"/>
-<p class="text-[11px] text-primary mt-1">Preview gambar yang akan diupload</p>
-</div>
-<p class="text-[11px] text-on-surface-variant relative z-10 m-0">Max 2 MB · JPG, PNG, WEBP · Kosongkan jika tidak ganti gambar</p>
-</div>
-
 <div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg flex items-center justify-between gap-4">
 <div class="flex flex-col gap-1">
 <span class="text-caption font-caption text-on-surface-variant">Siap ditampilkan?</span>
@@ -230,26 +208,31 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* Gambar file preview */
-    var gambarInput = document.getElementById('gambar');
-    var previewWrap = document.getElementById('gambar-preview-wrap');
-    var previewImg  = document.getElementById('gambar-preview-img');
-    if (gambarInput && previewWrap && previewImg) {
-        gambarInput.addEventListener('change', function () {
-            var file = this.files && this.files[0];
-            if (!file) { previewWrap.classList.add('hidden'); return; }
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                previewImg.src = e.target.result;
-                previewWrap.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        });
+    var kategoriSelect = document.getElementById('kategori');
+    var kategoriBaru = document.getElementById('kategori-baru');
+    var kategoriBaruHint = document.getElementById('kategori-baru-hint');
+    var toggleKategoriBaru = function () {
+        var show = kategoriSelect && kategoriSelect.value === '__new__';
+        if (kategoriBaru) { kategoriBaru.classList.toggle('hidden', !show); }
+        if (kategoriBaruHint) { kategoriBaruHint.classList.toggle('hidden', !show); }
+        if (show && kategoriBaru) { kategoriBaru.focus(); }
+    };
+    if (kategoriSelect) {
+        kategoriSelect.addEventListener('change', toggleKategoriBaru);
+        if (kategoriBaru) {
+            kategoriBaru.addEventListener('input', function () {
+                var val = this.value.trim().toLowerCase();
+                for (var i = 0; i < kategoriSelect.options.length; i++) {
+                    var opt = kategoriSelect.options[i];
+                    if (opt.value !== '' && opt.value !== '__new__' && opt.text.trim().toLowerCase() === val) {
+                        kategoriSelect.value = opt.value;
+                        toggleKategoriBaru();
+                        return;
+                    }
+                }
+            });
+        }
     }
-
-    /* Skeleton & lightbox init */
-    if (typeof MediaHelpers !== 'undefined') MediaHelpers.initSkeleton(document.body);
 });
 </script>
 <?php require __DIR__ . '/../layout_close.php'; ?>
-

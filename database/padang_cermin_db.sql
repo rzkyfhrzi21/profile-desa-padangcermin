@@ -168,7 +168,7 @@ CREATE TABLE `kependudukan_dusun` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_kd_periode_dusun` (`periode`,`nama_dusun`),
   KEY `idx_kd_periode` (`periode`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data tabel `kependudukan_dusun`: 9 baris
 INSERT INTO `kependudukan_dusun` (`id`,`periode`,`nama_dusun`,`jumlah_laki`,`jumlah_perempuan`,`jumlah_kk`,`jumlah_jiwa`,`updated_at`) VALUES
@@ -179,8 +179,7 @@ INSERT INTO `kependudukan_dusun` (`id`,`periode`,`nama_dusun`,`jumlah_laki`,`jum
 (5, '2026-04', 'Kejadian', 310, 278, 169, 588, '2026-08-08 15:07:04'),
 (6, '2026-04', 'Kecapi', 479, 463, 284, 942, '2026-08-08 15:07:04'),
 (7, '2026-04', 'Bambu Kuning', 331, 439, 182, 770, '2026-08-08 15:07:04'),
-(8, '2026-04', 'Lubuk Bakak', 919, 904, 441, 1823, '2026-08-09 19:56:59'),
-(9, '2026-04', 'Tes', 1, 1, 11, 1, '2026-08-09 14:10:21');
+(8, '2026-04', 'Lubuk Bakak', 919, 904, 441, 1823, '2026-08-09 19:56:59');
 
 -- ------------------------------------------------------------
 -- Struktur tabel `log_aktivitas`
@@ -258,10 +257,11 @@ CREATE TABLE `potensi_desa` (
 
 -- Data tabel `potensi_desa`: 4 baris
 INSERT INTO `potensi_desa` (`id`,`judul`,`deskripsi`,`gambar`,`kategori`,`ikon`,`urutan`,`status`,`created_at`,`updated_at`) VALUES
-(1, 'Sentra Produksi Pisang', 'Desa Padang Cermin menjadi sentra produksi pisang, terutama pisang ambon, dengan luas lahan produksi sekitar 152 hektare. Pisang menjadi mata pencaharian dan komoditas utama sebagian besar masyarakat.', 'potensi/dc59c9c74d9d5810.png', NULL, '', 1, 'aktif', '2026-08-08 15:07:04', '2026-08-09 20:27:28'),
-(2, 'Pertanian & Perkebunan', 'Desa terluas di Kecamatan Padang Cermin dengan luas areal mencapai sekitar 3.278 hektare. Komoditas utama meliputi pertanian padi serta perkebunan kopi dan lada.', NULL, 'Pertanian', NULL, 2, 'aktif', '2026-08-08 15:07:04', '2026-08-08 15:07:04'),
-(3, 'Jalur Strategis Pariwisata', 'Letak Desa Padang Cermin berfungsi sebagai jalur akses penting dari Kota Bandar Lampung menuju kawasan wisata bahari di Pesawaran dan sekitarnya.', NULL, 'Infrastruktur', NULL, 3, 'aktif', '2026-08-08 15:07:04', '2026-08-08 15:07:04'),
-(4, 'Agrowisata Air Terjun', 'Kawasan agrowisata air terjun yang terletak di Dusun Lubuk Bakak RT 005 Desa Padang Cermin. Saat ini sangat banyak dikunjungi wisatawan, baik lokal, luar daerah, maupun dari luar pulau.', NULL, 'Pariwisata', NULL, 4, 'aktif', '2026-08-08 15:07:04', '2026-08-08 15:07:04');
+(1, 'Sentra Produksi Pisang', 'Desa Padang Cermin menjadi sentra produksi pisang, terutama pisang ambon, dengan luas lahan produksi sekitar 152 hektare. Pisang menjadi mata pencaharian dan komoditas utama sebagian besar masyarakat.', 'potensi/dc59c9c74d9d5810.png', 'Pertanian', 'eco', 1, 'aktif', '2026-08-08 15:07:04', '2026-08-09 20:27:28'),
+(2, 'Pertanian Padi', 'Potensi pertanian tanaman pangan unggulan berbasis padi sawah yang menjadi penopang utama ketahanan pangan di Desa Padang Cermin.', NULL, 'Pertanian', 'grain', 2, 'aktif', '2026-08-08 15:07:04', '2026-08-08 15:07:04'),
+(3, 'Perkebunan Kopi, Pala & Cokelat', 'Sektor perkebunan pekon menghasilkan komoditas komersial bernilai tinggi seperti kopi robusta, pala, dan cokelat (kakao) yang dibudidayakan secara produktif.', NULL, 'Perkebunan', 'forest', 3, 'aktif', '2026-08-08 15:07:04', '2026-08-08 15:07:04'),
+(4, 'Jalur Strategis Pariwisata', 'Letak Desa Padang Cermin berfungsi sebagai jalur akses penting dari Kota Bandar Lampung menuju kawasan wisata bahari di Pesawaran dan sekitarnya.', NULL, 'Infrastruktur', 'alt_route', 4, 'aktif', '2026-08-08 15:07:04', '2026-08-08 15:07:04'),
+(5, 'Agrowisata Air Terjun', 'Kawasan agrowisata air terjun yang terletak di Dusun Lubuk Bakak RT 005 Desa Padang Cermin. Saat ini sangat banyak dikunjungi wisatawan, baik lokal, luar daerah, maupun dari luar pulau.', NULL, 'Pariwisata', 'tour', 5, 'aktif', '2026-08-08 15:07:04', '2026-08-08 15:07:04');
 
 -- ------------------------------------------------------------
 -- Struktur tabel `profil_desa`

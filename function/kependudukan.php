@@ -29,7 +29,12 @@ function getJumlahDusunTerbaru(): int
     if ($periode === false) {
         return 0;
     }
-    $stmt = $db->prepare('SELECT COUNT(DISTINCT nama_dusun) FROM kependudukan_dusun WHERE periode = ?');
+    $stmt = $db->prepare(
+        'SELECT COUNT(DISTINCT kd.nama_dusun)
+         FROM kependudukan_dusun kd
+         INNER JOIN dusun_master dm ON dm.nama = kd.nama_dusun AND dm.aktif = 1
+         WHERE kd.periode = ?'
+    );
     $stmt->execute([$periode]);
     return (int) $stmt->fetchColumn();
 }
@@ -43,7 +48,13 @@ function getKependudukanDusun(?string $periode = null): array
             return [];
         }
     }
-    $stmt = $db->prepare('SELECT * FROM kependudukan_dusun WHERE periode = ? ORDER BY jumlah_jiwa DESC, nama_dusun ASC');
+    $stmt = $db->prepare(
+        'SELECT kd.*
+         FROM kependudukan_dusun kd
+         INNER JOIN dusun_master dm ON dm.nama = kd.nama_dusun AND dm.aktif = 1
+         WHERE kd.periode = ?
+         ORDER BY kd.jumlah_jiwa DESC, kd.nama_dusun ASC'
+    );
     $stmt->execute([$periode]);
     return $stmt->fetchAll();
 }
@@ -146,4 +157,45 @@ function deleteDusunKependudukan(int $id): bool
     $db = getDb();
     $stmt = $db->prepare('DELETE FROM kependudukan_dusun WHERE id = ?');
     return $stmt->execute([$id]);
+}
+
+function deleteDusunMaster(int $id): ?string
+{
+    $db = getDb();
+    $stmt = $db->prepare('SELECT nama FROM dusun_master WHERE id = ?');
+    $stmt->execute([$id]);
+    $nama = $stmt->fetchColumn();
+    if ($nama === false) {
+        return null;
+    }
+
+    $db->beginTransaction();
+    try {
+        $periodeStmt = $db->prepare('SELECT DISTINCT periode FROM kependudukan_dusun WHERE nama_dusun = ?');
+        $periodeStmt->execute([$nama]);
+        $periodeList = $periodeStmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $db->prepare('DELETE FROM kependudukan_dusun WHERE nama_dusun = ?')->execute([$nama]);
+        $db->prepare('DELETE FROM dusun_master WHERE id = ?')->execute([$id]);
+
+        $aggregateStmt = $db->prepare(
+            'UPDATE data_kependudukan dk
+             SET jumlah_kk = (SELECT COALESCE(SUM(kd.jumlah_kk), 0) FROM kependudukan_dusun kd WHERE kd.periode = dk.periode),
+                 jumlah_jiwa = (SELECT COALESCE(SUM(kd.jumlah_jiwa), 0) FROM kependudukan_dusun kd WHERE kd.periode = dk.periode),
+                 jumlah_laki = (SELECT COALESCE(SUM(kd.jumlah_laki), 0) FROM kependudukan_dusun kd WHERE kd.periode = dk.periode),
+                 jumlah_perempuan = (SELECT COALESCE(SUM(kd.jumlah_perempuan), 0) FROM kependudukan_dusun kd WHERE kd.periode = dk.periode)
+             WHERE dk.periode = ?'
+        );
+        foreach ($periodeList as $periode) {
+            $aggregateStmt->execute([(string) $periode]);
+        }
+
+        $db->commit();
+        return (string) $nama;
+    } catch (Throwable $t) {
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
+        throw $t;
+    }
 }

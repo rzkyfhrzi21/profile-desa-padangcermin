@@ -591,12 +591,12 @@ function ajaxDispatch(string $modul, string $aksi): never
                 $rowsForJs = [];
                 foreach ($dusunRows as $d) {
                     $did = $d['dusun_id'];
-                    $h .= '<tr data-id="' . (int)($did ?? 0) . '" data-nama="' . e($d['nama_dusun']) . '">';
-                    $h .= '<td class="py-2 px-3 text-on-surface">' . e($d['nama_dusun']) . '</td>';
-                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-1 text-label-mono text-right focus:border-primary focus:outline-none" data-field="laki" value="' . (int)$d['jumlah_laki'] . '"/></td>';
-                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-1 text-label-mono text-right focus:border-primary focus:outline-none" data-field="perempuan" value="' . (int)$d['jumlah_perempuan'] . '"/></td>';
-                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-1 text-label-mono text-right focus:border-primary focus:outline-none" data-field="kk" value="' . (int)$d['jumlah_kk'] . '"/></td>';
-                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-1 text-label-mono text-right focus:border-primary focus:outline-none" data-field="jiwa" value="' . (int)$d['jumlah_jiwa'] . '"/></td>';
+                    $h .= '<tr class="border-b border-black/6 text-coklat" data-id="' . (int)($did ?? 0) . '" data-nama="' . e($d['nama_dusun']) . '">';
+                    $h .= '<td class="py-2 px-3 font-medium text-coklat">' . e($d['nama_dusun']) . '</td>';
+                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-admin-bg border border-black/10 rounded-lg px-2 py-1 text-label-mono text-coklat text-right focus:border-hijau focus:outline-none" data-field="laki" value="' . (int)$d['jumlah_laki'] . '"/></td>';
+                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-admin-bg border border-black/10 rounded-lg px-2 py-1 text-label-mono text-coklat text-right focus:border-hijau focus:outline-none" data-field="perempuan" value="' . (int)$d['jumlah_perempuan'] . '"/></td>';
+                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-admin-bg border border-black/10 rounded-lg px-2 py-1 text-label-mono text-coklat text-right focus:border-hijau focus:outline-none" data-field="kk" value="' . (int)$d['jumlah_kk'] . '"/></td>';
+                    $h .= '<td class="py-2 px-3 text-right"><input type="number" min="0" class="dusun-inp w-20 bg-admin-bg border border-black/10 rounded-lg px-2 py-1 text-label-mono text-coklat text-right focus:border-hijau focus:outline-none" data-field="jiwa" value="' . (int)$d['jumlah_jiwa'] . '"/></td>';
                     $h .= '</tr>';
                     $rowsForJs[] = [
                         'jumlah_kk'        => (int)$d['jumlah_kk'],
@@ -642,8 +642,8 @@ function ajaxDispatch(string $modul, string $aksi): never
                 $dm = getDb()->query('SELECT id, nama, urutan, aktif FROM dusun_master ORDER BY urutan')->fetchAll(PDO::FETCH_ASSOC);
                 $h = '';
                 foreach ($dm as $i => $row) {
-                    $h .= '<tr class="border-b border-glass-border/30"><td class="py-2 px-3">' . ($i+1) . '</td><td class="py-2 px-3">' . e($row['nama']) . '</td><td class="py-2 px-3 text-center">' . $row['urutan'] . '</td>';
-                    $h .= '<td class="py-2 px-3 text-right"><button type="button" data-master-delete data-id="' . (int)$row['id'] . '" data-nama="' . e($row['nama']) . '" class="text-error/70 hover:text-error transition-colors"><span class="material-symbols-outlined text-[17px]">delete</span></button></td></tr>';
+                    $h .= '<tr class="border-b border-black/6 text-coklat"><td class="py-2 px-3">' . ($i+1) . '</td><td class="py-2 px-3 font-medium">' . e($row['nama']) . '</td><td class="py-2 px-3 text-center text-abu">' . $row['urutan'] . '</td>';
+                    $h .= '<td class="py-2 px-3 text-right"><button type="button" data-master-delete data-id="' . (int)$row['id'] . '" data-nama="' . e($row['nama']) . '" class="inline-flex w-9 h-9 items-center justify-center rounded-lg text-red-600 hover:bg-red-50 transition-colors" aria-label="Hapus dusun ' . e($row['nama']) . '"><span class="material-symbols-outlined text-[18px]">delete</span></button></td></tr>';
                 }
                 ajaxResponse(['ok' => true, 'html' => $h, 'rows' => $dm]);
             }
@@ -669,8 +669,16 @@ function ajaxDispatch(string $modul, string $aksi): never
                 csrfValidate();
                 $mid = (int)($_POST['id'] ?? 0);
                 if ($mid <= 0) { ajaxResponse(['ok' => false, 'message' => 'ID tidak valid.']); }
-                $ok5 = (bool)getDb()->prepare('DELETE FROM dusun_master WHERE id = ?')->execute([$mid]);
-                ajaxResponse(['ok' => $ok5, 'message' => $ok5 ? 'Dusun dihapus dari master.' : 'Gagal menghapus.']);
+                try {
+                    $namaDihapus = deleteDusunMaster($mid);
+                    if ($namaDihapus === null) {
+                        ajaxResponse(['ok' => false, 'message' => 'Dusun tidak ditemukan.']);
+                    }
+                    catatLog('hapus dusun: ' . $namaDihapus, 'dusun_master', $mid);
+                    ajaxResponse(['ok' => true, 'message' => 'Dusun "' . $namaDihapus . '" dan seluruh data periodenya berhasil dihapus.']);
+                } catch (Throwable $t) {
+                    ajaxResponse(['ok' => false, 'message' => 'Gagal menghapus dusun dan data periodenya.']);
+                }
             }
             break;
         default:

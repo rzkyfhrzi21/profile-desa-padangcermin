@@ -13,7 +13,7 @@ $totalJiwa = $totalJiwa ?? 0;
 <span class="font-label-mono text-label-mono text-primary">TRANSPARANSI DATA</span>
 <h2 class="font-headline-lg text-headline-lg text-on-surface max-w-lg">Data Penduduk,<br/>Per Dusun.</h2>
 <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mt-2">
-Rekapitulasi jumlah penduduk <?= e($periodeKependudukan) ?> dari 8 dusun di Desa Padang Cermin. Data diperbarui berkala oleh perangkat desa.
+Rekapitulasi jumlah penduduk <?= e($periodeKependudukan) ?> dari <?= count($dusunList) ?> dusun di Desa Padang Cermin. Data diperbarui berkala oleh perangkat desa.
 </p>
 </div>
 </div>

@@ -194,7 +194,7 @@ require __DIR__ . '/../layout.php';
 <th class="py-2 px-3 font-medium text-right w-12">Hapus</th>
 </tr>
 </thead>
-<tbody id="master-tbody">
+<tbody id="master-tbody" class="text-coklat">
 <tr><td colspan="4" class="text-center py-4 text-on-surface-variant text-caption">Memuat...</td></tr>
 </tbody>
 </table>
@@ -438,11 +438,17 @@ document.addEventListener('DOMContentLoaded', function () {
         elMasterTbody.addEventListener('click', function (e) {
             var btn = e.target.closest('[data-master-delete]');
             if (!btn) return;
-            AdminUI.confirmModal('Hapus Dusun Master', 'Hapus dusun "' + (btn.dataset.nama || '') + '" dari daftar? Data kependudukan yang sudah tersimpan tidak terhapus.', 'Hapus', function () {
+            AdminUI.confirmModal('Hapus Dusun', 'Hapus dusun "' + (btn.dataset.nama || '') + '" beserta seluruh data dusun tersebut pada semua periode? Tindakan ini tidak dapat dibatalkan.', 'Hapus', function () {
                 AdminUI.ajax(BASE + '/dusun-master-delete', { id: btn.dataset.id })
                     .then(function (res) {
                         AdminUI.showToast(res.ok ? 'success' : 'error', res.message);
-                        if (res.ok) loadMaster();
+                        if (res.ok) {
+                            loadMaster();
+                            loadDusun();
+                        }
+                    })
+                    .catch(function () {
+                        AdminUI.showToast('error', 'Gagal terhubung ke server. Dusun belum dihapus.');
                     });
             });
         });

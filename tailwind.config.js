@@ -139,5 +139,7 @@ module.exports = {
         'hover:text-on-surface',
         'bg-red-500', 'hover:bg-red-600', 'font-medium',
         'gap-[8px]', 'overflow-hidden',
+        /* baris tabel yang dirender dari function/ajax.php */
+        'border-black/6', 'text-red-600', 'hover:bg-red-50',
     ],
 };

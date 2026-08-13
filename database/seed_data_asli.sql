@@ -39,9 +39,10 @@ INSERT INTO kependudukan_dusun (periode, nama_dusun, jumlah_laki, jumlah_perempu
 -- ============ POTENSI DESA ============
 INSERT INTO potensi_desa (judul, deskripsi, gambar, kategori, urutan, status) VALUES
 ('Sentra Produksi Pisang', 'Desa Padang Cermin menjadi sentra produksi pisang, terutama pisang ambon, dengan luas lahan produksi sekitar 152 hektare. Pisang menjadi mata pencaharian dan komoditas utama sebagian besar masyarakat.', NULL, 'Pertanian', 1, 'aktif'),
-('Pertanian & Perkebunan', 'Desa terluas di Kecamatan Padang Cermin dengan luas areal mencapai sekitar 3.278 hektare. Komoditas utama meliputi pertanian padi serta perkebunan kopi dan lada.', NULL, 'Pertanian', 2, 'aktif'),
-('Jalur Strategis Pariwisata', 'Letak Desa Padang Cermin berfungsi sebagai jalur akses penting dari Kota Bandar Lampung menuju kawasan wisata bahari di Pesawaran dan sekitarnya.', NULL, 'Infrastruktur', 3, 'aktif'),
-('Agrowisata Air Terjun', 'Kawasan agrowisata air terjun yang terletak di Dusun Lubuk Bakak RT 005 Desa Padang Cermin. Saat ini sangat banyak dikunjungi wisatawan, baik lokal, luar daerah, maupun dari luar pulau.', NULL, 'Pariwisata', 4, 'aktif');
+('Pertanian Padi', 'Potensi pertanian tanaman pangan unggulan berbasis padi sawah yang menjadi penopang utama ketahanan pangan di Desa Padang Cermin.', NULL, 'Pertanian', 2, 'aktif'),
+('Perkebunan Kopi, Pala & Cokelat', 'Sektor perkebunan pekon menghasilkan komoditas komersial bernilai tinggi seperti kopi robusta, pala, dan cokelat (kakao) yang dibudidayakan secara produktif.', NULL, 'Perkebunan', 3, 'aktif'),
+('Jalur Strategis Pariwisata', 'Letak Desa Padang Cermin berfungsi sebagai jalur akses penting dari Kota Bandar Lampung menuju kawasan wisata bahari di Pesawaran dan sekitarnya.', NULL, 'Infrastruktur', 4, 'aktif'),
+('Agrowisata Air Terjun', 'Kawasan agrowisata air terjun yang terletak di Dusun Lubuk Bakak RT 005 Desa Padang Cermin. Saat ini sangat banyak dikunjungi wisatawan, baik lokal, luar daerah, maupun dari luar pulau.', NULL, 'Pariwisata', 5, 'aktif');
 
 -- ============ WISATA ============
 INSERT INTO wisata_desa (id, nama, slug, deskripsi, alamat, latitude, longitude, harga_tiket, jam_buka, status) VALUES

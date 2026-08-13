@@ -12,6 +12,38 @@ function getPotensiList(bool $aktifSaja = false): array
     return $db->query($sql)->fetchAll();
 }
 
+function getPotensiKategoriList(): array
+{
+    $db = getDb();
+    $dbCategories = $db->query(
+        'SELECT DISTINCT kategori FROM potensi_desa WHERE kategori IS NOT NULL AND kategori != "" ORDER BY kategori ASC'
+    )->fetchAll(PDO::FETCH_COLUMN);
+
+    $defaultCategories = [
+        'Pertanian',
+        'Perkebunan',
+        'Peternakan',
+        'Perikanan',
+        'UMKM',
+        'Kerajinan',
+        'Infrastruktur',
+        'Pariwisata',
+    ];
+
+    $result = [];
+    foreach (array_merge($defaultCategories, $dbCategories) as $cat) {
+        $clean = trim((string) $cat);
+        if ($clean === '') {
+            continue;
+        }
+        $key = strtolower($clean);
+        if (!isset($result[$key])) {
+            $result[$key] = $clean;
+        }
+    }
+    return array_values($result);
+}
+
 function getPotensiById(int $id): ?array
 {
     $db = getDb();

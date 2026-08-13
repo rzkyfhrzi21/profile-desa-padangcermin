@@ -151,7 +151,7 @@ Tambah Data Periode
 <?php endif; ?>
 </h2>
 </div>
-<a href="<?= APP_BASE ?>/dashboard/kependudukan/form" class="text-caption font-caption text-primary hover:opacity-75 flex items-center gap-1 transition-opacity">
+<a href="<?= APP_BASE ?>/dashboard/kependudukan/form<?= $terbaru !== null ? '?id=' . (int) $terbaru['id'] : '' ?>" class="text-caption font-caption text-primary hover:opacity-75 flex items-center gap-1 transition-opacity">
 <span class="material-symbols-outlined text-[16px]">edit</span>Kelola Data Dusun
 </a>
 </div>

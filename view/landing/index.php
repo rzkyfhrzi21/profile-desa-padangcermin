@@ -5,13 +5,13 @@ declare(strict_types=1);
 $profil = getProfil();
 $namaPekon = $profil['nama_pekon'] ?? 'Desa Padang Cermin';
 $penduduk = getDataKependudukanTerbaru();
-$totalJiwa = $penduduk['jumlah_jiwa'] ?? 0;
-$totalKK = $penduduk['jumlah_kk'] ?? 0;
-$totalLaki = $penduduk['jumlah_laki'] ?? 0;
-$totalPerempuan = $penduduk['jumlah_perempuan'] ?? 0;
 $periodeKependudukan = $penduduk['periode'] ?? '';
 $dusunList = getKependudukanDusun();
 $jumlahDusun = getJumlahDusunTerbaru();  // jumlah dusun unik dari data kependudukan terbaru
+$totalKK = array_sum(array_map(static fn(array $d): int => (int) $d['jumlah_kk'], $dusunList));
+$totalJiwa = array_sum(array_map(static fn(array $d): int => (int) $d['jumlah_jiwa'], $dusunList));
+$totalLaki = array_sum(array_map(static fn(array $d): int => (int) $d['jumlah_laki'], $dusunList));
+$totalPerempuan = array_sum(array_map(static fn(array $d): int => (int) $d['jumlah_perempuan'], $dusunList));
 $potensiList = getPotensiList(true);
 $wisataList = getWisataWithGambar(getWisataList(true, 6));
 $wisataCount = count(getWisataList(true));

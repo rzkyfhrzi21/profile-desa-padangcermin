@@ -252,14 +252,15 @@ Buka di Google Maps
 </div>
 <div class="flex flex-col gap-2 relative z-10">
 <span class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]">Status</span>
-<div class="flex gap-2">
-<label class="flex-1 cursor-pointer">
-<input class="peer sr-only" name="status" type="radio" value="draft" <?= $v('status') === 'draft' || ($editId === 0 && $v('status') === '') ? 'checked' : '' ?>/>
-<div class="px-4 py-3 rounded-xl border border-glass-border bg-surface-container-highest text-on-surface-variant text-center text-caption font-caption peer-checked:border-primary/50 peer-checked:bg-primary/10 peer-checked:text-primary transition-all">Draft</div>
+<?php $statusAktif = $v('status') === 'publish' ? 'publish' : 'draft'; ?>
+<div class="flex gap-2" data-status-control>
+<label class="flex-1 cursor-pointer" data-status-option="draft">
+<input class="sr-only" name="status" type="radio" value="draft" <?= $statusAktif === 'draft' ? 'checked' : '' ?>/>
+<div class="px-4 py-3 rounded-xl border text-center text-caption font-caption transition-all <?= $statusAktif === 'draft' ? 'border-primary bg-primary text-on-primary shadow-lime-glow' : 'border-glass-border bg-surface-container-highest text-on-surface-variant' ?>" data-status-label>Draft</div>
 </label>
-<label class="flex-1 cursor-pointer">
-<input class="peer sr-only" name="status" type="radio" value="publish" <?= $v('status') === 'publish' ? 'checked' : '' ?>/>
-<div class="px-4 py-3 rounded-xl border border-glass-border bg-surface-container-highest text-on-surface-variant text-center text-caption font-caption peer-checked:border-primary/50 peer-checked:bg-primary/10 peer-checked:text-primary transition-all">Publish</div>
+<label class="flex-1 cursor-pointer" data-status-option="publish">
+<input class="sr-only" name="status" type="radio" value="publish" <?= $statusAktif === 'publish' ? 'checked' : '' ?>/>
+<div class="px-4 py-3 rounded-xl border text-center text-caption font-caption transition-all <?= $statusAktif === 'publish' ? 'border-primary bg-primary text-on-primary shadow-lime-glow' : 'border-glass-border bg-surface-container-highest text-on-surface-variant' ?>" data-status-label>Publish</div>
 </label>
 </div>
 </div>
@@ -380,6 +381,26 @@ Buka di Google Maps
         if (manual) return;
         slug.value = nama.value.toLowerCase().replace(/[^a-z0-9\s-]/g, '').trim().replace(/[\s-]+/g, '-');
     });
+})();
+
+(function() {
+    var control = document.querySelector('[data-status-control]');
+    if (!control) return;
+    var activeClasses = ['border-primary', 'bg-primary', 'text-on-primary', 'shadow-lime-glow'];
+    var inactiveClasses = ['border-glass-border', 'bg-surface-container-highest', 'text-on-surface-variant'];
+    function syncStatus() {
+        control.querySelectorAll('[data-status-option]').forEach(function (option) {
+            var input = option.querySelector('input[type="radio"]');
+            var label = option.querySelector('[data-status-label]');
+            if (!input || !label) return;
+            var add = input.checked ? activeClasses : inactiveClasses;
+            var remove = input.checked ? inactiveClasses : activeClasses;
+            label.classList.remove.apply(label.classList, remove);
+            label.classList.add.apply(label.classList, add);
+        });
+    }
+    control.addEventListener('change', syncStatus);
+    syncStatus();
 })();
 
 (function () {

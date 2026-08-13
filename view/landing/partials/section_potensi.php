@@ -3,7 +3,8 @@ declare(strict_types=1);
 $potensiList = $potensiList ?? [];
 $iconPotensi = static function (string $kategori): string {
     return match (strtolower($kategori)) {
-        'pertanian' => 'psychiatry',
+        'pertanian' => 'grain',
+        'perkebunan' => 'forest',
         'pariwisata' => 'tour',
         'infrastruktur' => 'alt_route',
         'umkm' => 'storefront',
