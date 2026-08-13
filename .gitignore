@@ -12,3 +12,7 @@ graphify-out/
 .rtk/
 @agents/
 Zzz/
+docs/
+AGENTS.md
+CLAUDE.md
+GEMINI.md

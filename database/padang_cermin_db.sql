@@ -316,14 +316,14 @@ INSERT INTO `struktur_organisasi` (`id`,`parent_id`,`nama`,`jabatan`,`pendidikan
 (6, 2, 'Gita Suci Veronissa', 'Kaur Tata Usaha dan Umum', NULL, NULL, 4, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
 (7, 2, 'Archy Ollyvia', 'Kaur Keuangan', NULL, 'struktur/struktur-kaur-keuangan.jpg', 5, '2026-08-09 13:36:28', '2026-08-09 13:49:31'),
 (8, 2, 'Indera Herlangga', 'Kaur Perencanaan', NULL, NULL, 6, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
-(9, 3, 'Ady Kurnia', 'Kepala Dusun Padang Cermin', NULL, NULL, 1, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
-(10, 3, 'Taufik', 'Kepala Dusun Tanjung Mas', NULL, NULL, 2, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
-(11, 3, 'Mutiono', 'Kepala Dusun Rawa Subur', NULL, NULL, 3, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
-(12, 3, 'Suhaimi', 'Kepala Dusun Rawa Tunggal', NULL, NULL, 4, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
-(13, 3, 'Rodi Pranata', 'Kepala Dusun Kejadian', NULL, NULL, 5, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
-(14, 3, 'Nursiah', 'Kepala Dusun Kecapi', NULL, NULL, 6, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
-(15, 3, 'Matnuri', 'Kepala Dusun Bambu Kuning', NULL, NULL, 7, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
-(16, 3, 'Nursiah', 'Kepala Dusun Bambu Kuning II', NULL, NULL, 8, '2026-08-09 13:36:28', '2026-08-09 13:36:28');
+(9, 2, 'Ady Kurnia', 'Kepala Dusun Padang Cermin', NULL, NULL, 7, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
+(10, 2, 'Taufik', 'Kepala Dusun Tanjung Mas', NULL, NULL, 8, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
+(11, 2, 'Mutiono', 'Kepala Dusun Rawa Subur', NULL, NULL, 9, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
+(12, 2, 'Suhaimi', 'Kepala Dusun Rawa Tunggal', NULL, NULL, 10, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
+(13, 2, 'Rodi Pranata', 'Kepala Dusun Kejadian', NULL, NULL, 11, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
+(14, 2, 'Nursiah', 'Kepala Dusun Kecapi', NULL, NULL, 12, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
+(15, 2, 'Matnuri', 'Kepala Dusun Bambu Kuning', NULL, NULL, 13, '2026-08-09 13:36:28', '2026-08-09 13:36:28'),
+(16, 2, 'Nursiah', 'Kepala Dusun Bambu Kuning II', NULL, NULL, 14, '2026-08-09 13:36:28', '2026-08-09 13:36:28');
 
 -- ------------------------------------------------------------
 -- Struktur tabel `wisata_desa`

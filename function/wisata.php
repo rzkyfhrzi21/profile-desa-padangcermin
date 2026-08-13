@@ -139,18 +139,18 @@ function saveWisataFasilitas(int $wisataId, string $ikon, string $judul, string 
     return (int) $db->lastInsertId();
 }
 
-function updateWisataFasilitas(int $id, string $ikon, string $judul, string $deskripsi, int $urutan): bool
+function updateWisataFasilitas(int $wisataId, int $id, string $ikon, string $judul, string $deskripsi, int $urutan): bool
 {
     $db = getDb();
-    $stmt = $db->prepare('UPDATE wisata_fasilitas SET ikon = ?, judul = ?, deskripsi = ?, urutan = ? WHERE id = ?');
-    return $stmt->execute([$ikon, $judul, $deskripsi, $urutan, $id]);
+    $stmt = $db->prepare('UPDATE wisata_fasilitas SET ikon = ?, judul = ?, deskripsi = ?, urutan = ? WHERE id = ? AND wisata_id = ?');
+    return $stmt->execute([$ikon, $judul, $deskripsi, $urutan, $id, $wisataId]);
 }
 
-function deleteWisataFasilitas(int $id): bool
+function deleteWisataFasilitas(int $wisataId, int $id): bool
 {
     $db = getDb();
-    $stmt = $db->prepare('DELETE FROM wisata_fasilitas WHERE id = ?');
-    return $stmt->execute([$id]);
+    $stmt = $db->prepare('DELETE FROM wisata_fasilitas WHERE id = ? AND wisata_id = ?');
+    return $stmt->execute([$id, $wisataId]);
 }
 
 function addWisataImage(int $wisataId, string $path, int $urutan = 0): void
@@ -160,16 +160,16 @@ function addWisataImage(int $wisataId, string $path, int $urutan = 0): void
     $stmt->execute([$wisataId, $path, $urutan]);
 }
 
-function deleteWisataImage(int $gambarId): ?string
+function deleteWisataImage(int $wisataId, int $gambarId): ?string
 {
     $db = getDb();
-    $stmt = $db->prepare('SELECT path_gambar FROM wisata_gambar WHERE id = ?');
-    $stmt->execute([$gambarId]);
+    $stmt = $db->prepare('SELECT path_gambar FROM wisata_gambar WHERE id = ? AND wisata_id = ?');
+    $stmt->execute([$gambarId, $wisataId]);
     $path = $stmt->fetchColumn();
     if ($path === false) {
         return null;
     }
-    $db->prepare('DELETE FROM wisata_gambar WHERE id = ?')->execute([$gambarId]);
+    $db->prepare('DELETE FROM wisata_gambar WHERE id = ? AND wisata_id = ?')->execute([$gambarId, $wisataId]);
     return (string) $path;
 }
 

@@ -52,38 +52,36 @@ INSERT INTO struktur_organisasi (parent_id, nama, jabatan, urutan)
 SELECT @sekdes_id, 'Indera Herlangga', 'Kaur Perencanaan', 6
 WHERE NOT EXISTS (SELECT 1 FROM struktur_organisasi WHERE nama = 'Indera Herlangga');
 
--- Level 3: Kepala Dusun (anak dari salah satu KASI)
--- Kepala Dusun di-assign ke Kasi Pemerintahan (parent paling umum untuk Kadus)
-SET @kasi_id = (SELECT id FROM struktur_organisasi WHERE jabatan = 'Kasi Pemerintahan' LIMIT 1);
+-- Level 2: Kepala Dusun (anak langsung Sekretaris Desa)
 
 INSERT INTO struktur_organisasi (parent_id, nama, jabatan, urutan)
-SELECT @kasi_id, 'Ady Kurnia', 'Kepala Dusun Padang Cermin', 1
+SELECT @sekdes_id, 'Ady Kurnia', 'Kepala Dusun Padang Cermin', 7
 WHERE NOT EXISTS (SELECT 1 FROM struktur_organisasi WHERE nama = 'Ady Kurnia');
 
 INSERT INTO struktur_organisasi (parent_id, nama, jabatan, urutan)
-SELECT @kasi_id, 'Taufik', 'Kepala Dusun Tanjung Mas', 2
+SELECT @sekdes_id, 'Taufik', 'Kepala Dusun Tanjung Mas', 8
 WHERE NOT EXISTS (SELECT 1 FROM struktur_organisasi WHERE nama = 'Taufik' AND jabatan LIKE '%Dusun%');
 
 INSERT INTO struktur_organisasi (parent_id, nama, jabatan, urutan)
-SELECT @kasi_id, 'Mutiono', 'Kepala Dusun Rawa Subur', 3
+SELECT @sekdes_id, 'Mutiono', 'Kepala Dusun Rawa Subur', 9
 WHERE NOT EXISTS (SELECT 1 FROM struktur_organisasi WHERE nama = 'Mutiono');
 
 INSERT INTO struktur_organisasi (parent_id, nama, jabatan, urutan)
-SELECT @kasi_id, 'Suhaimi', 'Kepala Dusun Rawa Tunggal', 4
+SELECT @sekdes_id, 'Suhaimi', 'Kepala Dusun Rawa Tunggal', 10
 WHERE NOT EXISTS (SELECT 1 FROM struktur_organisasi WHERE nama = 'Suhaimi');
 
 INSERT INTO struktur_organisasi (parent_id, nama, jabatan, urutan)
-SELECT @kasi_id, 'Rodi Pranata', 'Kepala Dusun Kejadian', 5
+SELECT @sekdes_id, 'Rodi Pranata', 'Kepala Dusun Kejadian', 11
 WHERE NOT EXISTS (SELECT 1 FROM struktur_organisasi WHERE nama = 'Rodi Pranata');
 
 INSERT INTO struktur_organisasi (parent_id, nama, jabatan, urutan)
-SELECT @kasi_id, 'Nursiah', 'Kepala Dusun Kecapi', 6
+SELECT @sekdes_id, 'Nursiah', 'Kepala Dusun Kecapi', 12
 WHERE NOT EXISTS (SELECT 1 FROM struktur_organisasi WHERE nama = 'Nursiah' AND jabatan LIKE '%Kecapi%');
 
 INSERT INTO struktur_organisasi (parent_id, nama, jabatan, urutan)
-SELECT @kasi_id, 'Matnuri', 'Kepala Dusun Bambu Kuning', 7
+SELECT @sekdes_id, 'Matnuri', 'Kepala Dusun Bambu Kuning', 13
 WHERE NOT EXISTS (SELECT 1 FROM struktur_organisasi WHERE nama = 'Matnuri');
 
 INSERT INTO struktur_organisasi (parent_id, nama, jabatan, urutan)
-SELECT @kasi_id, 'Nursiah', 'Kepala Dusun Bambu Kuning II', 8
+SELECT @sekdes_id, 'Nursiah', 'Kepala Dusun Bambu Kuning II', 14
 WHERE NOT EXISTS (SELECT 1 FROM struktur_organisasi WHERE nama = 'Nursiah' AND jabatan LIKE '%Bambu Kuning%');

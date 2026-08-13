@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['hapus_gambar'])) {
         $gambarId = (int) $_POST['hapus_gambar'];
-        $path = deleteWisataImage($gambarId);
+        $path = deleteWisataImage($editId, $gambarId);
         if ($path !== null) {
             $file = UPLOAD_PATH . '/' . $path;
             if (is_file($file)) {
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hapusFasilitas = array_map('intval', (array) ($_POST['hapus_fasilitas'] ?? []));
     foreach ($hapusFasilitas as $fid) {
         if ($fid > 0) {
-            deleteWisataFasilitas($fid);
+            deleteWisataFasilitas($editId, $fid);
         }
     }
 
@@ -133,6 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             continue;
         }
         updateWisataFasilitas(
+            $editId,
             (int) $fid,
             trim((string) ($row['ikon'] ?? 'eco')) !== '' ? trim((string) $row['ikon']) : 'eco',
             trim((string) ($row['judul'] ?? '')),
@@ -178,7 +179,7 @@ require __DIR__ . '/../layout.php';
 </a>
 </div>
 
-<form method="post" action="<?= APP_BASE ?>/dashboard/wisata/form<?= $editId > 0 ? '?id=' . $editId : '' ?>" enctype="multipart/form-data">
+<form id="wisata-form" method="post" action="<?= APP_BASE ?>/dashboard/wisata/form<?= $editId > 0 ? '?id=' . $editId : '' ?>" enctype="multipart/form-data">
 <?= csrfField() ?>
 <div class="grid grid-cols-12 gap-gutter">
 <div class="col-span-12 xl:col-span-8 flex flex-col gap-stack-lg">
@@ -296,18 +297,18 @@ Buka di Google Maps
 <template id="fas-template">
 <div class="fas-row flex flex-col gap-2 p-3 rounded-xl border border-glass-border bg-surface-container-highest/60">
 <div class="flex gap-2 items-center">
-<select name="fas_baru[][ikon]" class="flex-1 min-w-0 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all">
+<select name="fas_baru[__INDEX__][ikon]" class="flex-1 min-w-0 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all">
 <?php foreach ($ikonFasilitas as $ikon): ?>
 <option value="<?= e($ikon) ?>"><?= e($ikon) ?></option>
 <?php endforeach; ?>
 </select>
-<input name="fas_baru[][urutan]" type="number" min="0" value="0" class="w-16 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all" title="Urutan"/>
+<input name="fas_baru[__INDEX__][urutan]" type="number" min="0" value="0" class="w-16 bg-surface-container-highest border border-glass-border rounded-lg px-2 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all" title="Urutan"/>
 <button type="button" data-fas-hapus class="shrink-0 text-on-surface-variant hover:text-red-400 transition-colors" title="Buang baris">
 <span class="material-symbols-outlined text-[20px]">close</span>
 </button>
 </div>
-<input name="fas_baru[][judul]" type="text" placeholder="Judul fasilitas" class="w-full bg-surface-container-highest border border-glass-border rounded-lg px-3 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all"/>
-<textarea name="fas_baru[][deskripsi]" rows="2" placeholder="Deskripsi singkat" class="w-full bg-surface-container-highest border border-glass-border rounded-lg px-3 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all resize-y"></textarea>
+<input name="fas_baru[__INDEX__][judul]" type="text" placeholder="Judul fasilitas" class="w-full bg-surface-container-highest border border-glass-border rounded-lg px-3 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all"/>
+<textarea name="fas_baru[__INDEX__][deskripsi]" rows="2" placeholder="Deskripsi singkat" class="w-full bg-surface-container-highest border border-glass-border rounded-lg px-3 py-2 text-caption font-caption text-on-surface focus:outline-none focus:border-primary transition-all resize-y"></textarea>
 </div>
 </template>
 </div>
@@ -339,10 +340,6 @@ Buka di Google Maps
             <span class="material-symbols-outlined text-[18px]">delete</span>
         </button>
     </div>
-    <form class="hidden" method="post" action="<?= APP_BASE ?>/dashboard/wisata/form?id=<?= $editId ?>" data-delete-form="<?= (int) $g['id'] ?>">
-        <?= csrfField() ?>
-        <input type="hidden" name="hapus_gambar" value="<?= (int) $g['id'] ?>"/>
-    </form>
 </div>
 <?php endforeach; ?>
 </div>
@@ -462,8 +459,14 @@ Buka di Google Maps
         overlay.addEventListener('click', function(e) { if (e.target === overlay) closeConfirm(); });
         btnCancel.addEventListener('click', closeConfirm);
         btnOk.addEventListener('click', function() {
-            var form = document.querySelector('[data-delete-form="' + gambarId + '"]');
-            if (form) form.submit();
+            var form = document.getElementById('wisata-form');
+            if (!form) return;
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'hapus_gambar';
+            input.value = gambarId;
+            form.appendChild(input);
+            form.submit();
         });
     }
     document.addEventListener('click', function(e) {
@@ -478,9 +481,14 @@ Buka di Google Maps
     var addBtn = document.getElementById('fas-add-btn');
     var tpl = document.getElementById('fas-template');
     var wrap = document.getElementById('fas-new-wrap');
+    var index = 0;
     if (addBtn && tpl && wrap) {
         addBtn.addEventListener('click', function () {
             var row = tpl.content.firstElementChild.cloneNode(true);
+            row.querySelectorAll('[name]').forEach(function (field) {
+                field.name = field.name.replace(/__INDEX__/g, String(index));
+            });
+            index += 1;
             wrap.appendChild(row);
             row.scrollIntoView({ block: 'nearest' });
         });
