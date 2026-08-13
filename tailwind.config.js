@@ -143,5 +143,14 @@ module.exports = {
         'border-black/6', 'text-red-600', 'hover:bg-red-50',
         /* kartu wisata dirender dari function/ajax.php (folder function tidak di-scan) */
         'aspect-[4/3]', 'aspect-[8/3]',
+        /* modal + lightbox dari JS string (admin.js, media.js) */
+        'z-[210]', 'z-[211]', 'z-[220]', 'z-[100]',
+        'bg-black/75', 'bg-black/90', 'bg-black/30',
+        '-top-14', 'max-w-5xl', 'max-h-[80vh]',
+        'bg-white/10', 'hover:bg-white/25',
+        'bg-white/5', 'hover:bg-white/15', 'hover:bg-white/10',
+        'bg-red-600/90', 'border-red-500/40',
+        'bg-green-400', 'gap-0.5', 'h-0.5', 'pr-12', 'break-words',
+        'backdrop-blur-[1px]',
     ],
 };

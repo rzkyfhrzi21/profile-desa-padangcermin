@@ -64,7 +64,9 @@
         var trigger = overlay._trigger || null;
         overlay.remove();
         overlay = null;
-        document.body.style.overflow = '';
+        if (!document.querySelector('.admin-modal')) {
+            document.body.style.overflow = '';
+        }
         if (trigger && trigger.focus) trigger.focus();
     }
 
@@ -92,7 +94,7 @@
 
         overlay = document.createElement('div');
         overlay._trigger = el;
-        overlay.className = 'fixed inset-0 z-[210] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm';
+        overlay.className = 'lightbox-overlay fixed inset-0 z-[220] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm';
 
         var panel = document.createElement('div');
         panel.className = 'relative max-w-5xl w-full modal-panel';

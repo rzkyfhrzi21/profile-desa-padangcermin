@@ -124,7 +124,39 @@ $ogImage = $gambarUtama !== null ? APP_URL . '/uploads/' . $gambarUtama['path_ga
 </div>
 </div>
 <div class="lg:col-span-4 flex flex-col gap-8">
-<div class="bg-glass-fill backdrop-blur-xl border border-glass-border rounded-3xl p-8 sticky top-32 shadow-xl transition-all duration-300 hover:border-primary/40 group">
+<?php if ($gambar !== []): ?>
+<?php $totalGambar = count($gambar); ?>
+<div class="flex flex-col gap-4">
+<h4 class="font-headline-md text-body-lg font-bold text-on-surface">Galeri Visual</h4>
+<div class="relative" <?= $totalGambar > 1 ? 'data-carousel data-carousel-interval="1500"' : '' ?>>
+<div class="overflow-hidden rounded-2xl">
+<?php foreach ($gambar as $i => $g): ?>
+<div class="carousel-slide">
+<div class="w-full aspect-video rounded-2xl overflow-hidden cursor-pointer group">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" data-lightbox="<?= e(uploadUrl($g['path_gambar'])) ?>" data-skeleton alt="<?= e($wisata['nama']) ?>" src="<?= e(uploadUrl($g['path_gambar'])) ?>"/>
+</div>
+</div>
+<?php endforeach; ?>
+</div>
+<?php if ($totalGambar > 1): ?>
+<div class="flex items-center justify-center gap-4 mt-4">
+<button type="button" data-carousel-prev class="carousel-btn w-10 h-10 rounded-full border border-glass-border bg-glass-fill text-on-surface-variant flex items-center justify-center" aria-label="Sebelumnya">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<div class="carousel-dots flex items-center gap-2">
+<?php foreach ($gambar as $i => $g): ?>
+<button type="button" data-carousel-dot class="carousel-dot" aria-label="Gambar <?= $i + 1 ?>"></button>
+<?php endforeach; ?>
+</div>
+<button type="button" data-carousel-next class="carousel-btn w-10 h-10 rounded-full border border-glass-border bg-glass-fill text-on-surface-variant flex items-center justify-center" aria-label="Berikutnya">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<?php endif; ?>
+</div>
+</div>
+<?php endif; ?>
+<div class="bg-glass-fill backdrop-blur-xl border border-glass-border rounded-3xl p-8 transition-all duration-300 hover:border-primary/40 group">
 <div class="absolute top-0 left-0 w-full h-[3px] bg-primary rounded-t-3xl opacity-80"></div>
 <h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-3">
 <span class="material-symbols-outlined text-primary p-2 bg-primary/10 rounded-lg">info</span>
@@ -173,38 +205,7 @@ Pesan Tiket Sekarang <span class="material-symbols-outlined text-[18px]">chat</s
 </a>
 </div>
 </div>
-<?php if ($gambar !== []): ?>
-<?php $totalGambar = count($gambar); ?>
-<div class="flex flex-col gap-4">
-<h4 class="font-headline-md text-body-lg font-bold text-on-surface">Galeri Visual</h4>
-<div class="relative" <?= $totalGambar > 1 ? 'data-carousel data-carousel-interval="1500"' : '' ?>>
-<div class="overflow-hidden rounded-2xl">
-<?php foreach ($gambar as $i => $g): ?>
-<div class="carousel-slide">
-<div class="w-full aspect-video rounded-2xl overflow-hidden cursor-pointer group">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" data-lightbox="<?= e(uploadUrl($g['path_gambar'])) ?>" data-skeleton alt="<?= e($wisata['nama']) ?>" src="<?= e(uploadUrl($g['path_gambar'])) ?>"/>
-</div>
-</div>
-<?php endforeach; ?>
-</div>
-<?php if ($totalGambar > 1): ?>
-<div class="flex items-center justify-center gap-4 mt-4">
-<button type="button" data-carousel-prev class="carousel-btn w-10 h-10 rounded-full border border-glass-border bg-glass-fill text-on-surface-variant flex items-center justify-center" aria-label="Sebelumnya">
-<span class="material-symbols-outlined text-[18px]">chevron_left</span>
-</button>
-<div class="carousel-dots flex items-center gap-2">
-<?php foreach ($gambar as $i => $g): ?>
-<button type="button" data-carousel-dot class="carousel-dot" aria-label="Gambar <?= $i + 1 ?>"></button>
-<?php endforeach; ?>
-</div>
-<button type="button" data-carousel-next class="carousel-btn w-10 h-10 rounded-full border border-glass-border bg-glass-fill text-on-surface-variant flex items-center justify-center" aria-label="Berikutnya">
-<span class="material-symbols-outlined text-[18px]">chevron_right</span>
-</button>
-</div>
-<?php endif; ?>
-</div>
-</div>
-<?php endif; ?>
+
 </div>
 </div>
 </div>

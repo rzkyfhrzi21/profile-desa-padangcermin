@@ -143,10 +143,17 @@
             if (e.target === overlay) closeModal();
         });
         function esc(e) {
-            if (e.key === 'Escape') closeModal();
+            if (e.key === 'Escape') {
+                /* Lightbox di atas modal menangani ESC sendiri — jangan tutup modal */
+                if (document.querySelector('.lightbox-overlay')) return;
+                closeModal();
+            }
         }
         document.addEventListener('keydown', esc);
         overlay._esc = esc;
+        /* Jangan tutup modal saat lightbox di atasnya masih terbuka */
+        document.addEventListener('keydown', escOverlayGuard);
+        overlay._escGuard = escOverlayGuard;
 
         /* Focus trap: first focusable element */
         var focusable = panel.querySelectorAll('button, input, select, textarea, a[href], [tabindex]:not([tabindex="-1"])');
