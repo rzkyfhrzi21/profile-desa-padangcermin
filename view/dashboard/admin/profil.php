@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     /* ---- UPDATE PROFIL ---- */
     if ($aksi === 'update_profil') {
         $nama   = trim((string) ($_POST['nama'] ?? ''));
+        $username = trim((string) ($_POST['username'] ?? ''));
         $errors = [];
 
         if ($nama === '') {
@@ -19,6 +20,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         if (mb_strlen($nama) > 100) {
             $errors[] = 'Nama maksimal 100 karakter.';
+        }
+
+        if ($username === '') {
+            $errors[] = 'Username wajib diisi.';
+        } elseif (!preg_match('/^[a-zA-Z0-9_]{3,50}$/', $username)) {
+            $errors[] = 'Username hanya boleh huruf, angka, dan underscore (3–50 karakter).';
+        } else {
+            $db   = getDb();
+            $stmt = $db->prepare('SELECT id FROM admins WHERE username = ? AND id != ?');
+            $stmt->execute([$username, (int) $admin['id']]);
+            if ($stmt->fetch()) {
+                $errors[] = 'Username "' . $username . '" sudah digunakan oleh admin lain, tidak bisa diubah.';
+            }
         }
 
         /* Upload foto — kosongkan input = foto lama tetap */
@@ -41,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $db   = getDb();
-        $stmt = $db->prepare('UPDATE admins SET nama = ? WHERE id = ?');
-        $stmt->execute([$nama, (int) $admin['id']]);
+        $stmt = $db->prepare('UPDATE admins SET nama = ?, username = ? WHERE id = ?');
+        $stmt->execute([$nama, $username, (int) $admin['id']]);
 
         if ($fotoBaru !== null) {
             if (!empty($admin['foto'])) {
@@ -192,6 +206,11 @@ require __DIR__ . '/../layout.php';
                 <div class="flex flex-col gap-2 relative z-10">
                     <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="nama-profil">Nama Lengkap</label>
                     <input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all" id="nama-profil" name="nama" placeholder="Masukkan nama lengkap" required type="text" value="<?= e($admin['nama'] ?? '') ?>"/>
+                </div>
+                <div class="flex flex-col gap-2 relative z-10">
+                    <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="username-profil">Username <span class="text-on-surface-variant/50 normal-case">(dipakai untuk login)</span></label>
+                    <input class="w-full bg-surface-container-highest border border-glass-border rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:shadow-lime-glow transition-all" id="username-profil" name="username" placeholder="username_login" required type="text" minlength="3" maxlength="50" pattern="[a-zA-Z0-9_]{3,50}" value="<?= e($admin['username'] ?? '') ?>"/>
+                    <p class="text-[11px] text-on-surface-variant m-0">Hanya huruf, angka, dan underscore. Jika username sudah dipakai admin lain, perubahan tidak akan tersimpan.</p>
                 </div>
                 <div class="flex flex-col gap-2 relative z-10">
                     <label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="foto-profil">Foto Profil <span class="text-on-surface-variant/50 normal-case">(opsional, maks 2MB)</span></label>

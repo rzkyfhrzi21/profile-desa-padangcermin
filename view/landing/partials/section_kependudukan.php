@@ -62,8 +62,8 @@ Rekapitulasi jumlah penduduk <?= e($periodeKependudukan) ?> dari <?= count($dusu
 <h4 class="font-headline-md text-headline-md text-on-surface">Komposisi Penduduk</h4>
 <span class="bg-glass-fill backdrop-blur-md text-on-surface-variant font-label-mono text-[12px] px-3 py-1 rounded-full border border-glass-border w-max"><?= e($periodeKependudukan) ?></span>
 </div>
-<div class="relative w-full max-w-[220px] mx-auto">
-<canvas id="chart-penduduk" role="img" aria-label="Diagram komposisi penduduk laki-laki dan perempuan"></canvas>
+<div class="relative w-full max-w-[220px] aspect-square mx-auto">
+<canvas id="chart-penduduk" class="w-full h-full" role="img" aria-label="Diagram komposisi penduduk laki-laki dan perempuan"></canvas>
 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
 <span class="font-headline-lg text-headline-lg text-on-surface"><?= formatAngka($totalJiwa) ?></span>
 <span class="font-caption text-caption text-on-surface-variant">Total Jiwa</span>

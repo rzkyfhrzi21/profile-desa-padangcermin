@@ -264,6 +264,7 @@ $deskripsiPage = truncate('Portal resmi ' . $namaPekon . ', Kecamatan Padang Cer
                 options: {
                     cutout: '72%',
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: false

@@ -294,12 +294,9 @@ function ajaxListPotensi(array $p): array
         $no = $noBase + $noIdx;
         $kat = trim((string) ($po['kategori'] ?? ''));
         $katLabel = $kat !== '' ? ($kategoriLabel[$kat] ?? ucwords(str_replace(['_', '-'], ' ', $kat))) : '-';
-        $thumb = !empty($po['gambar'])
-            ? '<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden shrink-0 hidden sm:block"><img class="w-full h-full object-cover cursor-pointer" data-lightbox="' . uploadUrl($po['gambar']) . '" data-skeleton alt="Thumbnail ' . e($po['judul']) . '" src="' . uploadUrl($po['gambar']) . '"/></div>'
-            : '<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center shrink-0 border border-glass-border/50 hidden sm:flex"><span class="material-symbols-outlined text-on-surface-variant/50">psychiatry</span></div>';
         $html .= '<tr class="border-b border-glass-border/30 hover:bg-surface-container-highest/50 transition-colors group/row">'
             . '<td class="py-4 px-4 text-center w-12"><span class="text-label-mono font-label-mono text-[12px] text-on-surface-variant/60">' . $no . '</span></td>'
-            . '<td class="py-4 px-4"><div class="flex items-center gap-3">' . $thumb . '<span class="font-medium group-hover/row:text-primary transition-colors line-clamp-2 sm:line-clamp-1">' . e($po['judul']) . '</span></div></td>'
+            . '<td class="py-4 px-4"><span class="font-medium group-hover/row:text-primary transition-colors line-clamp-2 sm:line-clamp-1">' . e($po['judul']) . '</span></td>'
             . '<td class="py-4 px-4 text-on-surface-variant">' . e($katLabel) . '</td>'
             . '<td class="py-4 px-4 text-center text-label-mono font-label-mono text-on-surface-variant text-[13px] whitespace-nowrap">' . (int) $po['urutan'] . '</td>'
             . '<td class="py-4 px-4 text-right">' . ajaxBadge($po['status'], 'Aktif', 'Nonaktif') . '</td>'

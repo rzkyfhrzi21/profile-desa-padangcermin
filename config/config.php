@@ -31,7 +31,14 @@ function env(string $key, string $default = ''): string
     return $env[$key] ?? $default;
 }
 
-define('APP_URL', rtrim(env('APP_URL', 'http://localhost'), '/'));
+$appUrl = env('APP_URL', '');
+if ($appUrl === '') {
+    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
+        || (($_SERVER['SERVER_PORT'] ?? '') === '443');
+    $appUrl = ($https ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+}
+define('APP_URL', rtrim($appUrl, '/'));
 define('APP_BASE', rtrim(env('APP_BASE', ''), '/'));
 $is_local = in_array($_SERVER['HTTP_HOST'] ?? 'localhost', ['localhost', '127.0.0.1', '::1']) || str_ends_with($_SERVER['HTTP_HOST'] ?? '', '.test');
 

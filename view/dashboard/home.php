@@ -194,10 +194,7 @@ require __DIR__ . '/layout.php';
             </div>
 
             <div class="p-4">
-                <?php if (count($wisataSorotan) > 1): ?>
-                    <div class="relative" data-carousel data-carousel-interval="1500">
-                    <?php endif; ?>
-
+                <div class="relative" data-carousel data-carousel-interval="1500">
                     <div class="overflow-hidden rounded-xl">
                         <?php foreach ($wisataSorotan as $w):
                             $gambarUtama = $w['gambar'][0] ?? null; ?>

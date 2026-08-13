@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $telepon = trim((string) ($_POST['telepon'] ?? ''));
     $email = trim((string) ($_POST['email'] ?? ''));
     $whatsapp = trim((string) ($_POST['whatsapp'] ?? ''));
-    $fotoLama = $profil['foto_kepala_pekon'] ?? null;
 
     $errors = [];
     if ($nama === '') {
@@ -29,17 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = 'Format email tidak valid.';
-    }
-
-    $fotoBaru = null;
-    $adaFile = ($_FILES['foto']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
-    if ($adaFile && $errors === []) {
-        $up = handleUpload($_FILES['foto'], 'profil', 'Foto Kepala Pekon ' . $nama);
-        if (!$up['ok']) {
-            $errors[] = $up['error'];
-        } else {
-            $fotoBaru = $up['path'];
-        }
     }
 
     if ($errors !== []) {
@@ -62,18 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     if (updateProfil($data)) {
-        if ($fotoBaru !== null) {
-            updateFotoKepalaPekon($fotoBaru);
-            if ($fotoLama !== null && $fotoLama !== '' && $fotoLama !== $fotoBaru) {
-                $fileLama = UPLOAD_PATH . '/' . $fotoLama;
-                if (is_file($fileLama)) {
-                    @unlink($fileLama);
-                }
-            }
-            catatLog('update profil pekon (termasuk foto kepala pekon)', 'profil_desa', 1);
-        } else {
-            catatLog('update profil pekon', 'profil_desa', 1);
-        }
+        catatLog('update profil pekon', 'profil_desa', 1);
         flash('success', 'Profil pekon berhasil diperbarui.');
     } else {
         flash('error', 'Gagal memperbarui profil pekon.');
@@ -98,7 +75,7 @@ require __DIR__ . '/../layout.php';
 </a>
 </div>
 
-<form method="post" action="<?= APP_BASE ?>/dashboard/profil/form" enctype="multipart/form-data">
+<form method="post" action="<?= APP_BASE ?>/dashboard/profil/form">
 <?= csrfField() ?>
 <div class="grid grid-cols-12 gap-gutter">
 <div class="col-span-12 xl:col-span-8 flex flex-col gap-stack-lg">
@@ -180,24 +157,10 @@ require __DIR__ . '/../layout.php';
 <div class="col-span-12 xl:col-span-4 flex flex-col gap-stack-lg">
 <div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg flex flex-col gap-stack-md relative overflow-hidden">
 <div class="flex items-center gap-3 relative z-10">
-<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">account_circle</span>
 <h2 class="text-headline-md font-headline-md text-on-surface m-0">Foto Kepala Pekon</h2>
 </div>
-<?php if (!empty($profil['foto_kepala_pekon'])): ?>
-<div class="relative z-10">
-<img class="w-full aspect-[3/4] object-cover rounded-xl border border-glass-border" alt="Foto Kepala Pekon saat ini" src="<?= uploadUrl($profil['foto_kepala_pekon']) ?>"/>
-<p class="text-[11px] text-on-surface-variant mt-1">Foto saat ini. Unggah baru untuk mengganti.</p>
-</div>
-<?php endif; ?>
-<div class="flex flex-col gap-2 relative z-10">
-<label class="text-label-mono font-label-mono text-on-surface-variant uppercase tracking-widest text-[12px]" for="foto">Unggah Foto Baru</label>
-<input class="w-full text-caption font-caption text-on-surface-variant file:mr-4 file:rounded-xl file:border-0 file:bg-surface-container-highest file:px-4 file:py-2.5 file:text-on-surface file:cursor-pointer hover:file:bg-surface-container transition-colors" id="foto" name="foto" type="file" accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/heic,image/heif,image/x-icon"/>
-<p class="text-[11px] text-on-surface-variant m-0">Max 2 MB · JPG, PNG, WEBP · Kosongkan jika tidak ganti foto</p>
-</div>
-<div id="foto-preview-container" class="hidden relative z-10">
-<img id="foto-preview" class="w-full aspect-[3/4] object-cover rounded-xl border-2 border-primary/40" alt="Preview foto baru" src=""/>
-<p class="text-[11px] text-primary mt-1">Preview foto yang akan diupload</p>
-</div>
+<p class="text-body-md font-body-md text-on-surface-variant m-0 relative z-10 leading-relaxed">Foto Kepala Pekon dikelola pada menu <a class="text-primary hover:underline" href="<?= APP_BASE ?>/dashboard/struktur">Struktur Pemerintahan</a> (entri dengan jabatan Kepala Pekon), bukan di halaman ini.</p>
 </div>
 
 <div class="bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border p-4 md:p-stack-lg flex flex-col gap-stack-md relative overflow-hidden">
@@ -249,22 +212,6 @@ Simpan Perubahan
 </section>
 <script>
 (function () {
-    var fotoInput = document.getElementById('foto');
-    var previewContainer = document.getElementById('foto-preview-container');
-    var previewImg = document.getElementById('foto-preview');
-    if (fotoInput && previewContainer && previewImg) {
-        fotoInput.addEventListener('change', function () {
-            var file = this.files && this.files[0];
-            if (!file) { previewContainer.classList.add('hidden'); return; }
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                previewImg.src = e.target.result;
-                previewContainer.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        });
-    }
-
     var input      = document.getElementById('maps_embed_url');
     var preview    = document.getElementById('maps-preview');
     var iframeWrap = document.getElementById('maps-iframe-wrap');
