@@ -201,7 +201,7 @@ require __DIR__ . '/layout.php';
                             <div class="carousel-slide">
                                 <a href="<?= APP_BASE ?>/wisata/<?= e($w['slug']) ?>"
                                     class="group relative flex w-full aspect-[21/9] overflow-hidden rounded-xl block">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-surface/90 via-surface/20 to-transparent z-10"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/20 to-transparent z-10"></div>
                                     <?php if ($gambarUtama !== null): ?>
                                         <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                             data-skeleton
@@ -215,8 +215,8 @@ require __DIR__ . '/layout.php';
                                     <?php endif; ?>
                                     <div class="absolute bottom-0 left-0 right-0 z-20 p-5 flex items-end justify-between gap-4">
                                         <div class="flex flex-col gap-1">
-                                            <h3 class="text-base font-semibold text-on-surface group-hover:text-primary transition-colors"><?= e($w['nama']) ?></h3>
-                                            <p class="text-xs text-on-surface-variant line-clamp-1"><?= e(truncate($w['deskripsi'], 90)) ?></p>
+                                            <h3 class="text-base font-semibold text-coklat group-hover:text-primary transition-colors"><?= e($w['nama']) ?></h3>
+                                            <p class="text-xs text-[#6B655C] line-clamp-1"><?= e(truncate($w['deskripsi'], 90)) ?></p>
                                         </div>
                                         <span class="shrink-0 text-primary text-sm font-medium flex items-center gap-1">
                                             Detail <span class="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>

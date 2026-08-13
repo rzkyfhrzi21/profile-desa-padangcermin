@@ -141,5 +141,7 @@ module.exports = {
         'gap-[8px]', 'overflow-hidden',
         /* baris tabel yang dirender dari function/ajax.php */
         'border-black/6', 'text-red-600', 'hover:bg-red-50',
+        /* kartu wisata dirender dari function/ajax.php (folder function tidak di-scan) */
+        'aspect-[4/3]', 'aspect-[8/3]',
     ],
 };

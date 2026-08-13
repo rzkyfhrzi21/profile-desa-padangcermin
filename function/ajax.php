@@ -127,7 +127,7 @@ function ajaxListWisata(array $p): array
             ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-caption font-caption border border-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span>Published</span>'
             : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-caption font-caption border border-glass-border">Draft</span>';
         $card = '<div class="group relative bg-glass-fill backdrop-blur-md rounded-[20px] border border-glass-border overflow-hidden hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">';
-        $card .= '<div class="relative aspect-[4/3] overflow-hidden bg-surface-container-high">';
+        $card .= '<div class="relative aspect-[8/3] overflow-hidden bg-surface-container-high">';
         $card .= $imgHtml;
         $card .= '<div class="absolute top-2 left-2"><span class="bg-black/60 text-white text-[11px] font-mono px-2 py-0.5 rounded-full">#' . $no . '</span></div>';
         $card .= '<div class="absolute top-2 right-2">' . $statusBadge . '</div>';

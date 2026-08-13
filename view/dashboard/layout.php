@@ -186,7 +186,7 @@ $initClock = date('H:i:s');
                     aria-hidden="true">
 
                     <!-- Profile card di atas menu -->
-                    <div class="flex items-center gap-3 px-4 py-3.5 border-b border-glass-border bg-muted-forest/60">
+                    <div class="flex items-center gap-3 px-4 py-3.5 border-b border-glass-border bg-surface-container-low">
                         <?php if (!empty($admin['foto'])): ?>
                         <img src="<?= e(uploadUrl($admin['foto'])) ?>" alt="Foto <?= e($admin['nama'] ?? 'Admin') ?>"
                              class="w-11 h-11 rounded-xl object-cover border border-primary/30 shrink-0"/>

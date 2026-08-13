@@ -228,6 +228,7 @@
 #admin-main-wrap .bg-surface-container-lowest { background-color: #FFFFFF; }
 #admin-main-wrap .bg-surface-container-high { background-color: #EDF1EC; }
 #admin-main-wrap .bg-surface-container-highest { background-color: #FFFFFF; }
+#admin-main-wrap .bg-background { background-color: #F4F7F3; }
 #admin-main-wrap .border-glass-border { border-color: rgba(51, 41, 30, 0.12); }
 #admin-main-wrap tbody tr:hover { background-color: #F4F7F3; }
 
