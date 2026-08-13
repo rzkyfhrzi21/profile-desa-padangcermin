@@ -18,8 +18,8 @@ function renderStrukturNode(array $node, int $depth = 0): string
     $cardPad  = $isRoot ? 'px-5 py-4' : 'px-3 py-2.5';
 
     $foto = !empty($node['foto'])
-        ? '<img class="' . $fotoSize . ' rounded-full object-cover border-2 border-primary/40 shadow-md" data-skeleton
-              alt="Foto ' . e($node['nama']) . '" loading="lazy" src="' . e(uploadUrl($node['foto'])) . '"/>'
+        ? '<img class="' . $fotoSize . ' rounded-full object-cover border-2 border-primary/40 shadow-md cursor-pointer" data-skeleton
+              alt="Foto ' . e($node['nama']) . '" loading="lazy" src="' . e(uploadUrl($node['foto'])) . '" data-lightbox="' . e(uploadUrl($node['foto'])) . '"/>'
         : '<div class="' . $fotoSize . ' rounded-full bg-surface-container-highest border border-glass-border flex items-center justify-center">
               <span class="material-symbols-outlined ' . $fotoIc . ' text-primary/60">person</span>
            </div>';
@@ -43,6 +43,46 @@ function renderStrukturNode(array $node, int $depth = 0): string
     }
 
     return $html . '</li>';
+}
+
+function orgCard(array $node, string $level): string
+{
+    $sizes = [
+        'root'  => ['w-24 h-24', 'text-[40px]', 'text-[15px]', 'text-[11px]', 'px-5 py-4'],
+        'sekre' => ['w-16 h-16', 'text-[24px]', 'text-[13px]', 'text-[10px]', 'px-3 py-2.5'],
+        'staff' => ['w-14 h-14', 'text-[20px]', 'text-[12px]', 'text-[10px]', 'px-3 py-2.5'],
+        'kadus' => ['w-14 h-14', 'text-[20px]', 'text-[12px]', 'text-[10px]', 'px-3 py-2.5'],
+    ];
+    [$fotoSize, $fotoIc, $nameSize, $jabSize, $cardPad] = $sizes[$level];
+
+    $foto = !empty($node['foto'])
+        ? '<img class="' . $fotoSize . ' rounded-full object-cover border-2 border-primary/40 shadow-md cursor-pointer" data-skeleton
+              alt="Foto ' . e($node['nama']) . '" loading="lazy" src="' . e(uploadUrl($node['foto'])) . '" data-lightbox="' . e(uploadUrl($node['foto'])) . '"/>'
+        : '<div class="' . $fotoSize . ' rounded-full bg-surface-container-highest border border-glass-border flex items-center justify-center">
+              <span class="material-symbols-outlined ' . $fotoIc . ' text-primary/60">person</span>
+           </div>';
+
+    return '<div class="org-node flex flex-col items-center gap-2 ' . $cardPad
+        . ' bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0">'
+        . $foto
+        . '<div class="flex flex-col items-center gap-1 w-full min-w-0">'
+        . '<span class="' . $nameSize . ' font-semibold text-on-surface leading-tight max-w-[140px]">' . e($node['nama']) . '</span>'
+        . '<span class="' . $jabSize . ' text-primary/80 leading-tight max-w-[140px]">' . e($node['jabatan']) . '</span>'
+        . '</div>'
+        . '</div>';
+}
+
+function orgCardStatic(string $nama, string $jabatan, string $icon): string
+{
+    return '<div class="org-node flex flex-col items-center gap-2 px-4 py-3 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0">'
+        . '<div class="w-14 h-14 rounded-full bg-surface-container-highest border border-glass-border flex items-center justify-center">'
+        . '<span class="material-symbols-outlined text-[20px] text-primary/60">' . $icon . '</span>'
+        . '</div>'
+        . '<div class="flex flex-col items-center gap-1 w-full min-w-0">'
+        . '<span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">' . e($nama) . '</span>'
+        . '<span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">' . e($jabatan) . '</span>'
+        . '</div>'
+        . '</div>';
 }
 ?>
 <style>
@@ -126,6 +166,101 @@ function renderStrukturNode(array $node, int $depth = 0): string
     padding: 6px 8px 12px;
     margin: 0 -8px;
 }
+.org-custom {
+    overflow-x: auto;
+    padding: 6px 8px 12px;
+    margin: 0 -8px;
+}
+.org-custom .org-body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-width: 840px;
+    min-height: 640px;
+    margin: 0 auto;
+}
+.org-custom .org-trunk {
+    width: 2px;
+    flex: 1 1 auto;
+    min-height: 24px;
+    background: rgba(158, 230, 56, 0.35);
+}
+.org-custom .org-sekre {
+    position: absolute;
+    top: 24px;
+    left: calc(50% + 46px);
+}
+.org-custom .org-sekre::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -46px;
+    width: 92px;
+    height: 22px;
+    border-top: 2px solid rgba(158, 230, 56, 0.35);
+    border-right: 2px solid rgba(158, 230, 56, 0.35);
+    border-radius: 0 10px 0 0;
+}
+.org-custom .org-sekre .org-node {
+    margin-top: 22px;
+}
+.org-custom .org-staffrow {
+    position: absolute;
+    top: 220px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.org-custom .org-childrow {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+.org-custom .org-childrow-item {
+    position: relative;
+    padding: 34px 7px 0;
+}
+.org-custom .org-childrow-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(158, 230, 56, 0.35);
+}
+.org-custom .org-childrow-item:first-child::before {
+    left: 50%;
+}
+.org-custom .org-childrow-item:last-child::before {
+    right: 50%;
+}
+.org-custom .org-childrow-item::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    width: 2px;
+    height: 32px;
+    background: rgba(158, 230, 56, 0.35);
+}
+.org-custom .org-kadus-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.org-custom .org-kadus-vline {
+    width: 2px;
+    height: 34px;
+    background: rgba(158, 230, 56, 0.35);
+}
+.org-mline {
+    width: 2px;
+    height: 24px;
+    background: rgba(158, 230, 56, 0.35);
+}
 @media (prefers-reduced-motion: reduce) {
     .org-tree li,
     .org-tree ul {
@@ -144,6 +279,103 @@ function renderStrukturNode(array $node, int $depth = 0): string
 <?php if ($strukturTree === []): ?>
 <div class="bg-glass-fill backdrop-blur-md rounded-[20px] p-6 border border-glass-border text-center text-on-surface-variant font-body-md">Data struktur organisasi belum tersedia.</div>
 <?php else: ?>
+<?php
+$kades = $strukturTree[0] ?? null;
+$sekre = null;
+$kadusList = [];
+if ($kades !== null) {
+    foreach ($kades['children'] ?? [] as $c) {
+        $jab = $c['jabatan'] ?? '';
+        if (stripos($jab, 'Sekretaris') !== false || stripos($jab, 'Sekdes') !== false) {
+            $sekre = $c;
+        } else {
+            $kadusList[] = $c;
+        }
+    }
+}
+$kasi = [];
+$kaur = [];
+if ($sekre !== null) {
+    foreach ($sekre['children'] ?? [] as $s) {
+        $jab = $s['jabatan'] ?? '';
+        if (stripos($jab, 'Kasi') !== false) {
+            $kasi[] = $s;
+        } elseif (stripos($jab, 'Kaur') !== false) {
+            $kaur[] = $s;
+        } else {
+            $kasi[] = $s;
+        }
+    }
+}
+$customOk = $kades !== null && $sekre !== null && ($kasi !== [] || $kaur !== [] || $kadusList !== []);
+?>
+<?php if ($customOk): ?>
+<div class="hidden md:block">
+<div class="org-custom">
+<div class="flex items-center justify-center gap-2 md:gap-4">
+<?= orgCardStatic('BPD', 'Badan Permusyawaratan Desa', 'account_balance') ?>
+<div class="w-8 md:w-12 self-stretch flex items-center">
+<div class="w-full border-t-2 border-primary/30"></div>
+</div>
+<?= orgCard($kades, 'root') ?>
+<div class="w-8 md:w-12 self-stretch flex items-center">
+<div class="w-full border-t-2 border-primary/30"></div>
+</div>
+<?= orgCardStatic('LPM', 'Lembaga Pemberdayaan Masyarakat', 'groups') ?>
+</div>
+<div class="org-body">
+<div class="org-trunk" aria-hidden="true"></div>
+<div class="org-sekre">
+<?= orgCard($sekre, 'sekre') ?>
+</div>
+<?php if ($kasi !== [] || $kaur !== []): ?>
+<div class="org-staffrow">
+<div class="org-childrow">
+<?php foreach (array_merge($kasi, $kaur) as $s): ?>
+<div class="org-childrow-item"><?= orgCard($s, 'staff') ?></div>
+<?php endforeach; ?>
+</div>
+</div>
+<?php endif; ?>
+<?php if ($kadusList !== []): ?>
+<div class="org-kadus-wrap">
+<?php foreach (array_chunk($kadusList, 8) as $rIdx => $row): ?>
+<?php if ($rIdx > 0): ?>
+<div class="org-kadus-vline" aria-hidden="true"></div>
+<?php endif; ?>
+<div class="org-childrow">
+<?php foreach ($row as $kd): ?>
+<div class="org-childrow-item"><?= orgCard($kd, 'kadus') ?></div>
+<?php endforeach; ?>
+</div>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+</div>
+</div>
+</div>
+<div class="md:hidden">
+<div class="flex flex-col items-center gap-3">
+<?= orgCardStatic('BPD', 'Badan Permusyawaratan Desa', 'account_balance') ?>
+<?= orgCard($kades, 'root') ?>
+<?= orgCardStatic('LPM', 'Lembaga Pemberdayaan Masyarakat', 'groups') ?>
+<div class="org-mline"></div>
+<?= orgCard($sekre, 'sekre') ?>
+<?php if ($kasi !== [] || $kaur !== []): ?>
+<div class="org-mline"></div>
+<?php foreach (array_merge($kasi, $kaur) as $s): ?>
+<?= orgCard($s, 'staff') ?>
+<?php endforeach; ?>
+<?php endif; ?>
+<?php if ($kadusList !== []): ?>
+<div class="org-mline"></div>
+<?php foreach ($kadusList as $kd): ?>
+<?= orgCard($kd, 'kadus') ?>
+<?php endforeach; ?>
+<?php endif; ?>
+</div>
+</div>
+<?php else: ?>
 <div class="org-scroll">
 <div class="org-tree">
 <?php foreach ($strukturTree as $root): ?>
@@ -151,6 +383,7 @@ function renderStrukturNode(array $node, int $depth = 0): string
 <?php endforeach; ?>
 </div>
 </div>
+<?php endif; ?>
 <?php endif; ?>
 </div>
 </section>

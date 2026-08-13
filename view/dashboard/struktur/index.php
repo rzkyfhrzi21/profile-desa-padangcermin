@@ -202,7 +202,7 @@ require __DIR__ . '/../layout.php';
 
     <!-- Org Chart — scrollable horizontal di mobile -->
     <div class="overflow-x-auto -mx-2 px-2 pb-4">
-      <div class="relative z-10 min-w-[480px] flex flex-col items-center">
+      <div class="relative z-10">
 
         <?php if ($totalAnggota === 0): ?>
         <div class="flex flex-col items-center justify-center py-20 gap-4 text-center">
@@ -216,23 +216,233 @@ require __DIR__ . '/../layout.php';
 
         <?php else: ?>
 
+        <?php
+        $root = !empty($roots) ? $nodeMap[$roots[0]] : null;
+        $sekre = null;
+        $kadusList = [];
+        if ($root !== null) {
+            foreach ($children[(int) $root['id']] ?? [] as $cid) {
+                $jab = $nodeMap[$cid]['jabatan'] ?? '';
+                if (stripos($jab, 'Sekretaris') !== false || stripos($jab, 'Sekdes') !== false) {
+                    $sekre = $nodeMap[$cid];
+                } else {
+                    $kadusList[] = $nodeMap[$cid];
+                }
+            }
+        }
+        $kasi = [];
+        $kaur = [];
+        if ($sekre !== null) {
+            foreach ($children[(int) $sekre['id']] ?? [] as $sid) {
+                $jab = $nodeMap[$sid]['jabatan'] ?? '';
+                if (stripos($jab, 'Kasi') !== false) {
+                    $kasi[] = $nodeMap[$sid];
+                } elseif (stripos($jab, 'Kaur') !== false) {
+                    $kaur[] = $nodeMap[$sid];
+                } else {
+                    $kasi[] = $nodeMap[$sid];
+                }
+            }
+        }
+        $customOk = $root !== null && $sekre !== null && ($kasi !== [] || $kaur !== [] || $kadusList !== []);
+        $bpdCard = '<div class="flex flex-col items-center gap-2 px-4 py-3 min-w-[110px] '
+            . 'bg-gradient-to-br from-surface-container-high/80 to-surface-container-highest/60 '
+            . 'backdrop-blur-md rounded-2xl border border-glass-border '
+            . 'hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 text-center">'
+            . '<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">'
+            . '<span class="material-symbols-outlined text-[22px] text-primary/70" style="font-variation-settings:\'FILL\' 1">policy</span>'
+            . '</div>'
+            . '<div>'
+            . '<p class="text-caption font-semibold text-on-surface m-0">BPD</p>'
+            . '<p class="text-[10px] text-on-surface-variant/60 m-0 leading-tight">Badan Permusyawaratan Desa</p>'
+            . '</div>'
+            . '</div>';
+        $lpmCard = '<div class="flex flex-col items-center gap-2 px-4 py-3 min-w-[110px] '
+            . 'bg-gradient-to-br from-surface-container-high/80 to-surface-container-highest/60 '
+            . 'backdrop-blur-md rounded-2xl border border-glass-border '
+            . 'hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 text-center">'
+            . '<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">'
+            . '<span class="material-symbols-outlined text-[22px] text-primary/70" style="font-variation-settings:\'FILL\' 1">groups</span>'
+            . '</div>'
+            . '<div>'
+            . '<p class="text-caption font-semibold text-on-surface m-0">LPM</p>'
+            . '<p class="text-[10px] text-on-surface-variant/60 m-0 leading-tight">Lembaga Pemberdayaan Masyarakat</p>'
+            . '</div>'
+            . '</div>';
+        ?>
+
+        <style>
+        .org-custom {
+            overflow-x: auto;
+            padding: 6px 8px 12px;
+            margin: 0 -8px;
+        }
+        .org-custom .org-body {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            min-width: 840px;
+            min-height: 620px;
+            margin: 0 auto;
+        }
+        .org-custom .org-trunk {
+            width: 2px;
+            flex: 1 1 auto;
+            min-height: 24px;
+            background: rgba(158, 230, 56, 0.35);
+        }
+        .org-custom .org-sekre {
+            position: absolute;
+            top: 24px;
+            left: calc(50% + 46px);
+        }
+        .org-custom .org-sekre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -46px;
+            width: 92px;
+            height: 22px;
+            border-top: 2px solid rgba(158, 230, 56, 0.35);
+            border-right: 2px solid rgba(158, 230, 56, 0.35);
+            border-radius: 0 10px 0 0;
+        }
+        .org-custom .org-sekre .org-card {
+            margin-top: 22px;
+        }
+        .org-custom .org-staffrow {
+            position: absolute;
+            top: 220px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .org-custom .org-childrow {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .org-custom .org-childrow-item {
+            position: relative;
+            padding: 34px 7px 0;
+        }
+        .org-custom .org-childrow-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(158, 230, 56, 0.35);
+        }
+        .org-custom .org-childrow-item:first-child::before {
+            left: 50%;
+        }
+        .org-custom .org-childrow-item:last-child::before {
+            right: 50%;
+        }
+        .org-custom .org-childrow-item::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 50%;
+            width: 2px;
+            height: 32px;
+            background: rgba(158, 230, 56, 0.35);
+        }
+        .org-custom .org-kadus-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .org-custom .org-kadus-vline {
+            width: 2px;
+            height: 34px;
+            background: rgba(158, 230, 56, 0.35);
+        }
+        .org-mline {
+            width: 2px;
+            height: 24px;
+            background: rgba(158, 230, 56, 0.35);
+        }
+        </style>
+
+        <?php if ($customOk): ?>
+        <div class="hidden md:block">
+        <div class="org-custom">
+        <div class="flex items-center justify-center gap-2 md:gap-4">
+          <?= $bpdCard ?>
+          <div class="w-8 md:w-12 self-stretch flex items-center">
+          <div class="w-full border-t-2 border-primary/30"></div>
+          </div>
+          <?= renderOrgCard($root, 'lg') ?>
+          <div class="w-8 md:w-12 self-stretch flex items-center">
+          <div class="w-full border-t-2 border-primary/30"></div>
+          </div>
+          <?= $lpmCard ?>
+        </div>
+        <div class="org-body">
+        <div class="org-trunk" aria-hidden="true"></div>
+        <div class="org-sekre"><?= renderOrgCard($sekre, 'md') ?></div>
+        <?php if ($kasi !== [] || $kaur !== []): ?>
+        <div class="org-staffrow">
+        <div class="org-childrow">
+        <?php foreach (array_merge($kasi, $kaur) as $s): ?>
+        <div class="org-childrow-item"><?= renderOrgCard($s, 'sm') ?></div>
+        <?php endforeach; ?>
+        </div>
+        </div>
+        <?php endif; ?>
+        <?php if ($kadusList !== []): ?>
+        <div class="org-kadus-wrap">
+        <?php foreach (array_chunk($kadusList, 8) as $rIdx => $row): ?>
+        <?php if ($rIdx > 0): ?>
+        <div class="org-kadus-vline" aria-hidden="true"></div>
+        <?php endif; ?>
+        <div class="org-childrow">
+        <?php foreach ($row as $kd): ?>
+        <div class="org-childrow-item"><?= renderOrgCard($kd, 'sm') ?></div>
+        <?php endforeach; ?>
+        </div>
+        <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+        </div>
+        </div>
+        </div>
+
+        <div class="md:hidden">
+        <div class="flex flex-col items-center gap-3">
+          <?= $bpdCard ?>
+          <?= renderOrgCard($root, 'lg') ?>
+          <?= $lpmCard ?>
+          <div class="org-mline"></div>
+          <?= renderOrgCard($sekre, 'md') ?>
+          <?php if ($kasi !== [] || $kaur !== []): ?>
+          <div class="org-mline"></div>
+          <?php foreach (array_merge($kasi, $kaur) as $s): ?>
+          <?= renderOrgCard($s, 'sm') ?>
+          <?php endforeach; ?>
+          <?php endif; ?>
+          <?php if ($kadusList !== []): ?>
+          <div class="org-mline"></div>
+          <?php foreach ($kadusList as $kd): ?>
+          <?= renderOrgCard($kd, 'sm') ?>
+          <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+        </div>
+        <?php else: ?>
+        <div class="min-w-[480px] flex flex-col items-center">
+
         <!-- Garis BPD — Root — LPM (decorative, hanya jika ada root) -->
         <?php if (!empty($roots)): ?>
         <div class="flex items-center justify-center gap-0 w-full mb-2">
           <!-- BPD (dekoratif, bukan dari DB) -->
           <div class="flex items-center">
-            <div class="flex flex-col items-center gap-2 px-4 py-3 min-w-[110px]
-                        bg-gradient-to-br from-surface-container-high/80 to-surface-container-highest/60
-                        backdrop-blur-md rounded-2xl border border-glass-border
-                        hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 text-center">
-              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">
-                <span class="material-symbols-outlined text-[22px] text-primary/70" style="font-variation-settings:'FILL' 1">policy</span>
-              </div>
-              <div>
-                <p class="text-caption font-semibold text-on-surface m-0">BPD</p>
-                <p class="text-[10px] text-on-surface-variant/60 m-0 leading-tight">Badan Permusyawaratan Desa</p>
-              </div>
-            </div>
+            <?= $bpdCard ?>
             <div class="w-14 flex items-center justify-center">
               <div class="w-full border-t-2 border-dashed border-primary/30"></div>
             </div>
@@ -257,18 +467,7 @@ require __DIR__ . '/../layout.php';
               <div class="w-full border-t-2 border-dashed border-primary/30"></div>
             </div>
             <!-- LPM (dekoratif) -->
-            <div class="flex flex-col items-center gap-2 px-4 py-3 min-w-[110px]
-                        bg-gradient-to-br from-surface-container-high/80 to-surface-container-highest/60
-                        backdrop-blur-md rounded-2xl border border-glass-border
-                        hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 text-center">
-              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">
-                <span class="material-symbols-outlined text-[22px] text-primary/70" style="font-variation-settings:'FILL' 1">groups</span>
-              </div>
-              <div>
-                <p class="text-caption font-semibold text-on-surface m-0">LPM</p>
-                <p class="text-[10px] text-on-surface-variant/60 m-0 leading-tight">Lembaga Pemberdayaan Masyarakat</p>
-              </div>
-            </div>
+            <?= $lpmCard ?>
           </div>
         </div>
 
@@ -279,18 +478,19 @@ require __DIR__ . '/../layout.php';
 
         <?php endif; // end $roots check ?>
 
+        </div>
+        <?php endif; ?>
+
         <?php endif; // end $totalAnggota === 0 check ?>
 
-      </div><!-- /min-w chart -->
+      </div><!-- /chart -->
     </div><!-- /overflow-x-auto -->
 
     <!-- Legend -->
     <div class="relative z-10 mt-8 pt-5 border-t border-glass-border/30 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] text-on-surface-variant/50">
-      <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-primary/80"></div> Root / Kepala</div>
-      <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-primary/50"></div> Level 2</div>
-      <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-primary/30"></div> Level 3+</div>
-      <div class="flex items-center gap-1 border-l border-glass-border/40 pl-4">
-        <span class="border-t border-dashed border-primary/40 w-6"></span> Koordinasi
+      <div class="flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[13px]">account_tree</span>
+        Kepala Desa &rarr; Sekretaris &rarr; Kasi / Kaur &rarr; Kepala Dusun
       </div>
       <div class="ml-auto flex items-center gap-1">
         <span class="material-symbols-outlined text-[13px]">touch_app</span>
