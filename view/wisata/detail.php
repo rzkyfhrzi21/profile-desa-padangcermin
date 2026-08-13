@@ -62,8 +62,12 @@ $ogImage = $gambarUtama !== null ? APP_URL . '/uploads/' . $gambarUtama['path_ga
 <main class="w-full pt-24">
 <div class="flex flex-col w-full relative">
 <div class="relative w-full h-[600px] -mt-20 overflow-hidden flex items-end pt-32 pb-16">
-<?php if ($gambarUtama !== null): ?>
+<?php if ($gambarUtama !== null && fotoAda($gambarUtama['path_gambar'])): ?>
 <div class="absolute inset-0 z-0 bg-cover bg-center" style="background-image: url('<?= e(uploadUrl($gambarUtama['path_gambar'])) ?>')"></div>
+<?php elseif ($gambarUtama !== null): ?>
+<div class="absolute inset-0 z-0 bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
+<span class="text-[72px] font-bold text-white/40"><?= e(inisialNama($wisata['nama'])) ?></span>
+</div>
 <?php else: ?>
 <div class="absolute inset-0 z-0 bg-surface-container-high"></div>
 <?php endif; ?>
@@ -133,7 +137,13 @@ $ogImage = $gambarUtama !== null ? APP_URL . '/uploads/' . $gambarUtama['path_ga
 <?php foreach ($gambar as $i => $g): ?>
 <div class="carousel-slide">
 <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group">
+<?php if (fotoAda($g['path_gambar'])): ?>
 <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" data-lightbox="<?= e(uploadUrl($g['path_gambar'])) ?>" data-skeleton alt="<?= e($wisata['nama']) ?>" src="<?= e(uploadUrl($g['path_gambar'])) ?>"/>
+<?php else: ?>
+<div class="w-full h-full bg-gradient-to-br from-primary/70 to-primary/30 flex items-center justify-center">
+<span class="text-[36px] font-bold text-white"><?= e(inisialNama($wisata['nama'])) ?></span>
+</div>
+<?php endif; ?>
 </div>
 </div>
 <?php endforeach; ?>

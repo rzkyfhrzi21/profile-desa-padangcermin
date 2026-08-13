@@ -121,7 +121,9 @@ function ajaxListWisata(array $p): array
         $no = $noBase + $noIdx;
         $gambarUtama = $w['gambar'][0]['path_gambar'] ?? ($w['gambar_utama'] ?? '');
         $imgHtml = $gambarUtama !== ''
-            ? '<img src="' . uploadUrl($gambarUtama) . '" alt="' . e($w['nama']) . '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-lightbox="' . uploadUrl($gambarUtama) . '" data-skeleton loading="lazy">'
+            ? (fotoAda($gambarUtama)
+                ? '<img src="' . uploadUrl($gambarUtama) . '" alt="' . e($w['nama']) . '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-lightbox="' . uploadUrl($gambarUtama) . '" data-skeleton loading="lazy">'
+                : thumbInisial($w['nama'], 'w-full h-full', 'text-[28px]'))
             : '<div class="w-full h-full flex items-center justify-center bg-surface-container-high"><span class="material-symbols-outlined text-on-surface-variant text-[48px]">landscape</span></div>';
         $statusBadge = $w['status'] === 'publish'
             ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-caption font-caption border border-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span>Published</span>'
@@ -169,7 +171,9 @@ function ajaxDetailWisata(int $id): array
     $gambar = getWisataImages($id);
     $galeri = '';
     foreach ($gambar as $i => $g) {
-        $galeri .= '<img data-skeleton data-lightbox="' . uploadUrl($g['path_gambar']) . '" alt="' . e($w['nama']) . ' ' . ((int) $i + 1) . '" class="h-28 w-full object-cover rounded-xl cursor-pointer border border-glass-border/30" src="' . uploadUrl($g['path_gambar']) . '"/>';
+        $galeri .= fotoAda($g['path_gambar'])
+            ? '<img data-skeleton data-lightbox="' . uploadUrl($g['path_gambar']) . '" alt="' . e($w['nama']) . ' ' . ((int) $i + 1) . '" class="h-28 w-full object-cover rounded-xl cursor-pointer border border-glass-border/30" src="' . uploadUrl($g['path_gambar']) . '"/>'
+            : thumbInisial($w['nama'] . ' ' . ((int) $i + 1), 'h-28 w-full rounded-xl border border-glass-border/30', 'text-[24px]');
     }
     $html = '<div class="flex flex-col gap-4">'
         . '<div class="flex items-center gap-2 text-caption font-caption text-primary"><span class="material-symbols-outlined text-[16px]">landscape</span>WISATA</div>'
@@ -207,7 +211,9 @@ function ajaxListBerita(array $p): array
             . '<td class="py-4 px-4 text-center"><span class="text-label-mono font-label-mono text-[12px] text-on-surface-variant/60">' . $no . '</span></td>'
             . '<td class="py-3 px-4 w-16"><div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container-high flex-shrink-0">'
             . (!empty($b['gambar_utama'])
-                ? '<img src="' . uploadUrl($b['gambar_utama']) . '" alt="" class="w-full h-full object-cover" data-lightbox="' . uploadUrl($b['gambar_utama']) . '">'
+                ? (fotoAda($b['gambar_utama'])
+                    ? '<img src="' . uploadUrl($b['gambar_utama']) . '" alt="" class="w-full h-full object-cover" data-lightbox="' . uploadUrl($b['gambar_utama']) . '">'
+                    : thumbInisial($b['judul'], 'w-full h-full', 'text-[20px]'))
                 : '<span class="material-symbols-outlined text-on-surface-variant m-auto h-full flex items-center justify-center">image</span>')
             . '</div></td>'
             . '<td class="py-4 px-4"><span class="font-medium group-hover/row:text-primary transition-colors line-clamp-2 sm:line-clamp-1">' . e($b['judul']) . '</span></td>'
@@ -247,7 +253,11 @@ function ajaxDetailBerita(int $id): array
         . ($b['published_at'] !== null ? '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-high border border-glass-border text-caption font-caption text-on-surface-variant"><span class="material-symbols-outlined text-[14px]">calendar_today</span>' . formatTanggal($b['published_at']) . '</span>' : '')
         . '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-high border border-glass-border text-caption font-caption text-on-surface-variant"><span class="material-symbols-outlined text-[14px]">visibility</span>' . formatAngka($b['views']) . ' views</span>'
         . '</div>'
-        . (!empty($b['gambar_utama']) ? '<img data-skeleton data-lightbox="' . uploadUrl($b['gambar_utama']) . '" alt="' . e($b['judul']) . '" class="w-full max-h-64 object-cover rounded-xl cursor-pointer border border-glass-border/30" src="' . uploadUrl($b['gambar_utama']) . '"/>' : '')
+        . (!empty($b['gambar_utama'])
+            ? (fotoAda($b['gambar_utama'])
+                ? '<img data-skeleton data-lightbox="' . uploadUrl($b['gambar_utama']) . '" alt="' . e($b['judul']) . '" class="w-full max-h-64 object-cover rounded-xl cursor-pointer border border-glass-border/30" src="' . uploadUrl($b['gambar_utama']) . '"/>'
+                : thumbInisial($b['judul'], 'w-full max-h-64 rounded-xl border border-glass-border/30', 'text-[36px]'))
+            : '')
         . '<div class="flex flex-col gap-1"><span class="text-label-mono font-label-mono text-caption text-on-surface-variant">KONTEN</span><p class="text-body-md font-body-md text-on-surface-variant m-0 whitespace-pre-line">' . e(truncate((string) $b['konten'], 500)) . '</p></div>'
         . '</div>';
     return ['ok' => true, 'html' => $html];
@@ -340,7 +350,11 @@ function ajaxDetailPotensi(int $id): array
         . ($kat !== '' ? '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-high border border-glass-border text-caption font-caption text-on-surface-variant">' . e(ucwords(str_replace(['_', '-'], ' ', $kat))) . '</span>' : '')
         . '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-high border border-glass-border text-caption font-caption text-on-surface-variant"><span class="material-symbols-outlined text-[14px]">sort</span>Urutan ' . (int) $po['urutan'] . '</span>'
         . '</div>'
-        . (!empty($po['gambar']) ? '<img data-skeleton data-lightbox="' . uploadUrl($po['gambar']) . '" alt="' . e($po['judul']) . '" class="w-full max-h-64 object-cover rounded-xl cursor-pointer border border-glass-border/30" src="' . uploadUrl($po['gambar']) . '"/>' : '')
+        . (!empty($po['gambar'])
+            ? (fotoAda($po['gambar'])
+                ? '<img data-skeleton data-lightbox="' . uploadUrl($po['gambar']) . '" alt="' . e($po['judul']) . '" class="w-full max-h-64 object-cover rounded-xl cursor-pointer border border-glass-border/30" src="' . uploadUrl($po['gambar']) . '"/>'
+                : thumbInisial($po['judul'], 'w-full max-h-64 rounded-xl border border-glass-border/30', 'text-[36px]'))
+            : '')
         . '<div class="flex flex-col gap-1"><span class="text-label-mono font-label-mono text-caption text-on-surface-variant">DESKRIPSI</span><p class="text-body-md font-body-md text-on-surface-variant m-0 whitespace-pre-line">' . e($po['deskripsi'] ?? '-') . '</p></div>'
         . '</div>';
     return ['ok' => true, 'html' => $html];
@@ -390,7 +404,9 @@ function ajaxListStruktur(array $p): array
         $noIdx++;
         $no = $noBase + $noIdx;
         $foto = !empty($n['foto'])
-            ? '<div class="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-glass-border/50"><img class="w-full h-full object-cover cursor-pointer" data-lightbox="' . uploadUrl($n['foto']) . '" data-skeleton alt="Foto ' . e($n['nama']) . '" src="' . uploadUrl($n['foto']) . '"/></div>'
+            ? (fotoAda($n['foto'])
+                ? '<div class="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-glass-border/50"><img class="w-full h-full object-cover cursor-pointer" data-lightbox="' . uploadUrl($n['foto']) . '" data-skeleton alt="Foto ' . e($n['nama']) . '" src="' . uploadUrl($n['foto']) . '"/></div>'
+                : avatarInisial($n['nama'], 'w-10 h-10 shrink-0', 'text-[13px]'))
             : '<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0 border border-glass-border/50"><span class="material-symbols-outlined text-[18px] text-on-surface-variant/50">person</span></div>';
 
         $parentLabel = $n['parent_jabatan'] !== null
@@ -441,7 +457,9 @@ function ajaxDetailStruktur(int $id): array
         return ['ok' => false, 'message' => 'Data tidak ditemukan.'];
     }
     $foto = !empty($n['foto'])
-        ? '<img data-skeleton data-lightbox="' . uploadUrl($n['foto']) . '" alt="Foto ' . e($n['nama']) . '" class="w-28 h-28 object-cover rounded-2xl cursor-pointer border border-glass-border/30" src="' . uploadUrl($n['foto']) . '"/>'
+        ? (fotoAda($n['foto'])
+            ? '<img data-skeleton data-lightbox="' . uploadUrl($n['foto']) . '" alt="Foto ' . e($n['nama']) . '" class="w-28 h-28 object-cover rounded-2xl cursor-pointer border border-glass-border/30" src="' . uploadUrl($n['foto']) . '"/>'
+            : avatarInisial($n['nama'], 'w-28 h-28', 'text-[24px]', 'rounded-2xl'))
         : '<div class="w-28 h-28 rounded-2xl bg-surface-container flex items-center justify-center border border-glass-border/50"><span class="material-symbols-outlined text-[40px] text-on-surface-variant/50">person</span></div>';
     $html = '<div class="flex flex-col gap-4">'
         . '<div class="flex items-center gap-2 text-caption font-caption text-primary"><span class="material-symbols-outlined text-[16px]">account_tree</span>APARATUR DESA</div>'

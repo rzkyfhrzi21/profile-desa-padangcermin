@@ -152,6 +152,7 @@ require __DIR__ . '/../layout.php';
 <h2 class="text-headline-md font-headline-md text-on-surface m-0">Foto Pegawai</h2>
 </div>
 <?php if ($editId > 0 && !empty($struktur['foto'])): ?>
+<?php if (fotoAda($struktur['foto'])): ?>
 <div class="relative z-10 flex items-center gap-4">
 <a href="<?= uploadUrl($struktur['foto']) ?>" data-lightbox="<?= uploadUrl($struktur['foto']) ?>" title="Klik untuk preview">
 <img class="w-20 h-20 rounded-2xl object-cover border border-glass-border hover:ring-2 hover:ring-primary/60 transition-all cursor-zoom-in" data-skeleton alt="Foto <?= e($struktur['nama']) ?>" src="<?= uploadUrl($struktur['foto']) ?>"/>
@@ -161,6 +162,15 @@ require __DIR__ . '/../layout.php';
 <span class="text-caption font-caption text-on-surface-variant">Klik foto untuk preview. Ganti dengan unggah foto baru.</span>
 </div>
 </div>
+<?php else: ?>
+<div class="relative z-10 flex items-center gap-4">
+<?= avatarInisial($struktur['nama'], 'w-20 h-20', 'text-[24px]', 'rounded-2xl') ?>
+<div class="flex flex-col">
+<span class="text-label-mono font-label-mono text-primary text-[12px] uppercase tracking-widest">Foto Saat Ini</span>
+<span class="text-caption font-caption text-on-surface-variant">File foto tidak ditemukan di penyimpanan. Unggah ulang foto baru.</span>
+</div>
+</div>
+<?php endif; ?>
 <?php endif; ?>
 <!-- Preview foto baru sebelum upload -->
 <div id="foto-preview-wrap" class="hidden relative z-10">

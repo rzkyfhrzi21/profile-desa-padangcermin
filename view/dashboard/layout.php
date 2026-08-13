@@ -169,8 +169,12 @@ $initClock = date('H:i:s');
                         <span class="text-xs text-hijau">Super Admin</span>
                     </div>
                     <?php if (!empty($admin['foto'])): ?>
+                    <?php if (fotoAda($admin['foto'])): ?>
                     <img src="<?= e(uploadUrl($admin['foto'])) ?>" alt="Foto <?= e($admin['nama'] ?? 'Admin') ?>"
                          class="w-9 h-9 rounded-lg object-cover border border-primary/30 shrink-0"/>
+                    <?php else: ?>
+                    <?= avatarInisial($admin['nama'] ?? 'Admin', 'w-9 h-9 shrink-0', 'text-[14px]', 'rounded-lg') ?>
+                    <?php endif; ?>
                     <?php else: ?>
                     <div class="w-9 h-9 rounded-lg bg-surface-container-highest border border-glass-border flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1">admin_panel_settings</span>
@@ -188,8 +192,12 @@ $initClock = date('H:i:s');
                     <!-- Profile card di atas menu -->
                     <div class="flex items-center gap-3 px-4 py-3.5 border-b border-glass-border bg-surface-container-low">
                         <?php if (!empty($admin['foto'])): ?>
+                        <?php if (fotoAda($admin['foto'])): ?>
                         <img src="<?= e(uploadUrl($admin['foto'])) ?>" alt="Foto <?= e($admin['nama'] ?? 'Admin') ?>"
                              class="w-11 h-11 rounded-xl object-cover border border-primary/30 shrink-0"/>
+                        <?php else: ?>
+                        <?= avatarInisial($admin['nama'] ?? 'Admin', 'w-11 h-11 shrink-0', 'text-[16px]', 'rounded-xl') ?>
+                        <?php endif; ?>
                         <?php else: ?>
                         <div class="w-11 h-11 rounded-xl bg-primary/15 border border-primary/20 flex items-center justify-center shrink-0">
                             <span class="material-symbols-outlined text-primary text-[22px]" style="font-variation-settings: 'FILL' 1">admin_panel_settings</span>

@@ -129,16 +129,24 @@ if ($mapsVal !== ''):
 <?php
 /* Prioritas foto: dari tabel struktur (kepala desa), fallback ke profil */
 $fotoKades = null;
+$fotoKadesHilang = false;
 $namaKades = '-';
 $jabatanKades = 'Kepala Pekon';
 if ($kades !== null) {
     $namaKades    = $kades['nama'];
     $jabatanKades = $kades['jabatan'];
-    $fotoKades    = !empty($kades['foto']) ? uploadUrl($kades['foto']) : null;
+    if (!empty($kades['foto'])) {
+        $fotoKades = fotoAda($kades['foto']) ? uploadUrl($kades['foto']) : null;
+        $fotoKadesHilang = $fotoKades === null;
+    }
 }
 /* Fallback ke foto_kepala_pekon dari tabel profil */
 if ($fotoKades === null && !empty($profil['foto_kepala_pekon'])) {
-    $fotoKades = uploadUrl($profil['foto_kepala_pekon']);
+    if (fotoAda($profil['foto_kepala_pekon'])) {
+        $fotoKades = uploadUrl($profil['foto_kepala_pekon']);
+    } else {
+        $fotoKadesHilang = true;
+    }
 }
 ?>
 <?php if ($fotoKades !== null): ?>
@@ -151,6 +159,21 @@ if ($fotoKades === null && !empty($profil['foto_kepala_pekon'])) {
 <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
 <span class="material-symbols-outlined text-white text-[32px]">zoom_in</span>
 </div>
+</div>
+<div class="mt-3 text-center">
+<p class="text-body-md font-semibold text-on-surface"><?= e($namaKades) ?></p>
+<p class="text-caption text-primary"><?= e($jabatanKades) ?></p>
+<?php if ($kades !== null && !empty($kades['pendidikan_terakhir'])): ?>
+<p class="text-[11px] text-on-surface-variant"><?= e($kades['pendidikan_terakhir']) ?></p>
+<?php endif; ?>
+<a href="<?= APP_BASE ?>/dashboard/struktur/form?id=<?= (int) ($kades['id'] ?? 0) ?>"
+   class="mt-2 inline-flex items-center gap-1 text-[11px] text-primary/70 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[13px]">edit</span> Edit data kepala desa
+</a>
+</div>
+<?php elseif ($fotoKadesHilang): ?>
+<div class="aspect-[3/4] rounded-xl overflow-hidden border border-glass-border relative">
+<?= avatarInisial($namaKades, 'w-full h-full', 'text-[64px]', 'rounded-none') ?>
 </div>
 <div class="mt-3 text-center">
 <p class="text-body-md font-semibold text-on-surface"><?= e($namaKades) ?></p>

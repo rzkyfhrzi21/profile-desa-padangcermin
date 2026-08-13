@@ -323,8 +323,15 @@ Buka di Google Maps
 <div class="grid grid-cols-2 gap-3 relative z-10">
 <?php foreach ($galeri as $g): ?>
 <div class="relative group/thumb rounded-xl overflow-hidden border border-glass-border bg-surface-container-high">
+<?php if (fotoAda($g['path_gambar'])): ?>
     <img class="w-full h-24 object-cover block" alt="Galeri <?= e($wisata['nama']) ?>" src="<?= uploadUrl($g['path_gambar']) ?>"/>
+<?php else: ?>
+    <div class="w-full h-24 flex items-center justify-center bg-gradient-to-br from-primary/70 to-primary/30">
+        <span class="text-[20px] font-bold text-white"><?= e(inisialNama($wisata['nama'])) ?></span>
+    </div>
+<?php endif; ?>
     <div class="absolute inset-0 bg-black/55 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center gap-2 pointer-events-none group-hover/thumb:pointer-events-auto">
+        <?php if (fotoAda($g['path_gambar'])): ?>
         <button type="button"
                 class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/30 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white transition-all"
                 title="Lihat gambar"
@@ -333,6 +340,7 @@ Buka di Google Maps
                 data-alt="Galeri <?= e($wisata['nama']) ?>">
             <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1">zoom_in</span>
         </button>
+        <?php endif; ?>
         <button type="button"
                 class="w-9 h-9 rounded-full bg-red-500/70 hover:bg-red-500 backdrop-blur-sm border border-red-400/30 flex items-center justify-center text-white transition-all"
                 title="Hapus gambar"

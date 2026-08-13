@@ -85,8 +85,15 @@ $shareUrl = urlencode(APP_URL . '/berita/' . $berita['slug']);
 </div>
 </header>
 <div class="w-full aspect-[16/9] lg:aspect-[21/9] rounded-[24px] overflow-hidden relative shadow-xl mt-4 z-10 group">
-<?php $imgBerita = ($berita['gambar_utama'] !== null && $berita['gambar_utama'] !== '') ? uploadUrl($berita['gambar_utama']) : assetUrl('img/placeholder.webp'); ?>
+<?php $gU = $berita['gambar_utama'] ?? '';
+        $imgBerita = $gU !== '' && fotoAda($gU) ? uploadUrl($gU) : null; ?>
+<?php if ($imgBerita !== null): ?>
 <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cursor-zoom-in" data-lightbox="<?= e($imgBerita) ?>" data-skeleton alt="<?= e($berita['judul']) ?>" src="<?= e($imgBerita) ?>"/>
+<?php else: ?>
+<div class="w-full h-full bg-gradient-to-br from-primary/70 to-primary/30 flex items-center justify-center">
+<span class="text-[64px] font-bold text-white"><?= e(inisialNama($berita['judul'])) ?></span>
+</div>
+<?php endif; ?>
 <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80 pointer-events-none"></div>
 </div>
 <div class="prose prose-invert prose-lg max-w-none text-on-surface-variant font-body-lg z-10 mt-6 space-y-6">
@@ -111,7 +118,14 @@ $shareUrl = urlencode(APP_URL . '/berita/' . $berita['slug']);
 <?php foreach ($beritaTerkait as $bt): ?>
 <a class="group flex gap-4 items-start" href="<?= APP_BASE ?>/berita/<?= e($bt['slug']) ?>">
 <div class="w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-surface-container-highest">
-<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" alt="<?= e($bt['judul']) ?>" src="<?= $bt['gambar_utama'] !== null && $bt['gambar_utama'] !== '' ? e(uploadUrl($bt['gambar_utama'])) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuCEZQXtT2xMXJJ_v5WDTXOEBOKrh8mhkb5gMIUWVVmtI8cDhaE_ABlW39pVJspXTcgAFf5p8ab2QuhNKrxGZ0KT08hhlwmCi_uu2fl2jl5ingVeAfHWDk5hhTDghG7P44flHU2_cL08r1Y_GiG_pS530cHkygnRTbGh8SILyGMURHUNESYfJJ74rJTD_45bDzu9qBrmijPQYdurYJczXAaYKHjzenwYr7bjwUq-RDe1Xz0HlsCW5hqM' ?>"/>
+<?php $gT = $bt['gambar_utama'] ?? ''; ?>
+<?php if ($gT !== '' && !fotoAda($gT)): ?>
+<div class="w-full h-full bg-gradient-to-br from-primary/70 to-primary/30 flex items-center justify-center">
+<span class="text-[20px] font-bold text-white"><?= e(inisialNama($bt['judul'])) ?></span>
+</div>
+<?php else: ?>
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" alt="<?= e($bt['judul']) ?>" src="<?= $gT !== '' ? e(uploadUrl($gT)) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuCEZQXtT2xMXJJ_v5WDTXOEBOKrh8mhkb5gMIUWVVmtI8cDhaE_ABlW39pVJspXTcgAFf5p8ab2QuhNKrxGZ0KT08hhlwmCi_uu2fl2jl5ingVeAfHWDk5hhTDghG7P44flHU2_cL08r1Y_GiG_pS530cHkygnRTbGh8SILyGMURHUNESYfJJ74rJTD_45bDzu9qBrmijPQYdurYJczXAaYKHjzenwYr7bjwUq-RDe1Xz0HlsCW5hqM' ?>"/>
+<?php endif; ?>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-mono text-[11px] text-primary uppercase tracking-wider"><?= e($bt['kategori_nama'] ?? 'Berita') ?></span>

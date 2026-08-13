@@ -202,12 +202,16 @@ require __DIR__ . '/layout.php';
                                 <a href="<?= APP_BASE ?>/wisata/<?= e($w['slug']) ?>"
                                     class="group relative flex w-full aspect-[21/9] overflow-hidden rounded-xl block">
                                     <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/20 to-transparent z-10"></div>
-                                    <?php if ($gambarUtama !== null): ?>
+                                    <?php if ($gambarUtama !== null && fotoAda($gambarUtama['path_gambar'])): ?>
                                         <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                             data-skeleton
                                             alt="<?= e($w['nama']) ?>"
                                             loading="lazy"
                                             src="<?= e(uploadUrl($gambarUtama['path_gambar'])) ?>" />
+                                    <?php elseif ($gambarUtama !== null): ?>
+                                        <div class="w-full h-full bg-gradient-to-br from-primary/70 to-primary/30 flex items-center justify-center">
+                                            <span class="text-[40px] font-bold text-white"><?= e(inisialNama($w['nama'])) ?></span>
+                                        </div>
                                     <?php else: ?>
                                         <div class="w-full h-full bg-surface-container-high flex items-center justify-center">
                                             <span class="material-symbols-outlined text-on-surface-variant text-[48px]">landscape</span>

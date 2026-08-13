@@ -171,6 +171,7 @@ require __DIR__ . '/../layout.php';
 <h2 class="text-headline-md font-headline-md text-on-surface m-0">Gambar Utama</h2>
 </div>
 <?php if ($editId > 0 && !empty($berita['gambar_utama'])): ?>
+<?php if (fotoAda($berita['gambar_utama'])): ?>
 <div class="relative z-10">
 <img class="w-full h-40 object-cover rounded-xl border border-glass-border cursor-pointer"
      data-lightbox="<?= uploadUrl($berita['gambar_utama']) ?>"
@@ -179,6 +180,12 @@ require __DIR__ . '/../layout.php';
      src="<?= uploadUrl($berita['gambar_utama']) ?>"/>
 <p class="text-[11px] text-on-surface-variant mt-1">Klik gambar untuk lihat full-size</p>
 </div>
+<?php else: ?>
+<div class="relative z-10">
+<?= thumbInisial($berita['judul'], 'w-full h-40 rounded-xl border border-glass-border', 'text-[36px]') ?>
+<p class="text-[11px] text-on-surface-variant mt-1">File gambar tidak ditemukan di penyimpanan. Unggah ulang gambar baru.</p>
+</div>
+<?php endif; ?>
 <?php endif; ?>
 
 <div class="flex flex-col gap-2 relative z-10">

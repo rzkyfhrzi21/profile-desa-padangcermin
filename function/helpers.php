@@ -87,3 +87,47 @@ function uploadUrl(string $path): string
     }
     return APP_BASE . '/uploads/' . ltrim($path, '/');
 }
+
+/**
+ * Cek apakah file upload benar-benar ada di penyimpanan.
+ */
+function fotoAda(string $path): bool
+{
+    return $path !== '' && is_file(UPLOAD_PATH . '/' . ltrim($path, '/'));
+}
+
+/**
+ * Inisial nama: 2 huruf pertama dari 2 kata pertama (fallback '?').
+ */
+function inisialNama(string $nama): string
+{
+    $kata = array_values(array_filter(preg_split('/\s+/', trim($nama)), fn(string $w): bool => $w !== ''));
+    if ($kata === []) {
+        return '?';
+    }
+    $in = mb_strtoupper(mb_substr($kata[0], 0, 1));
+    if (count($kata) > 1) {
+        $in .= mb_strtoupper(mb_substr($kata[1], 0, 1));
+    }
+    return $in;
+}
+
+/**
+ * Avatar bulat berisi inisial nama — fallback foto orang yang tidak ditemukan.
+ */
+function avatarInisial(string $nama, string $sizeClass, string $initClass = 'text-[16px]', string $shape = 'rounded-full'): string
+{
+    return '<div class="' . $sizeClass . ' ' . $shape . ' bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto ' . e($nama) . ' tidak ditemukan di penyimpanan">'
+        . '<span class="' . $initClass . ' font-bold text-white">' . e(inisialNama($nama)) . '</span>'
+        . '</div>';
+}
+
+/**
+ * Kotak berisi inisial judul/nama — fallback gambar konten yang tidak ditemukan.
+ */
+function thumbInisial(string $nama, string $boxClass = 'w-full h-full', string $initClass = 'text-[24px]'): string
+{
+    return '<div class="' . $boxClass . ' bg-gradient-to-br from-primary/70 to-primary/30 flex items-center justify-center" title="Gambar tidak ditemukan di penyimpanan">'
+        . '<span class="' . $initClass . ' font-bold text-white">' . e(inisialNama($nama)) . '</span>'
+        . '</div>';
+}

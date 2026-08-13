@@ -34,14 +34,16 @@ function renderOrgCard(array $n, string $size = 'md'): string
     $jc   = $isLg ? 'text-caption font-medium' : 'text-[10px]';
     $pad  = $isLg ? 'px-5 py-4' : ($isSm ? 'px-3 py-2' : 'px-4 py-3');
 
-    $fotoUrl = !empty($n['foto']) ? uploadUrl($n['foto']) : null;
-    $img = $fotoUrl !== null
-        ? '<img src="' . e($fotoUrl) . '" alt="Foto ' . e($n['nama']) . '" '
+    $fotoPath = $n['foto'] ?? '';
+    $img = $fotoPath !== '' && fotoAda($fotoPath)
+        ? '<img src="' . e(uploadUrl($fotoPath)) . '" alt="Foto ' . e($n['nama']) . '" '
           . 'class="' . $avc . ' rounded-full object-cover border-2 border-primary/40 shadow-md cursor-pointer" '
-          . 'data-lightbox="' . e($fotoUrl) . '" data-skeleton loading="lazy">'
-        : '<div class="' . $avc . ' rounded-full bg-surface-container-high flex items-center justify-center border-2 border-glass-border/60 shadow-sm">'
-          . '<span class="material-symbols-outlined ' . $ic . ' text-on-surface-variant/40">person</span>'
-          . '</div>';
+          . 'data-lightbox="' . e(uploadUrl($fotoPath)) . '" data-skeleton loading="lazy">'
+        : ($fotoPath !== ''
+            ? avatarInisial($n['nama'], $avc, $ic)
+            : '<div class="' . $avc . ' rounded-full bg-surface-container-high flex items-center justify-center border-2 border-glass-border/60 shadow-sm">'
+              . '<span class="material-symbols-outlined ' . $ic . ' text-on-surface-variant/40">person</span>'
+              . '</div>');
 
     return '<div class="org-card group flex flex-col items-center gap-2 ' . $pad . ' '
         . 'bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border '
@@ -219,28 +221,32 @@ require __DIR__ . '/../layout.php';
         <?php
         $root = !empty($roots) ? $nodeMap[$roots[0]] : null;
         $sekre = null;
-        $kadusList = [];
-        if ($root !== null) {
-            foreach ($children[(int) $root['id']] ?? [] as $cid) {
-                $jab = $nodeMap[$cid]['jabatan'] ?? '';
-                if (stripos($jab, 'Sekretaris') !== false || stripos($jab, 'Sekdes') !== false) {
-                    $sekre = $nodeMap[$cid];
-                } else {
-                    $kadusList[] = $nodeMap[$cid];
-                }
-            }
-        }
         $kasi = [];
         $kaur = [];
-        if ($sekre !== null) {
-            foreach ($children[(int) $sekre['id']] ?? [] as $sid) {
-                $jab = $nodeMap[$sid]['jabatan'] ?? '';
-                if (stripos($jab, 'Kasi') !== false) {
-                    $kasi[] = $nodeMap[$sid];
-                } elseif (stripos($jab, 'Kaur') !== false) {
-                    $kaur[] = $nodeMap[$sid];
-                } else {
-                    $kasi[] = $nodeMap[$sid];
+        $kadusList = [];
+        if ($root !== null) {
+            $rootId = (int) $root['id'];
+            $stack = [$rootId];
+            while ($stack !== []) {
+                $id = (int) array_pop($stack);
+                if ($id !== $rootId) {
+                    $node = $nodeMap[$id];
+                    $jab = $node['jabatan'] ?? '';
+                    if (stripos($jab, 'Sekretaris') !== false || stripos($jab, 'Sekdes') !== false) {
+                        if ($sekre === null) {
+                            $sekre = $node;
+                        }
+                    } elseif (stripos($jab, 'Kasi') !== false) {
+                        $kasi[] = $node;
+                    } elseif (stripos($jab, 'Kaur') !== false) {
+                        $kaur[] = $node;
+                    } else {
+                        $kadusList[] = $node;
+                    }
+                }
+                $kids = $children[$id] ?? [];
+                for ($i = count($kids) - 1; $i >= 0; $i--) {
+                    $stack[] = (int) $kids[$i];
                 }
             }
         }

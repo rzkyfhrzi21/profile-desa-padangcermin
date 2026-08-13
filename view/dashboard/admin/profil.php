@@ -137,7 +137,12 @@ require __DIR__ . '/../layout.php';
                 <!-- Avatar -->
                 <div id="avatar-wrap" class="relative w-28 h-28 rounded-full border-2 border-primary/40 overflow-hidden bg-surface-container-high flex items-center justify-center shadow-lime-glow">
                     <?php if (!empty($admin['foto'])): ?>
+                    <?php if (fotoAda($admin['foto'])): ?>
                     <img id="avatar-preview" src="<?= e(uploadUrl($admin['foto'])) ?>" alt="Foto <?= e($admin['nama'] ?? 'Admin') ?>" class="w-full h-full object-cover"/>
+                    <?php else: ?>
+                    <?= avatarInisial($admin['nama'] ?? 'Admin', 'w-full h-full', 'text-[40px]') ?>
+                    <img id="avatar-preview" src="" alt="Preview" class="w-full h-full object-cover absolute inset-0 hidden"/>
+                    <?php endif; ?>
                     <?php else: ?>
                     <span id="avatar-icon" class="material-symbols-outlined text-primary text-[52px]" style="font-variation-settings:'FILL' 1">admin_panel_settings</span>
                     <img id="avatar-preview" src="" alt="Preview" class="w-full h-full object-cover absolute inset-0 hidden"/>

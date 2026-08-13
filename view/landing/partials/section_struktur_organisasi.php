@@ -13,16 +13,12 @@ function renderStrukturNode(array $node, int $depth = 0): string
 
     $fotoSize = $isRoot ? 'w-24 h-24' : ($depth === 1 ? 'w-16 h-16' : 'w-14 h-14');
     $fotoIc   = $isRoot ? 'text-[40px]' : ($depth === 1 ? 'text-[24px]' : 'text-[20px]');
+    $initIc   = $isRoot ? 'text-[28px]' : ($depth === 1 ? 'text-[18px]' : 'text-[16px]');
     $nameSize = $isRoot ? 'text-[15px]' : ($depth === 1 ? 'text-[13px]' : 'text-[12px]');
     $jabSize  = $isRoot ? 'text-[11px]' : 'text-[10px]';
     $cardPad  = $isRoot ? 'px-5 py-4' : 'px-3 py-2.5';
 
-    $foto = !empty($node['foto'])
-        ? '<img class="' . $fotoSize . ' rounded-full object-cover border-2 border-primary/40 shadow-md cursor-pointer" data-skeleton
-              alt="Foto ' . e($node['nama']) . '" loading="lazy" src="' . e(uploadUrl($node['foto'])) . '" data-lightbox="' . e(uploadUrl($node['foto'])) . '"/>'
-        : '<div class="' . $fotoSize . ' rounded-full bg-surface-container-highest border border-glass-border flex items-center justify-center">
-              <span class="material-symbols-outlined ' . $fotoIc . ' text-primary/60">person</span>
-           </div>';
+    $foto = strukturFoto($node, $fotoSize, $fotoIc, $initIc);
 
     $html = '<li>'
         . '<div class="org-node flex flex-col items-center gap-2 ' . $cardPad
@@ -45,22 +41,38 @@ function renderStrukturNode(array $node, int $depth = 0): string
     return $html . '</li>';
 }
 
+/**
+ * Foto kartu struktur: tampil jika file ada di penyimpanan,
+ * fallback inisial nama jika file tidak ditemukan,
+ * ikon person jika kolom foto kosong.
+ */
+function strukturFoto(array $node, string $fotoSize, string $fotoIc, string $initIc): string
+{
+    $foto = $node['foto'] ?? '';
+    if (fotoAda($foto)) {
+        $url = uploadUrl($foto);
+        return '<img class="' . $fotoSize . ' rounded-full object-cover border-2 border-primary/40 shadow-md cursor-pointer" data-skeleton
+              alt="Foto ' . e($node['nama']) . '" loading="lazy" src="' . e($url) . '" data-lightbox="' . e($url) . '"/>';
+    }
+    if ($foto !== '') {
+        return avatarInisial($node['nama'], $fotoSize, $initIc);
+    }
+    return '<div class="' . $fotoSize . ' rounded-full bg-surface-container-highest border border-glass-border flex items-center justify-center">
+          <span class="material-symbols-outlined ' . $fotoIc . ' text-primary/60">person</span>
+       </div>';
+}
+
 function orgCard(array $node, string $level): string
 {
     $sizes = [
-        'root'  => ['w-24 h-24', 'text-[40px]', 'text-[15px]', 'text-[11px]', 'px-5 py-4'],
-        'sekre' => ['w-16 h-16', 'text-[24px]', 'text-[13px]', 'text-[10px]', 'px-3 py-2.5'],
-        'staff' => ['w-14 h-14', 'text-[20px]', 'text-[12px]', 'text-[10px]', 'px-3 py-2.5'],
-        'kadus' => ['w-14 h-14', 'text-[20px]', 'text-[12px]', 'text-[10px]', 'px-3 py-2.5'],
+        'root'  => ['w-24 h-24', 'text-[40px]', 'text-[28px]', 'text-[15px]', 'text-[11px]', 'px-5 py-4'],
+        'sekre' => ['w-16 h-16', 'text-[24px]', 'text-[18px]', 'text-[13px]', 'text-[10px]', 'px-3 py-2.5'],
+        'staff' => ['w-14 h-14', 'text-[20px]', 'text-[16px]', 'text-[12px]', 'text-[10px]', 'px-3 py-2.5'],
+        'kadus' => ['w-14 h-14', 'text-[20px]', 'text-[16px]', 'text-[12px]', 'text-[10px]', 'px-3 py-2.5'],
     ];
-    [$fotoSize, $fotoIc, $nameSize, $jabSize, $cardPad] = $sizes[$level];
+    [$fotoSize, $fotoIc, $initIc, $nameSize, $jabSize, $cardPad] = $sizes[$level];
 
-    $foto = !empty($node['foto'])
-        ? '<img class="' . $fotoSize . ' rounded-full object-cover border-2 border-primary/40 shadow-md cursor-pointer" data-skeleton
-              alt="Foto ' . e($node['nama']) . '" loading="lazy" src="' . e(uploadUrl($node['foto'])) . '" data-lightbox="' . e(uploadUrl($node['foto'])) . '"/>'
-        : '<div class="' . $fotoSize . ' rounded-full bg-surface-container-highest border border-glass-border flex items-center justify-center">
-              <span class="material-symbols-outlined ' . $fotoIc . ' text-primary/60">person</span>
-           </div>';
+    $foto = strukturFoto($node, $fotoSize, $fotoIc, $initIc);
 
     return '<div class="org-node flex flex-col items-center gap-2 ' . $cardPad
         . ' bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0">'
@@ -282,28 +294,31 @@ function orgCardStatic(string $nama, string $jabatan, string $icon): string
 <?php
 $kades = $strukturTree[0] ?? null;
 $sekre = null;
-$kadusList = [];
-if ($kades !== null) {
-    foreach ($kades['children'] ?? [] as $c) {
-        $jab = $c['jabatan'] ?? '';
-        if (stripos($jab, 'Sekretaris') !== false || stripos($jab, 'Sekdes') !== false) {
-            $sekre = $c;
-        } else {
-            $kadusList[] = $c;
-        }
-    }
-}
 $kasi = [];
 $kaur = [];
-if ($sekre !== null) {
-    foreach ($sekre['children'] ?? [] as $s) {
-        $jab = $s['jabatan'] ?? '';
-        if (stripos($jab, 'Kasi') !== false) {
-            $kasi[] = $s;
-        } elseif (stripos($jab, 'Kaur') !== false) {
-            $kaur[] = $s;
-        } else {
-            $kasi[] = $s;
+$kadusList = [];
+if ($kades !== null) {
+    $kadesId = (int) ($kades['id'] ?? 0);
+    $stack = [$kades];
+    while ($stack !== []) {
+        $node = array_pop($stack);
+        if ((int) ($node['id'] ?? 0) !== $kadesId) {
+            $jab = $node['jabatan'] ?? '';
+            if (stripos($jab, 'Sekretaris') !== false || stripos($jab, 'Sekdes') !== false) {
+                if ($sekre === null) {
+                    $sekre = $node;
+                }
+            } elseif (stripos($jab, 'Kasi') !== false) {
+                $kasi[] = $node;
+            } elseif (stripos($jab, 'Kaur') !== false) {
+                $kaur[] = $node;
+            } else {
+                $kadusList[] = $node;
+            }
+        }
+        $children = $node['children'] ?? [];
+        for ($i = count($children) - 1; $i >= 0; $i--) {
+            $stack[] = $children[$i];
         }
     }
 }

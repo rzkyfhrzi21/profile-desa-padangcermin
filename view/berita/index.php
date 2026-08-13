@@ -63,7 +63,14 @@ $deskripsiPage = truncate('Kabar terbaru seputar kegiatan, program, dan perkemba
 <?php if ($beritaUtama !== null): ?>
 <article class="group grid grid-cols-1 lg:grid-cols-2 gap-gutter bg-glass-fill backdrop-blur-md border border-glass-border rounded-3xl overflow-hidden shadow-xl hover:border-primary/40 transition-colors duration-300">
 <div class="relative aspect-[16/10] overflow-hidden">
-<img class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-700 ease-out" alt="<?= e($beritaUtama['judul']) ?>" src="<?= $beritaUtama['gambar_utama'] !== null && $beritaUtama['gambar_utama'] !== '' ? e(uploadUrl($beritaUtama['gambar_utama'])) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuBRcM4Qyr3XfXm-elbFFZwnQziilLYVjnNWRZVJ24IbcbNyC_D06SmeCNOZdZYipLindZ5VQajSxi-9e9hI0GKZdXfaw8OWcXhsctKBM-07N8D1dqiWDw7Q9BxYd9vs6uruIFfJ_d4_CKxcAq5C31MLiM1uW24_NXMCusXSu7dROEmOf9qNKLd7A_BIIquHndusafowOemhKnVA5ZfQnWIQzIbM27UyYhQfvi_GZKNLAo7qjPCc96IQ' ?>" />
+<?php $gU = $beritaUtama['gambar_utama'] ?? ''; ?>
+<?php if ($gU !== '' && !fotoAda($gU)): ?>
+<div class="absolute inset-0 bg-gradient-to-br from-primary/70 to-primary/30 flex items-center justify-center">
+<span class="text-[44px] font-bold text-white"><?= e(inisialNama($beritaUtama['judul'])) ?></span>
+</div>
+<?php else: ?>
+<img class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-700 ease-out" alt="<?= e($beritaUtama['judul']) ?>" src="<?= $gU !== '' ? e(uploadUrl($gU)) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuBRcM4Qyr3XfXm-elbFFZwnQziilLYVjnNWRZVJ24IbcbNyC_D06SmeCNOZdZYipLindZ5VQajSxi-9e9hI0GKZdXfaw8OWcXhsctKBM-07N8D1dqiWDw7Q9BxYd9vs6uruIFfJ_d4_CKxcAq5C31MLiM1uW24_NXMCusXSu7dROEmOf9qNKLd7A_BIIquHndusafowOemhKnVA5ZfQnWIQzIbM27UyYhQfvi_GZKNLAo7qjPCc96IQ' ?>" />
+<?php endif; ?>
 <div class="absolute top-4 left-4 flex gap-2">
 <span class="bg-muted-forest text-primary font-caption text-caption px-3 py-1 rounded-full flex items-center gap-1 backdrop-blur-md">
 <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
@@ -90,7 +97,14 @@ $deskripsiPage = truncate('Kabar terbaru seputar kegiatan, program, dan perkemba
 <article class="bg-surface-container rounded-[20px] p-4 flex flex-col gap-3 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 shadow-md hover:shadow-lime-glow/20">
 <div class="absolute inset-0 rounded-[20px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)] pointer-events-none group-hover:shadow-[inset_0_0_0_1px_rgba(158,230,56,0.4)] transition-shadow duration-300"></div>
 <a href="<?= APP_BASE ?>/berita/<?= e($b['slug']) ?>" class="w-full aspect-[16/10] rounded-xl overflow-hidden relative block">
-<img class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-500" alt="<?= e($b['judul']) ?>" loading="lazy" src="<?= $b['gambar_utama'] !== null && $b['gambar_utama'] !== '' ? e(uploadUrl($b['gambar_utama'])) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuA1JrYpRDj9x6e2os6Ci4mAYfH7XwxBjwPcKe7pBFw6cQ2kB_kJyHamwvz5_coKAOksyoabWG-BXALRgcW_9dr6yGJTZLCzc7ppyhYNPXq-JmfyjsXDrmO19x4KWTZA8jJ8P0J42A6KDROoFotGU2xXUi0FeJBB9DJRbVklKfns4Jm1IVFoDPhOQoi4UXZ1F_TZlZ8cQ4CSdxXEPRzKD1mE6nmDn_Fu-S5c863L-W5T4UTGjmajO1Ge' ?>" />
+<?php $gB = $b['gambar_utama'] ?? ''; ?>
+<?php if ($gB !== '' && !fotoAda($gB)): ?>
+<div class="w-full h-full bg-gradient-to-br from-primary/70 to-primary/30 flex items-center justify-center">
+<span class="text-[32px] font-bold text-white"><?= e(inisialNama($b['judul'])) ?></span>
+</div>
+<?php else: ?>
+<img class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-500" alt="<?= e($b['judul']) ?>" loading="lazy" src="<?= $gB !== '' ? e(uploadUrl($gB)) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuA1JrYpRDj9x6e2os6Ci4mAYfH7XwxBjwPcKe7pBFw6cQ2kB_kJyHamwvz5_coKAOksyoabWG-BXALRgcW_9dr6yGJTZLCzc7ppyhYNPXq-JmfyjsXDrmO19x4KWTZA8jJ8P0J42A6KDROoFotGU2xXUi0FeJBB9DJRbVklKfns4Jm1IVFoDPhOQoi4UXZ1F_TZlZ8cQ4CSdxXEPRzKD1mE6nmDn_Fu-S5c863L-W5T4UTGjmajO1Ge' ?>" />
+<?php endif; ?>
 <div class="absolute top-3 left-3">
 <span class="bg-surface-container/80 backdrop-blur-md text-on-surface font-caption text-caption px-3 py-1 rounded-full shadow-sm"><?= e($b['kategori_nama'] ?? 'Berita') ?></span>
 </div>
