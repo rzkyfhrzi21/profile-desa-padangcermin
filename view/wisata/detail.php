@@ -128,11 +128,11 @@ $ogImage = $gambarUtama !== null ? APP_URL . '/uploads/' . $gambarUtama['path_ga
 <?php $totalGambar = count($gambar); ?>
 <div class="flex flex-col gap-4">
 <h4 class="font-headline-md text-body-lg font-bold text-on-surface">Galeri Visual</h4>
-<div class="relative" <?= $totalGambar > 1 ? 'data-carousel data-carousel-interval="1500"' : '' ?>>
+<div class="relative" <?= $totalGambar > 1 ? 'data-carousel data-carousel-interval="3000"' : '' ?>>
 <div class="overflow-hidden rounded-2xl">
 <?php foreach ($gambar as $i => $g): ?>
 <div class="carousel-slide">
-<div class="w-full aspect-video rounded-2xl overflow-hidden cursor-pointer group">
+<div class="w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group">
 <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" data-lightbox="<?= e(uploadUrl($g['path_gambar'])) ?>" data-skeleton alt="<?= e($wisata['nama']) ?>" src="<?= e(uploadUrl($g['path_gambar'])) ?>"/>
 </div>
 </div>
