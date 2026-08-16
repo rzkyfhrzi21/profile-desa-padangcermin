@@ -331,8 +331,8 @@ require __DIR__ . '/../layout.php';
         /* item lebar tetap agar midpoint bar selalu di tengah container */
         .org-custom .org-childrow-item {
             position: relative;
-            padding: 34px 0 0;
-            width: 140px;
+            padding: 34px 8px 0;
+            width: 150px;
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
