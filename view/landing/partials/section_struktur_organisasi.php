@@ -273,6 +273,61 @@ function orgCardStatic(string $nama, string $jabatan, string $icon): string
     height: 24px;
     background: rgba(158, 230, 56, 0.35);
 }
+/* ── Mobile: 4-lantai org chart ── */
+.org-mobile-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+}
+/* Lantai 1 (atas): BPD – KaDes – LPM horizontal */
+.org-mobile-toprow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    padding-bottom: 2px;
+}
+.org-mobile-toprow .org-node {
+    min-width: 76px;
+    padding: 8px 10px !important;
+}
+.org-mobile-hline {
+    flex-shrink: 0;
+    width: 18px;
+    height: 2px;
+    background: rgba(158, 230, 56, 0.35);
+    align-self: center;
+}
+/* Garis vertikal antar lantai */
+.org-mobile-vline {
+    width: 2px;
+    height: 24px;
+    background: rgba(158, 230, 56, 0.35);
+    flex-shrink: 0;
+}
+/* Lantai 2 – Sekre (tengah) */
+.org-mobile-sekre {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+/* Lantai 3 – Staff (Kasi+Kaur) dan Lantai 4 – Kadus */
+.org-mobile-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 0 4px;
+}
+.org-mobile-item .org-node {
+    min-width: 88px;
+}
 @media (prefers-reduced-motion: reduce) {
     .org-tree li,
     .org-tree ul {
@@ -370,24 +425,46 @@ $customOk = $kades !== null && $sekre !== null && ($kasi !== [] || $kaur !== [] 
 </div>
 </div>
 <div class="md:hidden">
-<div class="flex flex-col items-center gap-3">
-<?= orgCardStatic('BPD', 'Badan Permusyawaratan Desa', 'account_balance') ?>
-<?= orgCard($kades, 'root') ?>
-<?= orgCardStatic('LPM', 'Lembaga Pemberdayaan Masyarakat', 'groups') ?>
-<div class="org-mline"></div>
-<?= orgCard($sekre, 'sekre') ?>
-<?php if ($kasi !== [] || $kaur !== []): ?>
-<div class="org-mline"></div>
-<?php foreach (array_merge($kasi, $kaur) as $s): ?>
-<?= orgCard($s, 'staff') ?>
-<?php endforeach; ?>
-<?php endif; ?>
-<?php if ($kadusList !== []): ?>
-<div class="org-mline"></div>
-<?php foreach ($kadusList as $kd): ?>
-<?= orgCard($kd, 'kadus') ?>
-<?php endforeach; ?>
-<?php endif; ?>
+<div class="org-mobile-wrap">
+
+  <!-- LANTAI 1: BPD – Kepala Desa (pusat) – LPM sejajar horizontal -->
+  <div class="org-mobile-toprow">
+    <div class="flex-shrink-0"><?= orgCardStatic('BPD', 'Badan Permusyawaratan Desa', 'account_balance') ?></div>
+    <div class="org-mobile-hline"></div>
+    <div class="flex-shrink-0"><?= orgCard($kades, 'root') ?></div>
+    <div class="org-mobile-hline"></div>
+    <div class="flex-shrink-0"><?= orgCardStatic('LPM', 'Lembaga Pemberdayaan Masyarakat', 'groups') ?></div>
+  </div>
+
+  <!-- Garis vertikal turun dari Kepala Desa ke Sekre -->
+  <div class="org-mobile-vline"></div>
+
+  <!-- LANTAI 2: Sekretaris Desa (tengah) -->
+  <div class="org-mobile-sekre">
+    <?= orgCard($sekre, 'sekre') ?>
+  </div>
+
+  <?php if ($kasi !== [] || $kaur !== []): ?>
+  <!-- Garis vertikal turun dari Sekre ke Staff -->
+  <div class="org-mobile-vline"></div>
+  <!-- LANTAI 3: Kasi + Kaur sejajar (flex-wrap) -->
+  <div class="org-mobile-row">
+    <?php foreach (array_merge($kasi, $kaur) as $s): ?>
+    <div class="org-mobile-item"><?= orgCard($s, 'staff') ?></div>
+    <?php endforeach; ?>
+  </div>
+  <?php endif; ?>
+
+  <?php if ($kadusList !== []): ?>
+  <!-- Garis vertikal turun dari Staff ke Kadus -->
+  <div class="org-mobile-vline"></div>
+  <!-- LANTAI 4: Kepala Dusun sejajar (flex-wrap) -->
+  <div class="org-mobile-row">
+    <?php foreach ($kadusList as $kd): ?>
+    <div class="org-mobile-item"><?= orgCard($kd, 'kadus') ?></div>
+    <?php endforeach; ?>
+  </div>
+  <?php endif; ?>
 </div>
 </div>
 <?php else: ?>
