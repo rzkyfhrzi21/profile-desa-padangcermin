@@ -252,8 +252,7 @@ require __DIR__ . '/../layout.php';
         }
         $customOk = $root !== null && $sekre !== null && ($kasi !== [] || $kaur !== [] || $kadusList !== []);
         $bpdCard = '<div class="flex flex-col items-center gap-2 px-4 py-3 min-w-[110px] '
-            . 'bg-gradient-to-br from-surface-container-high/80 to-surface-container-highest/60 '
-            . 'backdrop-blur-md rounded-2xl border border-glass-border '
+            . 'bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border '
             . 'hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 text-center">'
             . '<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">'
             . '<span class="material-symbols-outlined text-[22px] text-primary/70" style="font-variation-settings:\'FILL\' 1">policy</span>'
@@ -264,8 +263,7 @@ require __DIR__ . '/../layout.php';
             . '</div>'
             . '</div>';
         $lpmCard = '<div class="flex flex-col items-center gap-2 px-4 py-3 min-w-[110px] '
-            . 'bg-gradient-to-br from-surface-container-high/80 to-surface-container-highest/60 '
-            . 'backdrop-blur-md rounded-2xl border border-glass-border '
+            . 'bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border '
             . 'hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 text-center">'
             . '<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">'
             . '<span class="material-symbols-outlined text-[22px] text-primary/70" style="font-variation-settings:\'FILL\' 1">groups</span>'

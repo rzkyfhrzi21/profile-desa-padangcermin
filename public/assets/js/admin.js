@@ -149,9 +149,15 @@
                 closeModal();
             }
         }
+        /* Guard tambahan: saat lightbox terbuka di atas modal, hentikan propagasi ESC
+           agar modal di bawahnya tidak ikut tertutup (mencegah modal jadi tidak berfungsi). */
+        function escOverlayGuard(e) {
+            if (e.key === 'Escape' && document.querySelector('.lightbox-overlay')) {
+                e.stopPropagation();
+            }
+        }
         document.addEventListener('keydown', esc);
         overlay._esc = esc;
-        /* Jangan tutup modal saat lightbox di atasnya masih terbuka */
         document.addEventListener('keydown', escOverlayGuard);
         overlay._escGuard = escOverlayGuard;
 

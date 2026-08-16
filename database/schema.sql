@@ -65,12 +65,22 @@ CREATE TABLE IF NOT EXISTS kependudukan_dusun (
     INDEX idx_kd_periode (periode)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS dusun_master (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    nama VARCHAR(100) NOT NULL,
+    urutan TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    aktif TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_dusun_nama (nama)
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS potensi_desa (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     judul VARCHAR(150) NOT NULL,
     deskripsi TEXT NOT NULL,
     gambar VARCHAR(255) NULL,
     kategori VARCHAR(100) NULL,
+    ikon VARCHAR(100) NULL,
     urutan INT NOT NULL DEFAULT 0,
     status ENUM('aktif','nonaktif') NOT NULL DEFAULT 'aktif',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

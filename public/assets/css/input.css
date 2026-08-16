@@ -232,6 +232,15 @@
 #admin-main-wrap .border-glass-border { border-color: rgba(51, 41, 30, 0.12); }
 #admin-main-wrap tbody tr:hover { background-color: #F4F7F3; }
 
+/* ApexCharts tooltip — teks dibuat gelap agar terbaca di atas tooltip berlatar terang */
+#admin-main-wrap .apexcharts-tooltip,
+#admin-main-wrap .apexcharts-tooltip .apexcharts-tooltip-title,
+#admin-main-wrap .apexcharts-tooltip .apexcharts-tooltip-series-group,
+#admin-main-wrap .apexcharts-tooltip .apexcharts-tooltip-text-y-label,
+#admin-main-wrap .apexcharts-tooltip .apexcharts-tooltip-text-y-value,
+#admin-main-wrap .apexcharts-tooltip .apexcharts-tooltip-text-z-value,
+#admin-main-wrap .apexcharts-tooltip .apexcharts-tooltip-marker { color: #33291E; }
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

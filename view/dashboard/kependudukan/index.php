@@ -253,7 +253,10 @@ window.addEventListener('load', function () {
             colors: ['#3C6E47', '#E7A825'],
             grid: { borderColor: 'rgba(0,0,0,0.06)', strokeDashArray: 4 },
             legend: { labels: { colors: '#33291E' }, position: 'top' },
-            tooltip: { theme: 'light' },
+            tooltip: {
+                theme: 'light',
+                style: { fontSize: '12px', color: '#33291E' }
+            },
             theme: { mode: 'light' },
             markers: { size: 4, colors: ['#3C6E47', '#E7A825'], strokeWidth: 0 }
         }).render();
