@@ -328,9 +328,15 @@ require __DIR__ . '/../layout.php';
             justify-content: center;
             align-items: flex-start;
         }
+        /* item lebar tetap agar midpoint bar selalu di tengah container */
         .org-custom .org-childrow-item {
             position: relative;
-            padding: 34px 7px 0;
+            padding: 34px 0 0;
+            width: 140px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .org-custom .org-childrow-item::before {
             content: '';
@@ -356,6 +362,22 @@ require __DIR__ . '/../layout.php';
             height: 32px;
             background: rgba(158, 230, 56, 0.35);
         }
+        /* Spacer antara grup Kasi dan Kaur */
+        .org-custom .org-gap-item {
+            position: relative;
+            width: 24px;
+            flex-shrink: 0;
+            padding-top: 34px;
+        }
+        .org-custom .org-gap-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(158, 230, 56, 0.35);
+        }
         .org-custom .org-kadus-wrap {
             display: flex;
             flex-direction: column;
@@ -370,6 +392,57 @@ require __DIR__ . '/../layout.php';
             width: 2px;
             height: 24px;
             background: rgba(158, 230, 56, 0.35);
+        }
+        /* ── Mobile: 4-lantai org chart ── */
+        .org-mobile-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            width: 100%;
+        }
+        .org-mobile-toprow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            padding-bottom: 2px;
+        }
+        .org-mobile-toprow .org-card,
+        .org-mobile-toprow > div > div {
+            min-width: 76px;
+        }
+        .org-mobile-hline {
+            flex-shrink: 0;
+            width: 16px;
+            height: 2px;
+            background: rgba(158, 230, 56, 0.35);
+            align-self: center;
+        }
+        .org-mobile-vline {
+            width: 2px;
+            height: 24px;
+            background: rgba(158, 230, 56, 0.35);
+            flex-shrink: 0;
+        }
+        .org-mobile-sekre {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .org-mobile-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 0 4px;
+        }
+        .org-mobile-item > div {
+            min-width: 88px;
         }
         </style>
 
@@ -393,7 +466,13 @@ require __DIR__ . '/../layout.php';
         <?php if ($kasi !== [] || $kaur !== []): ?>
         <div class="org-staffrow">
         <div class="org-childrow">
-        <?php foreach (array_merge($kasi, $kaur) as $s): ?>
+        <?php foreach ($kasi as $s): ?>
+        <div class="org-childrow-item"><?= renderOrgCard($s, 'sm') ?></div>
+        <?php endforeach; ?>
+        <?php if ($kasi !== [] && $kaur !== []): ?>
+        <div class="org-gap-item" aria-hidden="true"></div>
+        <?php endif; ?>
+        <?php foreach ($kaur as $s): ?>
         <div class="org-childrow-item"><?= renderOrgCard($s, 'sm') ?></div>
         <?php endforeach; ?>
         </div>
@@ -418,23 +497,42 @@ require __DIR__ . '/../layout.php';
         </div>
 
         <div class="md:hidden">
-        <div class="flex flex-col items-center gap-3">
-          <?= $bpdCard ?>
-          <?= renderOrgCard($root, 'lg') ?>
-          <?= $lpmCard ?>
-          <div class="org-mline"></div>
-          <?= renderOrgCard($sekre, 'md') ?>
+        <div class="org-mobile-wrap">
+          <!-- LANTAI 1: BPD – Kepala Desa (pusat) – LPM sejajar horizontal -->
+          <div class="org-mobile-toprow">
+            <div class="flex-shrink-0"><?= $bpdCard ?></div>
+            <div class="org-mobile-hline"></div>
+            <div class="flex-shrink-0"><?= renderOrgCard($root, 'lg') ?></div>
+            <div class="org-mobile-hline"></div>
+            <div class="flex-shrink-0"><?= $lpmCard ?></div>
+          </div>
+          <!-- Garis turun ke Sekre -->
+          <div class="org-mobile-vline"></div>
+          <!-- LANTAI 2: Sekretaris Desa (tengah) -->
+          <div class="org-mobile-sekre">
+            <?= renderOrgCard($sekre, 'md') ?>
+          </div>
           <?php if ($kasi !== [] || $kaur !== []): ?>
-          <div class="org-mline"></div>
-          <?php foreach (array_merge($kasi, $kaur) as $s): ?>
-          <?= renderOrgCard($s, 'sm') ?>
-          <?php endforeach; ?>
+          <div class="org-mobile-vline"></div>
+          <!-- LANTAI 3: Kasi + Kaur (flex-wrap, gap antar grup) -->
+          <div class="org-mobile-row">
+            <?php foreach ($kasi as $s): ?>
+            <div class="org-mobile-item"><?= renderOrgCard($s, 'sm') ?></div>
+            <?php endforeach; ?>
+            <?php if ($kasi !== [] && $kaur !== []): ?><div class="w-3"></div><?php endif; ?>
+            <?php foreach ($kaur as $s): ?>
+            <div class="org-mobile-item"><?= renderOrgCard($s, 'sm') ?></div>
+            <?php endforeach; ?>
+          </div>
           <?php endif; ?>
           <?php if ($kadusList !== []): ?>
-          <div class="org-mline"></div>
-          <?php foreach ($kadusList as $kd): ?>
-          <?= renderOrgCard($kd, 'sm') ?>
-          <?php endforeach; ?>
+          <div class="org-mobile-vline"></div>
+          <!-- LANTAI 4: Kepala Dusun (flex-wrap) -->
+          <div class="org-mobile-row">
+            <?php foreach ($kadusList as $kd): ?>
+            <div class="org-mobile-item"><?= renderOrgCard($kd, 'sm') ?></div>
+            <?php endforeach; ?>
+          </div>
           <?php endif; ?>
         </div>
         </div>

@@ -230,10 +230,17 @@ function orgCardStatic(string $nama, string $jabatan, string $icon): string
     justify-content: center;
     align-items: flex-start;
 }
+/* item lebar tetap agar midpoint bar selalu di tengah container */
 .org-custom .org-childrow-item {
     position: relative;
-    padding: 34px 7px 0;
+    padding: 34px 0 0;
+    width: 140px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+/* horizontal bar: full-width tiap item */
 .org-custom .org-childrow-item::before {
     content: '';
     position: absolute;
@@ -243,12 +250,15 @@ function orgCardStatic(string $nama, string $jabatan, string $icon): string
     height: 2px;
     background: rgba(158, 230, 56, 0.35);
 }
+/* potong sisi kiri item pertama dari kiri 50% */
 .org-custom .org-childrow-item:first-child::before {
     left: 50%;
 }
+/* potong sisi kanan item terakhir sampai 50% */
 .org-custom .org-childrow-item:last-child::before {
     right: 50%;
 }
+/* vertical drop ke card */
 .org-custom .org-childrow-item::after {
     content: '';
     position: absolute;
@@ -256,6 +266,23 @@ function orgCardStatic(string $nama, string $jabatan, string $icon): string
     left: 50%;
     width: 2px;
     height: 32px;
+    background: rgba(158, 230, 56, 0.35);
+}
+/* ── Spacer antara grup Kasi dan Kaur ── */
+.org-custom .org-gap-item {
+    position: relative;
+    width: 24px;
+    flex-shrink: 0;
+    padding-top: 34px;
+}
+/* gap item ikut draw horizontal bar tapi TIDAK drop vertical line */
+.org-custom .org-gap-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
     background: rgba(158, 230, 56, 0.35);
 }
 .org-custom .org-kadus-wrap {
@@ -401,7 +428,13 @@ $customOk = $kades !== null && $sekre !== null && ($kasi !== [] || $kaur !== [] 
 <?php if ($kasi !== [] || $kaur !== []): ?>
 <div class="org-staffrow">
 <div class="org-childrow">
-<?php foreach (array_merge($kasi, $kaur) as $s): ?>
+<?php foreach ($kasi as $s): ?>
+<div class="org-childrow-item"><?= orgCard($s, 'staff') ?></div>
+<?php endforeach; ?>
+<?php if ($kasi !== [] && $kaur !== []): ?>
+<div class="org-gap-item" aria-hidden="true"></div>
+<?php endif; ?>
+<?php foreach ($kaur as $s): ?>
 <div class="org-childrow-item"><?= orgCard($s, 'staff') ?></div>
 <?php endforeach; ?>
 </div>
