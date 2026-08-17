@@ -8,6 +8,7 @@ return [
     '/berita'               => ['function' => ['profil.php', 'berita.php'], 'view' => 'berita/index.php'],
     '/berita/{slug}'        => ['function' => ['profil.php', 'auth.php', 'berita.php'], 'view' => 'berita/detail.php'],
     '/sitemap.xml'          => ['function' => ['wisata.php', 'berita.php'], 'view' => 'sitemap.php'],
+    '/testdiagram'          => ['function' => [], 'view' => 'testdiagram.php'],
 
     '/auth/login'           => ['function' => ['auth.php', 'csrf.php', 'log.php'], 'view' => 'auth/login.php'],
     '/auth/logout'          => ['function' => ['auth.php', 'csrf.php'], 'view' => 'auth/logout.php'],

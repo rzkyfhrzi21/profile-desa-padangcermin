@@ -40,7 +40,8 @@ if ($appUrl === '') {
 }
 define('APP_URL', rtrim($appUrl, '/'));
 define('APP_BASE', rtrim(env('APP_BASE', ''), '/'));
-$is_local = in_array($_SERVER['HTTP_HOST'] ?? 'localhost', ['localhost', '127.0.0.1', '::1']) || str_ends_with($_SERVER['HTTP_HOST'] ?? '', '.test');
+$hostHeader = explode(':', $_SERVER['HTTP_HOST'] ?? 'localhost')[0];
+$is_local = in_array($hostHeader, ['localhost', '127.0.0.1', '::1']) || str_ends_with($hostHeader, '.test');
 
 if ($is_local) {
     define('APP_ENV', env('APP_ENV', 'development'));

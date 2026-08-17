@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagram Struktur Organisasi Desa</title>
+<!-- Tailwind CSS (ganti dengan file build Tailwind situs Anda) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<style>
+/* ── 4. Token fallback (hapus jika situs tujuan sudah punya token serupa) ── */
+:root {
+    --diag-primary: #9ee638;
+    --diag-surface: #0d1510;
+    --diag-surface-dim: #0a120d;
+    --diag-surface-container-highest: #16231a;
+    --diag-surface-container: #131e16;
+    --diag-on-surface: #ecf5ee;
+    --diag-on-surface-variant: #a3b5a8;
+    --diag-glass-border: rgba(255, 255, 255, 0.08);
+    --diag-line: rgba(158, 230, 56, 0.35);
+}
+body {
+    background: var(--diag-surface-dim);
+    color: var(--diag-on-surface);
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+.text-primary           { color: var(--diag-primary) !important; }
+.text-primary\/80       { color: rgba(158, 230, 56, 0.8) !important; }
+.text-primary\/60       { color: rgba(158, 230, 56, 0.6) !important; }
+.text-on-surface        { color: var(--diag-on-surface) !important; }
+.text-on-surface-variant{ color: var(--diag-on-surface-variant) !important; }
+.bg-glass-fill          { background: rgba(255, 255, 255, 0.06) !important; }
+.bg-surface-container-highest { background: var(--diag-surface-container-highest) !important; }
+.border-glass-border    { border-color: var(--diag-glass-border) !important; }
+.font-semibold          { font-weight: 600; }
+.rounded-2xl            { border-radius: 1rem; }
+.font-label-mono        { font-family: ui-monospace, 'SF Mono', Consolas, monospace; }
+.material-symbols-outlined { font-family: 'Material Symbols Outlined', sans-serif; }
+
+/* ── 5. CSS diagram struktur ────────────────────────────────────────────── */
+/* 5a. Pohon rekursif (fallback) */
+.org-tree,
+.org-tree ul {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    align-items: flex-start;
+}
+.org-tree {
+    flex-direction: column;
+    align-items: center;
+    width: max-content;
+    margin: 0 auto;
+}
+.org-tree ul {
+    position: relative;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding-top: 28px;
+    gap: 0 10px;
+}
+.org-tree ul::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 0;
+    height: 28px;
+    border-left: 2px solid var(--diag-line);
+}
+.org-tree li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 8px 0;
+}
+.org-tree li::before,
+.org-tree li::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 50%;
+    width: 50%;
+    height: 28px;
+    border-top: 2px solid var(--diag-line);
+}
+.org-tree li::after {
+    right: auto;
+    left: 50%;
+    border-left: 2px solid var(--diag-line);
+}
+.org-tree li:only-child::after,
+.org-tree li:only-child::before {
+    display: none;
+}
+.org-tree li:only-child {
+    padding-top: 0;
+}
+.org-tree li:only-child > ul::before {
+    height: 28px;
+}
+.org-tree li:first-child::before,
+.org-tree li:last-child::after {
+    border-top: 0 none;
+}
+.org-tree li:last-child::before {
+    border-top: 2px solid var(--diag-line);
+    border-right: 2px solid var(--diag-line);
+    border-radius: 0 8px 0 0;
+}
+.org-tree li:first-child::after {
+    border-radius: 8px 0 0 0;
+}
+.org-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 6px 8px 12px;
+    margin: 0 -8px;
+}
+
+/* 5b. Bagan 4 lantai (BPD–Kades–Sekre–Staff–Kadus) */
+.org-custom {
+    overflow-x: auto;
+    padding: 6px 8px 12px;
+    margin: 0 -8px;
+}
+.org-custom .org-body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-width: 840px;
+    min-height: 640px;
+    margin: 0 auto;
+}
+.org-custom .org-trunk {
+    width: 2px;
+    flex: 1 1 auto;
+    min-height: 24px;
+    background: var(--diag-line);
+}
+.org-custom .org-sekre {
+    position: absolute;
+    top: 24px;
+    left: calc(50% + 46px);
+}
+.org-custom .org-sekre::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -46px;
+    width: 92px;
+    height: 22px;
+    border-top: 2px solid var(--diag-line);
+    border-right: 2px solid var(--diag-line);
+    border-radius: 0 10px 0 0;
+}
+.org-custom .org-sekre .org-node {
+    margin-top: 22px;
+}
+.org-custom .org-staffrow {
+    position: absolute;
+    top: 220px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.org-custom .org-childrow {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+.org-custom .org-childrow-item {
+    position: relative;
+    padding: 34px 8px 0;
+    width: 150px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.org-custom .org-childrow-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--diag-line);
+}
+.org-custom .org-childrow-item:first-child::before {
+    left: 50%;
+}
+.org-custom .org-childrow-item:last-child::before {
+    right: 50%;
+}
+.org-custom .org-childrow-item::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    width: 2px;
+    height: 32px;
+    background: var(--diag-line);
+}
+.org-custom .org-gap-item {
+    position: relative;
+    width: 24px;
+    flex-shrink: 0;
+    padding-top: 34px;
+}
+.org-custom .org-gap-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--diag-line);
+}
+.org-custom .org-kadus-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.org-custom .org-kadus-vline {
+    width: 2px;
+    height: 34px;
+    background: var(--diag-line);
+}
+.org-mline {
+    width: 2px;
+    height: 24px;
+    background: var(--diag-line);
+}
+
+/* 5c. Mobile: 4 lantai org chart */
+.org-mobile-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+}
+.org-mobile-toprow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    padding-bottom: 2px;
+}
+.org-mobile-toprow .org-node {
+    min-width: 76px;
+    padding: 8px 10px !important;
+}
+.org-mobile-hline {
+    flex-shrink: 0;
+    width: 18px;
+    height: 2px;
+    background: var(--diag-line);
+    align-self: center;
+}
+.org-mobile-vline {
+    width: 2px;
+    height: 24px;
+    background: var(--diag-line);
+    flex-shrink: 0;
+}
+.org-mobile-sekre {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.org-mobile-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 0 4px;
+}
+.org-mobile-item .org-node {
+    min-width: 88px;
+}
+@media (prefers-reduced-motion: reduce) {
+    .org-tree li,
+    .org-tree ul {
+        padding-top: 12px;
+    }
+}
+</style>
+</head>
+<body class="py-14 px-4 lg:px-16">
+<section id="struktur" class="max-w-container max-w-[1200px] mx-auto">
+<h2 class="text-center text-[26px] font-bold text-on-surface mb-2">Perangkat Desa Padang Cermin</h2>
+<p class="text-center text-on-surface-variant mb-10">Struktur Organisasi Pemerintah Desa</p>
+
+<!-- ════════ Desktop: bagan 4 lantai ════════ -->
+<div class="hidden md:block">
+<div class="org-custom">
+<div class="flex items-center justify-center gap-2 md:gap-4">
+<div class="org-node flex flex-col items-center gap-2 px-4 py-3 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-primary/15 border-2 border-primary/30 flex items-center justify-center"><span class="text-[15px] font-bold text-primary">BP</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">BPD</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Badan Permusyawaratan Desa</span></div></div><div class="w-8 md:w-12 self-stretch flex items-center">
+<div class="w-full border-t-2 border-primary/30"></div>
+</div>
+<div class="org-node flex flex-col items-center gap-2 px-5 py-4 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-24 h-24 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Dra. Purwanti tidak ditemukan"><span class="text-[28px] font-bold text-white">DP</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[15px] font-semibold text-on-surface leading-tight max-w-[140px]">Dra. Purwanti</span><span class="text-[11px] text-primary/80 leading-tight max-w-[140px]">Kepala Desa</span></div></div><div class="w-8 md:w-12 self-stretch flex items-center">
+<div class="w-full border-t-2 border-primary/30"></div>
+</div>
+<div class="org-node flex flex-col items-center gap-2 px-4 py-3 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-primary/15 border-2 border-primary/30 flex items-center justify-center"><span class="text-[15px] font-bold text-primary">LP</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">LPM</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Lembaga Pemberdayaan Masyarakat</span></div></div></div>
+<div class="org-body">
+<div class="org-trunk" aria-hidden="true"></div>
+<div class="org-sekre">
+<div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Husen tidak ditemukan"><span class="text-[18px] font-bold text-white">H</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[13px] font-semibold text-on-surface leading-tight max-w-[140px]">Husen</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Sekretaris Desa</span></div></div></div>
+<div class="org-staffrow">
+<div class="org-childrow">
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Wawan Andriawan tidak ditemukan"><span class="text-[16px] font-bold text-white">WA</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Wawan Andriawan</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kasi Pemerintahan</span></div></div></div>
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Deden Surahman tidak ditemukan"><span class="text-[16px] font-bold text-white">DS</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Deden Surahman</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kasi Kesejahteraan</span></div></div></div>
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Irma Fauziyah tidak ditemukan"><span class="text-[16px] font-bold text-white">IF</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Irma Fauziyah</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kasi Pelayanan</span></div></div></div>
+<div class="org-gap-item" aria-hidden="true"></div>
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Gita Veronissa tidak ditemukan"><span class="text-[16px] font-bold text-white">GV</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Gita Veronissa</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kaur Tata Usaha dan Umum</span></div></div></div>
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Archy Ollivia tidak ditemukan"><span class="text-[16px] font-bold text-white">AO</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Archy Ollivia</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kaur Keuangan</span></div></div></div>
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Indera Herlangga tidak ditemukan"><span class="text-[16px] font-bold text-white">IH</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Indera Herlangga</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kaur Perencanaan</span></div></div></div>
+</div>
+</div>
+<div class="org-kadus-wrap">
+<div class="org-childrow">
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Ady Kurnia tidak ditemukan"><span class="text-[16px] font-bold text-white">AK</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Ady Kurnia</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Padang Cermin</span></div></div></div>
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Taufik tidak ditemukan"><span class="text-[16px] font-bold text-white">T</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Taufik</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Tanjung Mas</span></div></div></div>
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Mutiono tidak ditemukan"><span class="text-[16px] font-bold text-white">M</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Mutiono</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Rawa Subur</span></div></div></div>
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Suhaimi tidak ditemukan"><span class="text-[16px] font-bold text-white">S</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Suhaimi</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Rawa Tunggal</span></div></div></div>
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Rodi Pratama tidak ditemukan"><span class="text-[16px] font-bold text-white">RP</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Rodi Pratama</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Kejadian</span></div></div></div>
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Nursiah tidak ditemukan"><span class="text-[16px] font-bold text-white">N</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Nursiah</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Kecapi</span></div></div></div>
+<div class="org-childrow-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Mat Nuri tidak ditemukan"><span class="text-[16px] font-bold text-white">MN</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Mat Nuri</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Bambu Kuning</span></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ════════ Mobile: 4 lantai org chart ════════ -->
+<div class="md:hidden">
+<div class="org-mobile-wrap">
+
+  <!-- LANTAI 1: BPD – Kepala Desa (pusat) – LPM sejajar horizontal -->
+  <div class="org-mobile-toprow">
+    <div class="flex-shrink-0"><div class="org-node flex flex-col items-center gap-2 px-4 py-3 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-primary/15 border-2 border-primary/30 flex items-center justify-center"><span class="text-[15px] font-bold text-primary">BP</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">BPD</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Badan Permusyawaratan Desa</span></div></div></div>
+    <div class="org-mobile-hline"></div>
+    <div class="flex-shrink-0"><div class="org-node flex flex-col items-center gap-2 px-5 py-4 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-24 h-24 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Dra. Purwanti tidak ditemukan"><span class="text-[28px] font-bold text-white">DP</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[15px] font-semibold text-on-surface leading-tight max-w-[140px]">Dra. Purwanti</span><span class="text-[11px] text-primary/80 leading-tight max-w-[140px]">Kepala Desa</span></div></div></div>
+    <div class="org-mobile-hline"></div>
+    <div class="flex-shrink-0"><div class="org-node flex flex-col items-center gap-2 px-4 py-3 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-primary/15 border-2 border-primary/30 flex items-center justify-center"><span class="text-[15px] font-bold text-primary">LP</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">LPM</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Lembaga Pemberdayaan Masyarakat</span></div></div></div>
+  </div>
+
+  <!-- Garis vertikal turun dari Kepala Desa ke Sekre -->
+  <div class="org-mobile-vline"></div>
+
+  <!-- LANTAI 2: Sekretaris Desa (tengah) -->
+  <div class="org-mobile-sekre">
+    <div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Husen tidak ditemukan"><span class="text-[18px] font-bold text-white">H</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[13px] font-semibold text-on-surface leading-tight max-w-[140px]">Husen</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Sekretaris Desa</span></div></div>  </div>
+
+    <!-- Garis vertikal turun dari Sekre ke Staff -->
+  <div class="org-mobile-vline"></div>
+  <!-- LANTAI 3: Kasi + Kaur sejajar (flex-wrap) -->
+  <div class="org-mobile-row">
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Wawan Andriawan tidak ditemukan"><span class="text-[16px] font-bold text-white">WA</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Wawan Andriawan</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kasi Pemerintahan</span></div></div></div>
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Deden Surahman tidak ditemukan"><span class="text-[16px] font-bold text-white">DS</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Deden Surahman</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kasi Kesejahteraan</span></div></div></div>
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Irma Fauziyah tidak ditemukan"><span class="text-[16px] font-bold text-white">IF</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Irma Fauziyah</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kasi Pelayanan</span></div></div></div>
+        <div class="w-3"></div>        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Gita Veronissa tidak ditemukan"><span class="text-[16px] font-bold text-white">GV</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Gita Veronissa</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kaur Tata Usaha dan Umum</span></div></div></div>
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Archy Ollivia tidak ditemukan"><span class="text-[16px] font-bold text-white">AO</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Archy Ollivia</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kaur Keuangan</span></div></div></div>
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Indera Herlangga tidak ditemukan"><span class="text-[16px] font-bold text-white">IH</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Indera Herlangga</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kaur Perencanaan</span></div></div></div>
+      </div>
+  
+    <!-- Garis vertikal turun dari Staff ke Kadus -->
+  <div class="org-mobile-vline"></div>
+  <!-- LANTAI 4: Kepala Dusun sejajar (flex-wrap) -->
+  <div class="org-mobile-row">
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Ady Kurnia tidak ditemukan"><span class="text-[16px] font-bold text-white">AK</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Ady Kurnia</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Padang Cermin</span></div></div></div>
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Taufik tidak ditemukan"><span class="text-[16px] font-bold text-white">T</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Taufik</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Tanjung Mas</span></div></div></div>
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Mutiono tidak ditemukan"><span class="text-[16px] font-bold text-white">M</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Mutiono</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Rawa Subur</span></div></div></div>
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Suhaimi tidak ditemukan"><span class="text-[16px] font-bold text-white">S</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Suhaimi</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Rawa Tunggal</span></div></div></div>
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Rodi Pratama tidak ditemukan"><span class="text-[16px] font-bold text-white">RP</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Rodi Pratama</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Kejadian</span></div></div></div>
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Nursiah tidak ditemukan"><span class="text-[16px] font-bold text-white">N</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Nursiah</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Kecapi</span></div></div></div>
+        <div class="org-mobile-item"><div class="org-node flex flex-col items-center gap-2 px-3 py-2.5 bg-glass-fill backdrop-blur-md rounded-2xl border border-glass-border text-center min-w-0"><div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary/70 to-primary/30 border border-glass-border flex items-center justify-center" title="Foto Mat Nuri tidak ditemukan"><span class="text-[16px] font-bold text-white">MN</span></div><div class="flex flex-col items-center gap-1 w-full min-w-0"><span class="text-[12px] font-semibold text-on-surface leading-tight max-w-[140px]">Mat Nuri</span><span class="text-[10px] text-primary/80 leading-tight max-w-[140px]">Kepala Dusun Bambu Kuning</span></div></div></div>
+      </div>
+  </div>
+</div>
+
+
+</section>
+</body>
+</html>
