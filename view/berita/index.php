@@ -22,15 +22,18 @@ $deskripsiPage = truncate('Kabar terbaru seputar kegiatan, program, dan perkemba
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title><?= e($judulPage) ?></title>
 <link rel="icon" type="image/x-icon" href="<?= APP_BASE ?>/favicon.ico"/>
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
 <meta name="description" content="<?= e($deskripsiPage) ?>"/>
 <link rel="canonical" href="<?= e(APP_URL . '/berita') ?>"/>
 <meta property="og:type" content="website"/>
 <meta property="og:title" content="<?= e($judulPage) ?>"/>
 <meta property="og:description" content="<?= e($deskripsiPage) ?>"/>
+<meta property="og:image" content="<?= e(APP_URL . '/assets/img/logo.png') ?>"/>
 <meta property="og:url" content="<?= e(APP_URL . '/berita') ?>"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="<?= e($judulPage) ?>"/>
 <meta name="twitter:description" content="<?= e($deskripsiPage) ?>"/>
+<meta name="twitter:image" content="<?= e(APP_URL . '/assets/img/logo.png') ?>"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&family=Space+Grotesk:wght@100..900&display=swap" rel="stylesheet"/>
 <link href="<?= assetUrl('css/tailwind.css') ?>" rel="stylesheet"/>

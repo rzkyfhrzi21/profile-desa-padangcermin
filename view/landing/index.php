@@ -30,6 +30,9 @@ $deskripsiPage = truncate('Portal resmi ' . $namaPekon . ', Kecamatan Padang Cer
     <title><?= e($judulPage) ?></title>
     <link rel="icon" type="image/x-icon" href="<?= APP_BASE ?>/favicon.ico" />
     <link rel="shortcut icon" href="<?= APP_BASE ?>/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= APP_BASE ?>/assets/img/logo.png" />
+    <meta name="theme-color" content="#0a120d" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <meta name="description" content="<?= e($deskripsiPage) ?>" />
     <link rel="canonical" href="<?= e(APP_URL . '/') ?>" />
     <meta property="og:type" content="website" />
@@ -44,10 +47,23 @@ $deskripsiPage = truncate('Portal resmi ' . $namaPekon . ', Kecamatan Padang Cer
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
-            "@type": "GovernmentOrganization",
-            "name": <?= json_encode($namaPekon, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
-            "url": <?= json_encode(APP_URL . '/', JSON_UNESCAPED_SLASHES) ?>,
-            "address": <?= json_encode(['@type' => 'PostalAddress', 'streetAddress' => $profil['alamat_kantor'] ?? '', 'addressCountry' => 'ID'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
+            "@graph": [
+                {
+                    "@type": "GovernmentOrganization",
+                    "@id": <?= json_encode(APP_URL . '/#organization', JSON_UNESCAPED_SLASHES) ?>,
+                    "name": <?= json_encode($namaPekon, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+                    "url": <?= json_encode(APP_URL . '/', JSON_UNESCAPED_SLASHES) ?>,
+                    "address": <?= json_encode(['@type' => 'PostalAddress', 'streetAddress' => $profil['alamat_kantor'] ?? '', 'addressCountry' => 'ID'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": <?= json_encode(APP_URL . '/#website', JSON_UNESCAPED_SLASHES) ?>,
+                    "url": <?= json_encode(APP_URL . '/', JSON_UNESCAPED_SLASHES) ?>,
+                    "name": <?= json_encode($namaPekon, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+                    "publisher": { "@id": <?= json_encode(APP_URL . '/#organization', JSON_UNESCAPED_SLASHES) ?> },
+                    "inLanguage": "id-ID"
+                }
+            ]
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />

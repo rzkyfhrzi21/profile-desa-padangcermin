@@ -51,6 +51,12 @@ if ($isDashboard) {
     requireAdmin();
 }
 
+// A09/SEO — pastikan area privat (auth & dashboard) tidak pernah terindeks Google,
+// baik via meta robots (sudah ada di view) maupun HTTP header X-Robots-Tag.
+if ($isDashboard || str_starts_with($path, '/auth')) {
+    header('X-Robots-Tag: noindex, nofollow, noarchive, nosnippet', true);
+}
+
 foreach ($route['function'] as $fn) {
     require dirname(__DIR__) . '/function/' . $fn;
 }

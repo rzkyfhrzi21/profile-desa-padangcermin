@@ -32,6 +32,7 @@ $ogImage = $gambarUtama !== null ? APP_URL . '/uploads/' . $gambarUtama['path_ga
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title><?= e($judulPage) ?></title>
 <link rel="icon" type="image/x-icon" href="<?= APP_BASE ?>/favicon.ico"/>
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
 <meta name="description" content="<?= e($deskripsiPage) ?>"/>
 <link rel="canonical" href="<?= e(APP_URL . '/wisata/' . $wisata['slug']) ?>"/>
 <meta property="og:type" content="website"/>

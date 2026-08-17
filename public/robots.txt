@@ -1,8 +1,37 @@
+# ==============================================================================
+# ROBOTS.TXT STANDAR PRODUKSI (SEO-OPTIMIZED & SECURE)
+# ==============================================================================
+
 User-agent: *
+# Izinkan perayapan aset publik untuk rendering sempurna di Googlebot
 Allow: /
+Allow: /assets/
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.webp$
+Allow: /*.svg$
+
+# Blokir rute privat, autentikasi, dan area administrasi
 Disallow: /dashboard/
 Disallow: /dashboard
 Disallow: /auth/
 Disallow: /auth
+Disallow: /admin/
+Disallow: /api/
+Disallow: /testdiagram
 
-Sitemap: https://pekonpadangcermin.id/sitemap.xml
+# Folder sensitif (juga diblokir fisik di .htaccess)
+Disallow: /config/
+Disallow: /function/
+Disallow: /database/
+Disallow: /view/
+Disallow: /Zzz/
+Disallow: /docs/
+Disallow: /@agents/
+Disallow: /.env
+
+# Lokasi Berkas Peta Situs Resmi (XML Sitemap)
+Sitemap: https://padangcermin.web.id/sitemap.xml
